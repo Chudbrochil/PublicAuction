@@ -10,11 +10,11 @@ public class Account
     private float temporaryHold;
 
     /**
-     * Account
+     * Account initial constructor
      * @param accountNum
      * @param amount
      */
-    public void Account(long accountNum, float amount)
+    public Account(long accountNum, float amount)
     {
         this.accountNum = accountNum;
         this.amount = amount;
