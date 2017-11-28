@@ -14,20 +14,22 @@ public static void main(String[] args){
     try{
         ServerSocket socket = new ServerSocket(4444);
         System.out.println("Welcome to the Bank");
-        Socket pipeConnection = socket.accept();
 
-        ObjectOutputStream out = new ObjectOutputStream(pipeConnection.getOutputStream());
-        ObjectInputStream in = new ObjectInputStream(pipeConnection.getInputStream());
+        while(true) {
+            Socket pipeConnection = socket.accept();
 
-        agent = (Agent) in.readObject();
-        agent.setAccountBalance(500);
-        agent.setAccountNum(rand.nextInt(1000) + 1);
+            ObjectOutputStream out = new ObjectOutputStream(pipeConnection.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(pipeConnection.getInputStream());
+
+            agent = (Agent) in.readObject();
+            agent.setAccountBalance(500);
+            agent.setAccountNum(rand.nextInt(1000) + 1);
 //        agent.setBankKey();
 
-        out.writeObject(agent);
-
-        out.close();
-        in.close();
+            out.writeObject(agent);
+        }
+//        out.close();
+//        in.close();
     }catch(Exception e){
 
     }
