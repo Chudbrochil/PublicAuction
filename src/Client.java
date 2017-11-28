@@ -9,11 +9,11 @@ public class Client {
         Agent newUser = new Agent(name);
         System.out.println("You've chosen " + newUser.getName() + " as your username" );
         try {
-            Socket socket = new Socket("127.0.0.1", 4444);
+            Socket bankSocket = new Socket("127.0.0.1", 4444);
             Socket centralSocket = new Socket("127.0.0.1", 5555);
 
-            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+            ObjectOutputStream out = new ObjectOutputStream(bankSocket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(bankSocket.getInputStream());
 
             out.writeObject(newUser);
 
@@ -30,8 +30,11 @@ public class Client {
             newUser = (Agent) in.readObject();
             System.out.println("Bidding Key = " + newUser.getBiddingKey());
 
-        } catch (Exception e) {
 
+        } catch (Exception e) {
+            e.printStackTrace();
+            e.getMessage();
+            e.getLocalizedMessage();
         }
     }
     public static void main(String[] args){

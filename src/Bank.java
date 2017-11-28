@@ -12,7 +12,7 @@ public class Bank{
        Random rand = new Random();
         try{
             ServerSocket socket = new ServerSocket(4444);
-            System.out.println("Welcome to the Bank");
+         System.out.println("Welcome to the Bank");
 
             while(true) {
                 Socket pipeConnection = socket.accept();
@@ -26,13 +26,37 @@ public class Bank{
 //        agent.setBankKey();
 
                 out.writeObject(agent);
-            }
-//        out.close();
-//        in.close();
-        }catch(Exception e){
 
+//                next line test out the Bank's ability to listen for an AuctionCentral
+//                listenforAC(socket, pipeConnection, in, out);
+
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+            e.getLocalizedMessage();
+            e.getMessage();
         }
     }
+
+
+    public void listenforAC(ServerSocket socket, Socket pipeConnection, ObjectInputStream in, ObjectOutputStream out){
+        try {
+            pipeConnection = socket.accept();
+            out = new ObjectOutputStream(pipeConnection.getOutputStream());
+            in = new ObjectInputStream(pipeConnection.getInputStream());
+
+
+           Agent agent = (Agent) in.readObject();
+            System.out.println("Request coming in from Auction Central...");
+            System.out.println("Account amount = " + agent.getAccountBalance());
+        }
+        catch(Exception e){
+         e.getMessage();
+         e.getLocalizedMessage();
+         e.printStackTrace();
+        }
+        }
 
 public static void main(String[] args){
         Bank b = new Bank();

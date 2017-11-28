@@ -16,7 +16,7 @@ public class AuctionCentral
         HashMap<String, Integer> registeredUsers = new HashMap<>();
         try{
             ServerSocket socket = new ServerSocket(5555);
-            System.out.println("Auction Central is online");
+          System.out.println("Auction Central is online");
 
 
             while(true){
@@ -30,7 +30,11 @@ public class AuctionCentral
                 agent.setBiddingKey(rand.nextInt(10000) + 1);
 
                 out.writeObject(agent);
+                //next lines were to test out the communicateBank function
+//                Socket bankSocket  = new Socket("127.0.0.1", 4444);
+//                communicateBank(agent, bankSocket, out);
 
+//
             }
         }catch(Exception e){
             e.printStackTrace();
@@ -39,12 +43,26 @@ public class AuctionCentral
         }
     }
 
+    public void communicateBank(Agent agent,Socket bankSocket, ObjectOutputStream out){
+       try {
+
+           out = new ObjectOutputStream(bankSocket.getOutputStream());
+           System.out.println("Sending request for Bank info");
+           out.writeObject(agent);
+       }
+       catch(Exception e){
+           e.printStackTrace();
+           e.getLocalizedMessage();
+           e.getMessage();
+       }
+    }
+
     // Returns true if it successfully registers an Agent and gives it a biddingKey
     public boolean registerAgent(String name, int bankKey)
     {
         return true;
     }
-    
+
     // Returns true if it successfully registers an AuctionHouse and gives it a public IDs.ID
     public boolean registerAuctionHouse(String name)
     {
