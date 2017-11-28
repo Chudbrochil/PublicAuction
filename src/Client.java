@@ -36,6 +36,14 @@ public class Client {
             e.getMessage();
             e.getLocalizedMessage();
         }
+
+
+
+        // TODO: A given Agent/AuctionHouse will call methods on it's "mailman" (client)
+        // which will then create messages to send to other clients/servers (auction central, auction house)
+        
+
+
     }
     public static void main(String[] args){
 
