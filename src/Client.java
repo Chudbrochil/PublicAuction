@@ -9,6 +9,7 @@ public class Client {
         System.out.println("You've chosen " + newUser.getName() + " as your username" );
         try {
            Socket socket = new Socket("127.0.0.1", 4444);
+           Socket centralSocket = new Socket("127.0.0.1", 5555);
 
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
@@ -19,8 +20,15 @@ public class Client {
 
             System.out.println("Account Amount = " + newUser.getAccountBalance());
             System.out.println("Account Number = " + newUser.getAccountNum());
-            out.close();
-            in.close();
+
+            out = new ObjectOutputStream(centralSocket.getOutputStream());
+            in = new ObjectInputStream(centralSocket.getInputStream());
+
+            out.writeObject(newUser);
+
+            newUser = (Agent) in.readObject();
+            System.out.println("Bidding Key = " + newUser.getBiddingKey());
+
         } catch (Exception e) {
 
         }

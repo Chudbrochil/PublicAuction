@@ -12,7 +12,7 @@ public class Agent implements Serializable
 
     private int accountNum;
     private String bankKey, name;
-    private String biddingKey;
+    private int biddingKey;
     private double accountBalance;
 
 
@@ -47,6 +47,14 @@ public Agent(String name){
     private void getAHItems()
     {
 
+    }
+
+    public void setBiddingKey(int newKey){
+        biddingKey = newKey;
+    }
+
+    public int getBiddingKey(){
+        return biddingKey;
     }
 
     public String getName(){

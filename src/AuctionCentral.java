@@ -1,9 +1,15 @@
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
 
 public class AuctionCentral
 {
     Bank bank;
-    ArrayList<Agent> registeredAgents;
+
 
     // Returns true if it successfully registers an Agent and gives it a biddingKey
     public boolean registerAgent(String name, int bankKey)
@@ -25,7 +31,34 @@ public class AuctionCentral
     }
 
 
+public static void main(String[] args){
+        Agent agent = null;
+        Random rand = new Random();
+    HashMap<String, Integer> registeredUsers = new HashMap<>();
+        try{
+            ServerSocket socket = new ServerSocket(5555);
+            System.out.println("Auction Central is online");
 
+
+            while(true){
+                Socket pipeConnection = socket.accept();
+
+                ObjectOutputStream out = new ObjectOutputStream(pipeConnection.getOutputStream());
+                ObjectInputStream in = new ObjectInputStream(pipeConnection.getInputStream());
+
+                agent = (Agent) in.readObject();
+                registeredUsers.put(agent.getName(), agent.getAccountNum());
+                agent.setBiddingKey(rand.nextInt(10000) + 1);
+
+                out.writeObject(agent);
+
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            e.getLocalizedMessage();
+            e.getMessage();
+        }
+}
 
 
 }
