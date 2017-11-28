@@ -4,12 +4,13 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class Client {
-    public static void main(String[] args){
-        Agent newUser = new Agent(args[0]);
+
+    public Client(String name){
+        Agent newUser = new Agent(name);
         System.out.println("You've chosen " + newUser.getName() + " as your username" );
         try {
-           Socket socket = new Socket("127.0.0.1", 4444);
-           Socket centralSocket = new Socket("127.0.0.1", 5555);
+            Socket socket = new Socket("127.0.0.1", 4444);
+            Socket centralSocket = new Socket("127.0.0.1", 5555);
 
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
@@ -32,5 +33,9 @@ public class Client {
         } catch (Exception e) {
 
         }
+    }
+    public static void main(String[] args){
+
+       Client client = new Client(args[0]);
     }
 }

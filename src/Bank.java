@@ -7,33 +7,35 @@ import java.util.Random;
 public class Bank{
     ArrayList<Agent> registeredAgents = new ArrayList<>();
 
+    public Bank(){
+        Agent agent = null;
+       Random rand = new Random();
+        try{
+            ServerSocket socket = new ServerSocket(4444);
+            System.out.println("Welcome to the Bank");
 
-public static void main(String[] args){
-    Agent agent = null;
-    Random rand = new Random();
-    try{
-        ServerSocket socket = new ServerSocket(4444);
-        System.out.println("Welcome to the Bank");
+            while(true) {
+                Socket pipeConnection = socket.accept();
 
-        while(true) {
-            Socket pipeConnection = socket.accept();
+                ObjectOutputStream out = new ObjectOutputStream(pipeConnection.getOutputStream());
+                ObjectInputStream in = new ObjectInputStream(pipeConnection.getInputStream());
 
-            ObjectOutputStream out = new ObjectOutputStream(pipeConnection.getOutputStream());
-            ObjectInputStream in = new ObjectInputStream(pipeConnection.getInputStream());
-
-            agent = (Agent) in.readObject();
-            agent.setAccountBalance(500);
-            agent.setAccountNum(rand.nextInt(1000) + 1);
+                agent = (Agent) in.readObject();
+                agent.setAccountBalance(500);
+                agent.setAccountNum(rand.nextInt(1000) + 1);
 //        agent.setBankKey();
 
-            out.writeObject(agent);
-        }
+                out.writeObject(agent);
+            }
 //        out.close();
 //        in.close();
-    }catch(Exception e){
+        }catch(Exception e){
 
+        }
     }
 
+public static void main(String[] args){
+        Bank b = new Bank();
 }
 
 
