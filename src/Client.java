@@ -41,7 +41,7 @@ public class Client {
 
         // TODO: A given Agent/AuctionHouse will call methods on it's "mailman" (client)
         // which will then create messages to send to other clients/servers (auction central, auction house)
-        
+
 
 
     }
