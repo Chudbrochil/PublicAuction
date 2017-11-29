@@ -10,12 +10,12 @@ public class Client {
         System.out.println("You've chosen " + newUser.getName() + " as your username");
         try {
             Socket bankSocket = new Socket("127.0.0.1", 4444);
-            Socket centralSocket = new Socket("127.0.0.1", 5555);
+//            Socket centralSocket = new Socket("127.0.0.1", 5555);
 
             ObjectOutputStream out = new ObjectOutputStream(bankSocket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(bankSocket.getInputStream());
 
-           registerAgent(out,in,newUser,centralSocket);
+           registerAgent(out,in,newUser,bankSocket);
 
         } catch (Exception e) {
             e.printStackTrace();
