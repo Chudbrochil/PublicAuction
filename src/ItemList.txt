@@ -1,0 +1,6 @@
+// ItemName, ImgPath, MinimumBid
+Suit Jacket, , 50
+i7 Laptop, , 500
+Picasso Painting, , 100000
+Physics Textbook, , 200000
+Logitech Mouse, , 30
