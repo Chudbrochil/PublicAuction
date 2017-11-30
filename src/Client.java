@@ -18,8 +18,19 @@ public class Client implements IAuctionCentral {
 
                 ObjectOutputStream out = new ObjectOutputStream(bankSocket.getOutputStream());
                 ObjectInputStream in = new ObjectInputStream(bankSocket.getInputStream());
+                ObjectOutputStream centralOut = new ObjectOutputStream(centralSocket.getOutputStream());
 
-                registerAgent(out, in, newUser, centralSocket);
+
+                out.writeObject(newUser);
+                newUser = (Agent) in.readObject();
+                System.out.println("Account num: " + newUser.getAccountNum());
+
+                centralOut.writeObject(newUser);
+
+                ObjectInputStream centralIn = new ObjectInputStream(centralSocket.getInputStream());
+
+                newUser = (Agent) centralIn.readObject();
+                System.out.println("Bidding key: " + newUser.getBiddingKey());
                 System.out.println("Would you like to bid? Y/N");
                 String answer = scanner.nextLine();
                 if(answer.equals("Y")){
@@ -43,15 +54,24 @@ public class Client implements IAuctionCentral {
     }
 
     public Client() {
+
         AuctionHouse ah = new AuctionHouse();
-        System.out.println("You've created a new Auction House");
+//        System.out.println("You've created a new Auction House");
 
         try {
             Socket auctionCentralSocket = new Socket("127.0.0.1", 5555);
 
             ObjectOutputStream out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(auctionCentralSocket.getInputStream());
-            registerAH(out, in, ah);
+
+             out.writeObject(ah);
+            ah = (AuctionHouse) in.readObject();
+System.out.println("we are in auction house");
+
+ah = (AuctionHouse) in.readObject();
+            System.out.println("we are in auction house");
+
+
 
 
         } catch (Exception e) {
@@ -104,7 +124,7 @@ public class Client implements IAuctionCentral {
 
     public static void main(String[] args) {
 Scanner scanner = new Scanner(System.in);
-        if (args[0].equals("Auction House")) {
+        if (args[0].equals("AuctionHouse")) {
             Client client = new Client();
         } else if (args[0].equals("Agent") && !args[1].equals(null)) {
             Client client = new Client(args[1], scanner);

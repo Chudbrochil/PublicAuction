@@ -1,9 +1,6 @@
 import IDs.AuctionHouseID;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -28,7 +25,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * ***
  */
 
-public class AuctionHouse
+public class AuctionHouse implements Serializable
 {
     private String name;
     private String publicID;
