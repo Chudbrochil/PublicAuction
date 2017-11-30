@@ -1,5 +1,4 @@
 import IDs.AuctionHouseID;
-import javafx.util.Pair;
 
 /**
  * This class is a data class that holds the information related to a particular auction item.
@@ -17,20 +16,10 @@ public class Item
     public final String ITEM_NAME;          //Name of the item
     private String currentHighestBidderID;    //biddingID of Agent who holds the currentBid, which is winning. Will be null until first bid.
     private String imgPath;
-    
-    /**
-     * Item()
-     * @param auctionHouseID IDs.ID of the AuctionHouse that holds this item
-     * @param minimumBid Minimum bid of this item
-     * @param itemName Name of this item
-     * Creates an Item with given parameters, a currentBid of 0, and a currentHighestBidderID of null.
-     */
-    public Item (AuctionHouseID auctionHouseID, String itemName, String imgPath, float minimumBid)
-    {
-        this(itemName, imgPath, minimumBid);
-        AUCTION_HOUSE_ID = auctionHouseID;
-    }
+    public final String ITEM_ID;            //Unique item ID
+    private static int staticIDCounter = 1;
 
+    
     public Item(String itemName, String imgPath, float minimumBid)
     {
         ITEM_NAME = itemName;
@@ -38,6 +27,8 @@ public class Item
         MINIMUM_BID = minimumBid;
         currentBid = 0;
         currentHighestBidderID = null;
+        ITEM_ID = staticIDCounter*42 +""; //actually make it look like a real ID, sorta.
+        staticIDCounter++;
     }
     
     public synchronized float getCurrentBid() { return currentBid; }
