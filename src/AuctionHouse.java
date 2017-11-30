@@ -36,7 +36,7 @@ public class AuctionHouse
     {
         this();
         AUCTION_CENTRAL = AC;
-        AUCTION_CENTRAL.registerAuctionHouse(name);
+        //AUCTION_CENTRAL.registerAuctionHouse(name);
         //get publicID from AuctionHouse and
     }
     public AuctionHouse()
