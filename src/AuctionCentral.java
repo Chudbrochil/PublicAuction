@@ -63,10 +63,10 @@ public class AuctionCentral
         return true;
     }
 
-    // Returns true if it successfully registers an AuctionHouse and gives it a public IDs.ID
-    public boolean registerAuctionHouse(String name)
+    
+    public void registerAuctionHouse(AuctionHouse ah)
     {
-        return true;
+        //todo: implement. See Bank.registerAgent(Agent agent)
     }
 
     // Talks to bank to place hold for a particular agent with a particular bidding key

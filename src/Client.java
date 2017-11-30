@@ -4,7 +4,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Client {
+public class Client implements IAuctionCentral {
 
     public Client(String name, Scanner scanner) {
         Agent newUser = new Agent(name);
@@ -95,6 +95,11 @@ public class Client {
             e.getLocalizedMessage();
             e.printStackTrace();
         }
+    }
+    
+    public void registerAuctionHouse(AuctionHouse ah)
+    {
+        //registerAH //todo: Make i/o streams class variables?
     }
 
     public static void main(String[] args) {
