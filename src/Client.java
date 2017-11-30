@@ -2,26 +2,38 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class Client {
 
-    public Client(String name) {
+    public Client(String name, Scanner scanner) {
         Agent newUser = new Agent(name);
         System.out.println("You've chosen " + newUser.getName() + " as your username");
-        try {
-            Socket bankSocket = new Socket("127.0.0.1", 4444);
-//            Socket centralSocket = new Socket("127.0.0.1", 5555);
+            try {
 
-            ObjectOutputStream out = new ObjectOutputStream(bankSocket.getOutputStream());
-            ObjectInputStream in = new ObjectInputStream(bankSocket.getInputStream());
 
-           registerAgent(out,in,newUser,bankSocket);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            e.getMessage();
-            e.getLocalizedMessage();
-        }
+                Socket bankSocket = new Socket("127.0.0.1", 4444);
+                Socket centralSocket = new Socket("127.0.0.1", 5555);
+
+                ObjectOutputStream out = new ObjectOutputStream(bankSocket.getOutputStream());
+                ObjectInputStream in = new ObjectInputStream(bankSocket.getInputStream());
+
+                registerAgent(out, in, newUser, centralSocket);
+                System.out.println("Would you like to bid? Y/N");
+                String answer = scanner.nextLine();
+                if(answer.equals("Y")){
+                    //put auction houses listings here
+                }
+                else if(answer.equals("N")){
+
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                e.getMessage();
+                e.getLocalizedMessage();
+            }
 
 
         // TODO: A given Agent/AuctionHouse will call methods on it's "mailman" (client)
@@ -86,11 +98,11 @@ public class Client {
     }
 
     public static void main(String[] args) {
-
+Scanner scanner = new Scanner(System.in);
         if (args[0].equals("Auction House")) {
             Client client = new Client();
         } else if (args[0].equals("Agent") && !args[1].equals(null)) {
-            Client client = new Client(args[1]);
+            Client client = new Client(args[1], scanner);
         }
     }
 }

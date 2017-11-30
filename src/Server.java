@@ -23,8 +23,7 @@ public class Server {
                 ObjectInputStream in = new ObjectInputStream(pipeConnection.getInputStream());
 
                 if(num == 4444){
-
-
+                    System.out.println("Bank Online");
                     Bank bank = new Bank();
 
                     Agent agent;
@@ -32,9 +31,11 @@ public class Server {
 
                     bank.registerAgent(agent);
                     out.writeObject(agent);
+//                    System.out.println("Where do we reside");
+
                 }
                 else if(num == 5555){
-
+System.out.println("Auction Central Online");
                     //AuctionCentral ac = new AuctionCentral();
                     //AuctionHouse ah;
                     //ah = (AuctionHouse) in.readObject();
