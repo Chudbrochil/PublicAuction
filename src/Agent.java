@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 public class Agent implements Serializable
 {
-    Bank bank;
-    AuctionCentral central;
-    ArrayList<AuctionHouse> auctionHouses;
+    private Bank bank;
+    private AuctionCentral central;
+    private ArrayList<AuctionHouse> auctionHouses;
 
     private int accountNum;
     private String bankKey, name;

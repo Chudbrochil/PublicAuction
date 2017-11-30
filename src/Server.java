@@ -35,10 +35,10 @@ public class Server {
                 }
                 else if(num == 5555){
 
-                    //AuctionCentral ac = new AuctionCentral();
-                    //AuctionHouse ah;
-                    //ah = (AuctionHouse) in.readObject();
-                    //register acution houses
+                    AuctionCentral ac = new AuctionCentral();
+                    AuctionHouse ah;
+                    ah = (AuctionHouse) in.readObject();
+                    ac.registerAuctionHouse(ah);
                     //out.writeObject(ah)
 
                 }
