@@ -3,7 +3,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class Client {
+public class Client implements IAuctionCentral {
 
     public Client(String name) {
         Agent newUser = new Agent(name);
@@ -83,6 +83,11 @@ public class Client {
             e.getLocalizedMessage();
             e.printStackTrace();
         }
+    }
+    
+    public void registerAuctionHouse(AuctionHouse ah)
+    {
+        //registerAH //todo: Make i/o streams class variables?
     }
 
     public static void main(String[] args) {

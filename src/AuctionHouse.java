@@ -22,29 +22,49 @@ import java.util.concurrent.ThreadLocalRandom;
  *   for an amount equal to the bid in question
  * A bid is successful and 'wins' if it is not overtaken in 30 seconds.
  * For a successful/winning bid, the AuctionHouse requests that AuctionCentral transfer the money to the AuctionHouse.
+ *
+ * ***
+ * To use this class, you MUST set the AuctionCentral via setAuctionCentral() method.
+ * ***
  */
 
 public class AuctionHouse
 {
     private String name;
-    private AuctionHouseID ID;
+    private String publicID;
     private String secretKey; // Requested and received from Auction Central
     private ArrayList<Item> items;
-    private AuctionCentral AUCTION_CENTRAL;
+    private IAuctionCentral auctionCentral;
     
-    public AuctionHouse(AuctionCentral AC)
-    {
-        this();
-        AUCTION_CENTRAL = AC;
-        //AUCTION_CENTRAL.registerAuctionHouse(name);
-        //get publicID from AuctionHouse and
-    }
+    /**
+     * Creates an AuctionHouse that has three random items for sale.
+     */
     public AuctionHouse()
     {
         for(int i = 0; i < 3; ++i)
         {
             System.out.println(ItemDB.getRandomItem().ITEM_NAME);
         }
+    }
+    
+    /**
+     * @param ac Object that implements IAuctionCentral. This can be an actual AuctionCentral or a Client object
+     *           that 'pretends' to be an AuctionCentral and passes messages to a Server, which then passes them to the
+     *           actual AuctionCentral and calls the appropriate method.
+     */
+    public void setAuctionCentral(IAuctionCentral ac)
+    {
+        auctionCentral = ac;
+    }
+    
+    /**
+     * Called by an IAuctionCentral to set the PublicID and SecretKey
+     */
+    public void setIDs(String publicid, String secretkey)
+    {
+        publicID = publicid;
+        secretKey = secretkey;
+        
     }
     
     public void placeHold(String biddingKey, float amount)
