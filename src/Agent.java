@@ -14,9 +14,9 @@ public class Agent implements Serializable
     private double accountBalance;
 
 
-public Agent(String name){
-    this.name = name;
-}
+    public Agent(String name){
+        this.name = name;
+    }
 
     // Returns true if bid is successful
     private boolean placeBid()
@@ -56,11 +56,11 @@ public Agent(String name){
     }
 
     public String getName(){
-    return this.name;
+        return this.name;
     }
 
     public void setAccountNum(int accountNum){
-    this.accountNum = accountNum;
+        this.accountNum = accountNum;
     }
 
     public int getAccountNum(){
