@@ -17,5 +17,9 @@ public class Bank {
         System.out.println("Account Balance: " + agent.getAccountBalance());
         agent.setAccountNum(rand.nextInt(1000) + 1);
         System.out.println("Account num: " + agent.getAccountNum());
+
+        Account account = new Account(agent.getAccountNum(), (float) agent.getAccountBalance());
+        map.put(account, agent.getAccountNum());
+        
     }
 }
