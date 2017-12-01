@@ -2,82 +2,90 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.HashMap;
 import java.util.Scanner;
 
-public class Client implements IAuctionCentral {
-//    @SuppressWarnings(value = "unchecked")
-
-    public Client(String name, Scanner scanner) {
-        Agent newUser = new Agent(name);
-        System.out.println("You've chosen " + newUser.getName() + " as your username");
-        try {
+public class Client implements IAuctionCentral
+{
+    private Agent agent;
+    private AuctionHouse auctionHouse;
 
 
-            Socket bankSocket = new Socket("127.0.0.1", 4444);
-            Socket centralSocket = new Socket("127.0.0.1", 5555);
-
-            ObjectOutputStream out = new ObjectOutputStream(bankSocket.getOutputStream());
-            ObjectInputStream in = new ObjectInputStream(bankSocket.getInputStream());
-            ObjectOutputStream centralOut = new ObjectOutputStream(centralSocket.getOutputStream());
 
 
-            out.writeObject(newUser);
-            newUser = (Agent) in.readObject();
-            System.out.println("Account num: " + newUser.getAccountNum());
+    /**
+     * Client-Agent constructor
+     * @param name
+     * @param scanner
+     */
+    public Client(String name, Scanner scanner)
+    {
+        agent = new Agent(name);
+        System.out.println("You've chosen " + agent.getName() + " as your username");
+            try
+            {
+                Socket bankSocket = new Socket("127.0.0.1", 4444);
+                Socket centralSocket = new Socket("127.0.0.1", 5555);
 
-            centralOut.writeObject(newUser);
+                ObjectOutputStream out = new ObjectOutputStream(bankSocket.getOutputStream());
+                ObjectInputStream in = new ObjectInputStream(bankSocket.getInputStream());
 
-            ObjectInputStream centralIn = new ObjectInputStream(centralSocket.getInputStream());
+                registerAgent(out, in, agent, centralSocket);
+                System.out.println("Would you like to bid? Y/N");
+                String answer = scanner.nextLine();
+                if(answer.equals("Y")){
+                    //put auction houses listings here
+                }
+                else if(answer.equals("N")){
 
-            newUser = (Agent) centralIn.readObject();
-            System.out.println("Bidding key: " + newUser.getBiddingKey());
+                }
 
-
-            HashMap<AuctionHouse, String> map;
-
-            if (centralIn.readObject() != null) {
-System.out.println(centralIn.readObject());
-
-            } else {
+            } catch (Exception e) {
+                e.printStackTrace();
+                e.getMessage();
+                e.getLocalizedMessage();
             }
-
-
-            System.out.println("Would you like to bid? Y/N");
-            String answer = scanner.nextLine();
-            if (answer.equals("Y")) {
-                //put auction houses listings here
-            } else if (answer.equals("N")) {
-
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            e.getMessage();
-            e.getLocalizedMessage();
-        }
 
 
         // TODO: A given Agent/AuctionHouse will call methods on it's "mailman" (client)
         // which will then create messages to send to other clients/servers (auction central, auction house)
 
-
     }
 
-    public Client() {
+     public Client(String name)
+     {
+         agent = new Agent(name);
+         System.out.println("You've chosen " + agent.getName() + " as your username");
+         try
+         {
+             Socket bankSocket = new Socket("127.0.0.1", 4444);
+             Socket centralSocket = new Socket("127.0.0.1", 5555);
 
-        AuctionHouse ah = new AuctionHouse();
-//        System.out.println("You've created a new Auction House");
+             ObjectOutputStream out = new ObjectOutputStream(bankSocket.getOutputStream());
+             ObjectInputStream in = new ObjectInputStream(bankSocket.getInputStream());
+
+             registerAgent(out, in, agent, centralSocket);
+
+         } catch (Exception e) {
+             e.printStackTrace();
+             e.getMessage();
+             e.getLocalizedMessage();
+         }
+     }
+
+    /**
+     * Client-AuctionHouse constructor
+     */
+    public Client()
+    {
+        AuctionHouse ah = new AuctionHouse("AuctionHouse1", this);
+        System.out.println("You've created a new Auction House");
 
         try {
             Socket auctionCentralSocket = new Socket("127.0.0.1", 5555);
 
             ObjectOutputStream out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(auctionCentralSocket.getInputStream());
-
-            out.writeObject(ah);
-            ah = (AuctionHouse) in.readObject();
-            System.out.println("we are in auction house");
+            registerAH(out, in, ah);
 
 
         } catch (Exception e) {
@@ -88,7 +96,7 @@ System.out.println(centralIn.readObject());
     }
 
 
-    public void registerAgent(ObjectOutputStream out, ObjectInputStream in, Agent newUser, Socket centralSocket) {
+    public void registerAgent(ObjectOutputStream out, ObjectInputStream in,Agent newUser, Socket centralSocket) {
         try {
             out.writeObject(newUser);
 
@@ -106,9 +114,9 @@ System.out.println(centralIn.readObject());
             System.out.println("Bidding Key = " + newUser.getBiddingKey());
 
         } catch (Exception e) {
-            e.getLocalizedMessage();
-            e.getMessage();
-            e.printStackTrace();
+        e.getLocalizedMessage();
+        e.getMessage();
+        e.printStackTrace();
         }
     }
 
@@ -122,14 +130,20 @@ System.out.println(centralIn.readObject());
             e.printStackTrace();
         }
     }
-
-    public void registerAuctionHouse(AuctionHouse ah) {
+    
+    public void registerAuctionHouse(AuctionHouse ah)
+    {
         //registerAH //todo: Make i/o streams class variables?
+    }
+
+    public Agent getAgent()
+    {
+        return agent; //TODO: CHECK FOR NULL SOMEWHERE IN HERE
     }
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        if (args[0].equals("AuctionHouse")) {
+        if (args[0].equals("Auction House")) {
             Client client = new Client();
         } else if (args[0].equals("Agent") && !args[1].equals(null)) {
             Client client = new Client(args[1], scanner);

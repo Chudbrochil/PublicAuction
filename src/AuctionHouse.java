@@ -2,6 +2,7 @@ import IDs.AuctionHouseID;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -27,32 +28,33 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class AuctionHouse implements Serializable
 {
-    private String name;
+    private final String NAME;
     private String publicID;
     private String secretKey; // Requested and received from Auction Central
-    private ArrayList<Item> items;
-    private IAuctionCentral auctionCentral;
+    private HashMap<String, Item> myItems; //Item ID as key for the item.
+    //private HashMap<String, Time>
+    //private HashMap<>
+    //private static int AuctionHouseID;
     
     /**
+     * AuctionHouse()
      * Creates an AuctionHouse that has three random items for sale.
+
      */
     public AuctionHouse()
     {
+//        NAME = name;
+
+        myItems = new HashMap<>();
+        
+        //Give me items!
         for(int i = 0; i < 3; ++i)
         {
-            System.out.println(ItemDB.getRandomItem().ITEM_NAME);
+            Item item = ItemDB.getRandomItem();
+            myItems.put(item.ITEM_ID, item);
+            System.out.println("");
         }
-        name = publicID = "ID";
-    }
-    
-    /**
-     * @param ac Object that implements IAuctionCentral. This can be an actual AuctionCentral or a Client object
-     *           that 'pretends' to be an AuctionCentral and passes messages to a Server, which then passes them to the
-     *           actual AuctionCentral and calls the appropriate method.
-     */
-    public void setAuctionCentral(IAuctionCentral ac)
-    {
-        auctionCentral = ac;
+        NAME = publicID = "ID";
     }
     
     /**
@@ -62,14 +64,39 @@ public class AuctionHouse implements Serializable
     {
         publicID = publicid;
         secretKey = secretkey;
-        
     }
     public String getName(){
-        return name;
+        return NAME;
     }
     public void placeHold(String biddingKey, float amount)
     {
     
+    }
+    
+    /**
+     * placeBid()
+     * Called by an Agent to place a bid (or by a Client acting on behalf of an Agent)
+     * @param biddingID biddingID of the Agent who wishes to place a bid
+     * @param amount Amount the bidder wishes to bid.
+     * @param itemID ID of the item the bidder wishes to bid on
+     * @param auctionHouseID the ID of this auction house (needed by Client)
+     */
+    public void placeBid(String biddingID, double amount, String itemID, String auctionHouseID)
+    {
+        Item item = myItems.get(itemID);
+        if(item == null)
+        {
+            //That item isn't for sale here USER OUTPUT
+            System.err.println("Bidding ID "+biddingID+" tried to bid on "+itemID+", which is not an item in "+NAME+".");
+            return;
+        }
+        
+        //If it's a valid bid amount
+        if(amount >= item.MINIMUM_BID && amount > item.getCurrentBid())
+        {
+            //Agent didn't bid enough USER OUTPUT
+            //if(placeHold())
+        }
     }
 
     private static class ItemDB
@@ -108,13 +135,6 @@ public class AuctionHouse implements Serializable
         {
             return items.get(ThreadLocalRandom.current().nextInt(0, items.size()));
         }
-
-
     }
-
-
-
-
-
 
 }

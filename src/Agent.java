@@ -10,17 +10,19 @@ public class Agent implements Serializable
 
     private int accountNum;
     private String bankKey, name;
-    private int biddingKey;
+    private String biddingKey;
     private double accountBalance;
 
 
-    public Agent(String name){
+    public Agent(String name)
+    {
         this.name = name;
     }
 
     // Returns true if bid is successful
-    private boolean placeBid()
+    public boolean placeBid()
     {
+
         return true;
     }
 
@@ -47,11 +49,11 @@ public class Agent implements Serializable
 
     }
 
-    public void setBiddingKey(int newKey){
+    public void setBiddingKey(String newKey){
         biddingKey = newKey;
     }
 
-    public int getBiddingKey(){
+    public String getBiddingKey(){
         return biddingKey;
     }
 
@@ -72,7 +74,8 @@ public class Agent implements Serializable
         this.accountBalance = num;
     }
 
-    public double getAccountBalance(){
+    public double getAccountBalance()
+    {
         return accountBalance;
     }
 
