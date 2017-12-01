@@ -6,7 +6,7 @@ import java.util.Random;
 
 public class Bank
 {
-    HashMap<Integer, Account> map = new HashMap<Integer, Account>();
+    HashMap<Integer, Account> map = new HashMap<>();
     Random rand = new Random();
 
 
@@ -15,11 +15,20 @@ public class Bank
 
     }
 
-    public HashMap<Integer, Account> getMap() {
+    public HashMap<Integer, Account> getMap()
+    {
         return map;
     }
 
 
+    /**
+     * registerAgent()
+     * <p>
+     * Initial registering of an agent by the bank.
+     * The agent is given a starting balance, account number and bank key by the bank.
+     *
+     * @param agent The agent we are registering with the bank.
+     */
     public void registerAgent(Agent agent)
     {
 
@@ -27,7 +36,7 @@ public class Bank
         System.out.println("Account name: " + agent.getName());
         agent.setAccountBalance(500.00);
         System.out.println("Account Balance: " + agent.getAccountBalance());
-        agent.setAccountNum(rand.nextInt(1000) + 1);
+        agent.setAccountNum(rand.nextInt(100000) + 1);
         System.out.println("Account num: " + agent.getAccountNum() + "\n");
         agent.setBankKey(Bank.getKey(agent.getName()));
         System.out.println("Agent Bank Key: " + agent.getBankKey());
@@ -40,14 +49,14 @@ public class Bank
 
     /**
      * getKey()
-     *
+     * <p>
      * This is the method for creating a secret key. The bank holds this as it is the "most secure" resource.
      *
      * @param name This is the name passed to the method to generate the secret key
      * @return A "secret key". These will correspond to:
-     *          Agent gets a Bank key from the Bank
-     *          Agent gets a bidding key from the AuctionCentral
-     *          AuctionHouse gets an Auction key from the AuctionCentral
+     * Agent gets a Bank key from the Bank
+     * Agent gets a bidding key from the AuctionCentral
+     * AuctionHouse gets an Auction key from the AuctionCentral
      */
     public static String getKey(String name)
     {
@@ -58,11 +67,12 @@ public class Bank
             byte[] hash = digest.digest(name.getBytes(StandardCharsets.UTF_8));
             output = hash.toString();
         }
-        catch(NoSuchAlgorithmException e) { System.out.println(e.getMessage()); }
+        catch (NoSuchAlgorithmException e)
+        {
+            System.out.println(e.getMessage());
+        }
         return output;
     }
-
-
 
 
 }

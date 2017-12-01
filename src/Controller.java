@@ -37,7 +37,9 @@ public class Controller
             {
                 //System.out.println(agent.getAccountBalance());
                 // Platform syncs this command with the UI, fixes javafx thread bugs
-                Platform.runLater(() -> {lblBalance.setText(String.valueOf(agent.getAccountBalance()));});
+                Platform.runLater(() -> {
+                    lblBalance.setText(String.valueOf(agent.getAccountBalance()));
+                });
             }
         }, 0, 500, TimeUnit.MILLISECONDS);
     }
