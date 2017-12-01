@@ -34,7 +34,10 @@ public class Server {
                         bankOut.writeObject(agent);
                     } else {
                         bank.getMap().get(agent.getAccountNum()).setAmount(bank.getMap().get(agent.getAccountNum()).getAmount()-100);
+                        agent.setAccountBalance(bank.getMap().get(agent.getAccountNum()).getAmount());
                         System.out.println(bank.getMap().get(agent.getAccountNum()).getAmount());
+                        bankOut.writeObject(agent);
+
                     }
                 }
 

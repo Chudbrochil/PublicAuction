@@ -145,7 +145,7 @@ public class Client
 
 
 
-    public void placeBid(double bidAmt, Agent agent)
+    public void placeBid(double bidAmt)
     {
         try {
              bankSocket = new Socket("127.0.0.1", 4444);
@@ -154,6 +154,8 @@ public class Client
              in = new ObjectInputStream(bankSocket.getInputStream());
 
             out.writeObject(agent);
+            agent = (Agent) in.readObject();
+            System.out.println(agent.getAccountBalance() + "Inside client agent");
 
         }catch (Exception e){
             e.getMessage();
