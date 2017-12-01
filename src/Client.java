@@ -8,25 +8,34 @@ public class Client
     private Agent agent;
     private AuctionHouse auctionHouse;
 
-    /**
-     * Client-Agent constructor
-     *
-     * @param name
-     * @param scanner
-     */
-    public Client(String name, Scanner scanner)
+    
+    public Client(boolean isAgent, String name, Scanner scanner)
     {
-        agent = new Agent(name);
-        System.out.println("You've chosen " + agent.getName() + " as your username");
-        try
+        if(isAgent)
         {
-            Socket bankSocket = new Socket("127.0.0.1", 4444);
-            Socket centralSocket = new Socket("127.0.0.1", 5555);
+            agent = new Agent(name);
+            System.out.println("You've chosen " + agent.getName() + " as your username");
+            try
+            {
+                Socket bankSocket = new Socket("127.0.0.1", 4444);
+                Socket centralSocket = new Socket("127.0.0.1", 5555);
 
-            ObjectOutputStream out = new ObjectOutputStream(bankSocket.getOutputStream());
-            ObjectInputStream in = new ObjectInputStream(bankSocket.getInputStream());
+                ObjectOutputStream out = new ObjectOutputStream(bankSocket.getOutputStream());
+                ObjectInputStream in = new ObjectInputStream(bankSocket.getInputStream());
 
-            registerAgent(out, in, agent, centralSocket);
+                registerAgent(out, in, agent, centralSocket);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                e.getMessage();
+                e.getLocalizedMessage();
+            }
+        }
+
+        // TODO: Purely for spinning up agents on command line. Will be (likely) removed after GUI is hardened.
+        if(scanner != null)
+        {
             System.out.println("Would you like to bid? Y/N");
             String answer = scanner.nextLine();
             if (answer.equals("Y"))
@@ -37,68 +46,30 @@ public class Client
             {
 
             }
-
         }
-        catch (Exception e)
+
+        if(isAgent == false)
         {
-            e.printStackTrace();
-            e.getMessage();
-            e.getLocalizedMessage();
+            AuctionHouse ah = new AuctionHouse("AuctionHouse1", this);
+            System.out.println("You've created a new Auction House");
+
+            try
+            {
+                Socket auctionCentralSocket = new Socket("127.0.0.1", 5555);
+
+                ObjectOutputStream out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
+                ObjectInputStream in = new ObjectInputStream(auctionCentralSocket.getInputStream());
+                registerAH(out, in, ah);
+            }
+            catch (Exception e)
+            {
+                e.getLocalizedMessage();
+                e.getMessage();
+                e.printStackTrace();
+            }
         }
 
 
-        // TODO: A given Agent/AuctionHouse will call methods on it's "mailman" (client)
-        // which will then create messages to send to other clients/servers (auction central, auction house)
-
-    }
-
-    public Client(String name)
-    {
-        agent = new Agent(name);
-        System.out.println("You've chosen " + agent.getName() + " as your username");
-        try
-        {
-            Socket bankSocket = new Socket("127.0.0.1", 4444);
-            Socket centralSocket = new Socket("127.0.0.1", 5555);
-
-            ObjectOutputStream out = new ObjectOutputStream(bankSocket.getOutputStream());
-            ObjectInputStream in = new ObjectInputStream(bankSocket.getInputStream());
-
-            registerAgent(out, in, agent, centralSocket);
-
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            e.getMessage();
-            e.getLocalizedMessage();
-        }
-    }
-
-    /**
-     * Client-AuctionHouse constructor
-     */
-    public Client()
-    {
-        AuctionHouse ah = new AuctionHouse("AuctionHouse1");
-        System.out.println("You've created a new Auction House");
-
-        try
-        {
-            Socket auctionCentralSocket = new Socket("127.0.0.1", 5555);
-
-            ObjectOutputStream out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
-            ObjectInputStream in = new ObjectInputStream(auctionCentralSocket.getInputStream());
-            registerAH(out, in, ah);
-
-
-        }
-        catch (Exception e)
-        {
-            e.getLocalizedMessage();
-            e.getMessage();
-            e.printStackTrace();
-        }
     }
 
 
@@ -161,11 +132,11 @@ public class Client
         Scanner scanner = new Scanner(System.in);
         if (args[0].equals("Auction House"))
         {
-            Client client = new Client();
+            Client client = new Client(false, args[0], null);
         }
         else if (args[0].equals("Agent") && !args[1].equals(null))
         {
-            Client client = new Client(args[1], scanner);
+            Client client = new Client(true, args[1], scanner);
         }
     }
 }
