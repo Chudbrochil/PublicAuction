@@ -9,9 +9,6 @@ public class Client implements IAuctionCentral
     private Agent agent;
     private AuctionHouse auctionHouse;
 
-
-
-
     /**
      * Client-Agent constructor
      * @param name
@@ -51,9 +48,9 @@ public class Client implements IAuctionCentral
 
     }
 
-     public Client(String name)
+     public Client(Agent agent)
      {
-         agent = new Agent(name);
+         //agent = new Agent(name);
          System.out.println("You've chosen " + agent.getName() + " as your username");
          try
          {
