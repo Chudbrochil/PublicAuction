@@ -21,6 +21,9 @@ public class Agent implements Serializable
     // Returns true if bid is successful
     public boolean placeBid()
     {
+        // TODO: For now just doing a withdrawal from bank
+
+
 
         return true;
     }
