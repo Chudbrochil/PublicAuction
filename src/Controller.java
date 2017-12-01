@@ -22,7 +22,7 @@ public class Controller
     @FXML
     private void initialize()
     {
-        client = new Client(true, "Agent1", null);
+        client = new Client(true, "Agent1");
         agent = client.getAgent();
         update();
     }

@@ -10,71 +10,47 @@ public class Client
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private Socket bankSocket;
+    private Socket auctionCentralSocket;
 
-    public Client(boolean isAgent, String name, Scanner scanner)
+    public Client(boolean isAgent, String name)
     {
-        if (isAgent)
-        {
-            agent = new Agent(name);
-            System.out.println("You've chosen " + agent.getName() + " as your username");
-            try
-            {
-                Socket bankSocket = new Socket("127.0.0.1", 4444);
-                Socket centralSocket = new Socket("127.0.0.1", 5555);
+        if(name == null) { name = "NONAME CLIENT"; }
 
+        try
+        {
+
+            auctionCentralSocket = new Socket("127.0.0.1", 5555);
+
+            if(isAgent)
+            {
+                agent = new Agent(name);
+                System.out.println("You've chosen " + agent.getName() + " as your username");
+                bankSocket = new Socket("127.0.0.1", 4444);
                 out = new ObjectOutputStream(bankSocket.getOutputStream());
                 in = new ObjectInputStream(bankSocket.getInputStream());
-
-                registerAgent(out, in, agent, centralSocket);
+                registerAgent(out, in, agent);
             }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-                e.getMessage();
-                e.getLocalizedMessage();
-            }
-        }
-
-        // TODO: Purely for spinning up agents on command line. Will be (likely) removed after GUI is hardened.
-        if (scanner != null)
-        {
-            System.out.println("Would you like to bid? Y/N");
-            String answer = scanner.nextLine();
-            if (answer.equals("Y"))
-            {
-                //put auction houses listings here
-            }
-            else if (answer.equals("N"))
+            else
             {
 
-            }
-        }
-
-        if (isAgent == false)
-        {
-            auctionHouse = new AuctionHouse("AuctionHouse1");
-            System.out.println("You've created a new Auction House");
-
-            try
-            {
-                Socket auctionCentralSocket = new Socket("127.0.0.1", 5555);
-
+                auctionHouse =  new AuctionHouse(name);
+                System.out.println("You've chosen " + auctionHouse.getName() + " as your auction house.");
                 out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
                 in = new ObjectInputStream(auctionCentralSocket.getInputStream());
                 registerAH(out, in, auctionHouse);
             }
-            catch (Exception e)
-            {
-                e.getLocalizedMessage();
-                e.getMessage();
-                e.printStackTrace();
-            }
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            e.getMessage();
+            e.getLocalizedMessage();
         }
 
     }
 
 
-    public void registerAgent(ObjectOutputStream out, ObjectInputStream in, Agent newUser, Socket centralSocket)
+    private void registerAgent(ObjectOutputStream out, ObjectInputStream in, Agent newUser)
     {
         try
         {
@@ -85,8 +61,8 @@ public class Client
             System.out.println("Account Balance = " + newUser.getAccountBalance());
             System.out.println("Account Number = " + newUser.getAccountNum());
 
-            out = new ObjectOutputStream(centralSocket.getOutputStream());
-            in = new ObjectInputStream(centralSocket.getInputStream());
+            out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
+            in = new ObjectInputStream(auctionCentralSocket.getInputStream());
 
             out.writeObject(newUser);
 
@@ -103,7 +79,7 @@ public class Client
         }
     }
 
-    public void registerAH(ObjectOutputStream out, ObjectInputStream in, AuctionHouse ah)
+    private void registerAH(ObjectOutputStream out, ObjectInputStream in, AuctionHouse ah)
     {
         try
         {
@@ -124,18 +100,10 @@ public class Client
         return agent; //TODO: CHECK FOR NULL SOMEWHERE IN HERE
     }
 
-    public static void main(String[] args)
-    {
-        Scanner scanner = new Scanner(System.in);
-        if (args[0].equals("AuctionHouse"))
-        {
-            Client client = new Client(false, args[0], null);
-        }
-        else if (args[0].equals("Agent") && !args[1].equals(null))
-        {
-            Client client = new Client(true, args[1], scanner);
-        }
-    }
+
+    /**
+     *  TODO: This is where method's for AuctionHouse and Agent will live. We need messaging here.
+     */
 
 
     public void placeBid(double bidAmt, Agent agent)
@@ -158,6 +126,22 @@ public class Client
             e.getMessage();
             e.getLocalizedMessage();
             e.printStackTrace();
+        }
+    }
+
+
+
+
+    public static void main(String[] args)
+    {
+        Scanner scanner = new Scanner(System.in);
+        if (args[0].equals("AuctionHouse"))
+        {
+            Client client = new Client(false, args[1]);
+        }
+        else if (args[0].equals("Agent") && !args[1].equals(null))
+        {
+            Client client = new Client(true, args[1]);
         }
     }
 
