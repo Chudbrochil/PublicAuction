@@ -28,6 +28,7 @@ public class AuctionCentral
     {
         map.put(ah, ah.getName());
         ah.setIDs("public Id", "Secret key");
+        System.out.println("Auction house is registered...");
         //todo: implement. See Bank.registerAgent(Agent agent)
     }
 
