@@ -114,7 +114,7 @@ public class Client
      */
 
 
-    public void placeBid(double bidAmt)
+    public void placeBid(double bidAmt, Agent agent)
     {
         try
         {
@@ -124,8 +124,6 @@ public class Client
             in = new ObjectInputStream(bankSocket.getInputStream());
 
             out.writeObject(agent);
-            agent = (Agent) in.readObject();
-            System.out.println(agent.getAccountBalance() + "Inside client agent");
 
             // TODO: We need to get a response from the bank that the bid went through
             agent.setAccountBalance(agent.getAccountBalance() - bidAmt);
