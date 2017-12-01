@@ -2,7 +2,7 @@ import IDs.AuctionHouseID;
 
 /**
  * This class is a data class that holds the information related to a particular auction item.
- *
+ * <p>
  * AUCTION_HOUSE_ID, MINIMUM_BID, and ITEM_NAME are never changed once the item is created, so these fields are final and public.
  * currentBid is set to 0 when the object is created and will be set when the first valid bid is made.
  * currentHighestBidderID is set to null when the object is first created and will be set when the first valid bid is made.
@@ -19,7 +19,7 @@ public class Item
     public final String ITEM_ID;            //Unique item ID
     private static int staticIDCounter = 1;
 
-    
+
     public Item(String itemName, String imgPath, Double minimumBid)
     {
         ITEM_NAME = itemName;
@@ -27,16 +27,23 @@ public class Item
         MINIMUM_BID = minimumBid;
         currentBid = 0.0;
         currentHighestBidderID = null;
-        ITEM_ID = staticIDCounter*42 +""; //actually make it look like a real ID, sorta.
+        ITEM_ID = staticIDCounter * 42 + ""; //actually make it look like a real ID, sorta.
         staticIDCounter++;
     }
-    
-    public synchronized Double getCurrentBid() { return currentBid; }
-    
-    public synchronized String getCurrentHighestBidderID() { return currentHighestBidderID; }
-    
+
+    public synchronized Double getCurrentBid()
+    {
+        return currentBid;
+    }
+
+    public synchronized String getCurrentHighestBidderID()
+    {
+        return currentHighestBidderID;
+    }
+
     /**
      * setCurrentBidAndBidder()
+     *
      * @param newBid
      * @param newBiddingKey Agent who is making the bid of amount newBid
      */
