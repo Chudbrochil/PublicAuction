@@ -1,69 +1,24 @@
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
-public class AuctionCentral
-{
-    Bank bank;
+public class AuctionCentral {
 
+    HashMap<AuctionHouse, Integer> map = new HashMap<>();
+    Random random = new Random();
     public AuctionCentral(){
-        Agent agent = null;
-        Random rand = new Random();
-        HashMap<String, Integer> registeredUsers = new HashMap<>();
-        try{
-            ServerSocket socket = new ServerSocket(5555);
-          System.out.println("Auction Central is online");
 
-
-            while(true){
-                Socket pipeConnection = socket.accept();
-
-                ObjectOutputStream out = new ObjectOutputStream(pipeConnection.getOutputStream());
-                ObjectInputStream in = new ObjectInputStream(pipeConnection.getInputStream());
-
-                agent = (Agent) in.readObject();
-                registeredUsers.put(agent.getName(), agent.getAccountNum());
-                agent.setBiddingKey(rand.nextInt(10000) + 1);
-
-                out.writeObject(agent);
-                //next lines were to test out the communicateBank function
-//                Socket bankSocket  = new Socket("127.0.0.1", 4444);
-//                communicateBank(agent, bankSocket, out);
-
-//
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-            e.getLocalizedMessage();
-            e.getMessage();
-        }
     }
-
-    public void communicateBank(Agent agent,Socket bankSocket, ObjectOutputStream out){
-       try {
-
-           out = new ObjectOutputStream(bankSocket.getOutputStream());
-           System.out.println("Sending request for Bank info");
-           out.writeObject(agent);
-       }
-       catch(Exception e){
-           e.printStackTrace();
-           e.getLocalizedMessage();
-           e.getMessage();
-       }
-    }
-
-    // Returns true if it successfully registers an Agent and gives it a biddingKey
-    public boolean registerAgent(String name, int bankKey)
+    public void registerAgent(Agent agent)
     {
-        return true;
+        System.out.println("Registering a new user...");
+        System.out.println("User name: " + agent.getName());
+        agent.setBiddingKey(random.nextInt(1000) + 1);
+        System.out.println("Bidding key: " + agent.getBiddingKey() + "\n");
+
+
     }
 
-    
+
     public void registerAuctionHouse(AuctionHouse ah)
     {
         //todo: implement. See Bank.registerAgent(Agent agent)
@@ -75,11 +30,5 @@ public class AuctionCentral
     {
         return true;
     }
-
-
-public static void main(String[] args){
-        AuctionCentral ac = new AuctionCentral();
-}
-
 
 }

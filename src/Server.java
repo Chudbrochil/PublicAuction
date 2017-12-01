@@ -11,40 +11,25 @@ public class Server {
     //constructor for  bank
     public Server(int num) {
 
+        Bank bank = new Bank();
 
         //do bank registration for agent
-
         try {
-            ServerSocket socket = new ServerSocket(num);
 
-            while(true){
-                Socket pipeConnection = socket.accept();
-                ObjectOutputStream out = new ObjectOutputStream(pipeConnection.getOutputStream());
-                ObjectInputStream in = new ObjectInputStream(pipeConnection.getInputStream());
+            ServerSocket bankSocket = new ServerSocket(4444);
+            while (true) {
 
-                if(num == 4444){
+                Socket pipeConnection = bankSocket.accept();
+                ObjectOutputStream bankOut = new ObjectOutputStream(pipeConnection.getOutputStream());
+                ObjectInputStream bankIn = new ObjectInputStream(pipeConnection.getInputStream());
+                System.out.println("Bank Online");
 
+                Agent agent;
+                agent = (Agent) bankIn.readObject();
 
-                    Bank bank = new Bank();
-
-                    Agent agent;
-                    agent = (Agent)in.readObject();
-
-                    bank.registerAgent(agent);
-                    out.writeObject(agent);
-                }
-                else if(num == 5555){
-
-                    AuctionCentral ac = new AuctionCentral();
-                    AuctionHouse ah;
-                    ah = (AuctionHouse) in.readObject();
-                    ac.registerAuctionHouse(ah);
-                    //out.writeObject(ah)
-
-                }
-
-
-
+                bank.registerAgent(agent);
+                bankOut.writeObject(agent);
+//                    System.out.println("Where do we reside");
 
             }
         } catch (Exception e) {
@@ -56,13 +41,38 @@ public class Server {
 
     }
 
+    public Server() {
+        AuctionCentral ac = new AuctionCentral();
+
+        while (true) {
+            try {
+
+                ServerSocket auctionCentralSocket = new ServerSocket(5555);
+
+                Socket otherPipeConnection = auctionCentralSocket.accept();
+                ObjectOutputStream centralOut = new ObjectOutputStream(otherPipeConnection.getOutputStream());
+                ObjectInputStream centralIn = new ObjectInputStream(otherPipeConnection.getInputStream());
+
+                System.out.println("Auction Central Online");
+                Agent agent = (Agent) centralIn.readObject();
+                ac.registerAgent(agent);
+                centralOut.writeObject(agent);
 
 
-    public static void main(String[] args){
-        if(args[0].equals("Bank")){
+            } catch (Exception e) {
+                e.getLocalizedMessage();
+                e.getMessage();
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    public static void main(String[] args) {
+        if (args[0].equals("Bank")) {
             Server s = new Server(4444);
-        } else if(args[0].equals("AuctionCentral")){
-            Server s = new Server(5555);
+        } else if (args[0].equals("AuctionCentral")) {
+            Server s = new Server();
         }
     }
 
