@@ -1,6 +1,3 @@
-import java.util.ArrayList;
-
-
 // This is a class for the bank to hold in a map i.e. HashMap<BankKey, Account>
 
 public class Account
@@ -11,6 +8,7 @@ public class Account
 
     /**
      * Account initial constructor
+     *
      * @param accountNum
      * @param amount
      */
@@ -22,7 +20,7 @@ public class Account
 
     public boolean deductAmount(Double amountToDeduct)
     {
-        if(amount - amountToDeduct < 0)
+        if (amount - amountToDeduct < 0)
         {
             return false;
         }

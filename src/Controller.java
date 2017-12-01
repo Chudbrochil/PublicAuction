@@ -1,6 +1,5 @@
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -18,16 +17,8 @@ public class Controller
     private void initialize()
     {
         Client client = new Client("Agent1");
-
-
         agent = client.getAgent();
-
         update();
-
-
-
-        // TODO: Only for testing, delete as implementation continues
-        //AuctionHouse ah = new AuctionHouse();
     }
 
     private void update()
@@ -41,7 +32,7 @@ public class Controller
                 System.out.println(agent.getAccountBalance());
                 lblBalance.setText(String.valueOf(agent.getAccountBalance()));
             }
-        }, 0, 40, TimeUnit.MILLISECONDS);
+        }, 0, 500, TimeUnit.MILLISECONDS);
     }
 
 
@@ -71,9 +62,6 @@ public class Controller
      * 90s turn off auction house 1
      *
      */
-
-
-
 
 
 }

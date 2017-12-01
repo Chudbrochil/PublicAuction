@@ -1,4 +1,3 @@
-import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -11,6 +10,7 @@ public class Client implements IAuctionCentral
 
     /**
      * Client-Agent constructor
+     *
      * @param name
      * @param scanner
      */
@@ -18,29 +18,33 @@ public class Client implements IAuctionCentral
     {
         agent = new Agent(name);
         System.out.println("You've chosen " + agent.getName() + " as your username");
-            try
+        try
+        {
+            Socket bankSocket = new Socket("127.0.0.1", 4444);
+            Socket centralSocket = new Socket("127.0.0.1", 5555);
+
+            ObjectOutputStream out = new ObjectOutputStream(bankSocket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(bankSocket.getInputStream());
+
+            registerAgent(out, in, agent, centralSocket);
+            System.out.println("Would you like to bid? Y/N");
+            String answer = scanner.nextLine();
+            if (answer.equals("Y"))
             {
-                Socket bankSocket = new Socket("127.0.0.1", 4444);
-                Socket centralSocket = new Socket("127.0.0.1", 5555);
-
-                ObjectOutputStream out = new ObjectOutputStream(bankSocket.getOutputStream());
-                ObjectInputStream in = new ObjectInputStream(bankSocket.getInputStream());
-
-                registerAgent(out, in, agent, centralSocket);
-                System.out.println("Would you like to bid? Y/N");
-                String answer = scanner.nextLine();
-                if(answer.equals("Y")){
-                    //put auction houses listings here
-                }
-                else if(answer.equals("N")){
-
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                e.getMessage();
-                e.getLocalizedMessage();
+                //put auction houses listings here
             }
+            else if (answer.equals("N"))
+            {
+
+            }
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            e.getMessage();
+            e.getLocalizedMessage();
+        }
 
 
         // TODO: A given Agent/AuctionHouse will call methods on it's "mailman" (client)
@@ -48,26 +52,28 @@ public class Client implements IAuctionCentral
 
     }
 
-     public Client(String name)
-     {
-         agent = new Agent(name);
-         System.out.println("You've chosen " + agent.getName() + " as your username");
-         try
-         {
-             Socket bankSocket = new Socket("127.0.0.1", 4444);
-             Socket centralSocket = new Socket("127.0.0.1", 5555);
+    public Client(String name)
+    {
+        agent = new Agent(name);
+        System.out.println("You've chosen " + agent.getName() + " as your username");
+        try
+        {
+            Socket bankSocket = new Socket("127.0.0.1", 4444);
+            Socket centralSocket = new Socket("127.0.0.1", 5555);
 
-             ObjectOutputStream out = new ObjectOutputStream(bankSocket.getOutputStream());
-             ObjectInputStream in = new ObjectInputStream(bankSocket.getInputStream());
+            ObjectOutputStream out = new ObjectOutputStream(bankSocket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(bankSocket.getInputStream());
 
-             registerAgent(out, in, agent, centralSocket);
+            registerAgent(out, in, agent, centralSocket);
 
-         } catch (Exception e) {
-             e.printStackTrace();
-             e.getMessage();
-             e.getLocalizedMessage();
-         }
-     }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            e.getMessage();
+            e.getLocalizedMessage();
+        }
+    }
 
     /**
      * Client-AuctionHouse constructor
@@ -77,7 +83,8 @@ public class Client implements IAuctionCentral
         AuctionHouse ah = new AuctionHouse("AuctionHouse1", this);
         System.out.println("You've created a new Auction House");
 
-        try {
+        try
+        {
             Socket auctionCentralSocket = new Socket("127.0.0.1", 5555);
 
             ObjectOutputStream out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
@@ -85,7 +92,9 @@ public class Client implements IAuctionCentral
             registerAH(out, in, ah);
 
 
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             e.getLocalizedMessage();
             e.getMessage();
             e.printStackTrace();
@@ -93,8 +102,10 @@ public class Client implements IAuctionCentral
     }
 
 
-    public void registerAgent(ObjectOutputStream out, ObjectInputStream in,Agent newUser, Socket centralSocket) {
-        try {
+    public void registerAgent(ObjectOutputStream out, ObjectInputStream in, Agent newUser, Socket centralSocket)
+    {
+        try
+        {
             out.writeObject(newUser);
 
             newUser = (Agent) in.readObject();
@@ -110,24 +121,30 @@ public class Client implements IAuctionCentral
             newUser = (Agent) in.readObject();
             System.out.println("Bidding Key = " + newUser.getBiddingKey());
 
-        } catch (Exception e) {
-        e.getLocalizedMessage();
-        e.getMessage();
-        e.printStackTrace();
+        }
+        catch (Exception e)
+        {
+            e.getLocalizedMessage();
+            e.getMessage();
+            e.printStackTrace();
         }
     }
 
-    public void registerAH(ObjectOutputStream out, ObjectInputStream in, AuctionHouse ah) {
-        try {
+    public void registerAH(ObjectOutputStream out, ObjectInputStream in, AuctionHouse ah)
+    {
+        try
+        {
             out.writeObject(ah);
             ah = (AuctionHouse) in.readObject();
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             e.getMessage();
             e.getLocalizedMessage();
             e.printStackTrace();
         }
     }
-    
+
     public void registerAuctionHouse(AuctionHouse ah)
     {
         //registerAH //todo: Make i/o streams class variables?
@@ -138,11 +155,15 @@ public class Client implements IAuctionCentral
         return agent; //TODO: CHECK FOR NULL SOMEWHERE IN HERE
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         Scanner scanner = new Scanner(System.in);
-        if (args[0].equals("Auction House")) {
+        if (args[0].equals("Auction House"))
+        {
             Client client = new Client();
-        } else if (args[0].equals("Agent") && !args[1].equals(null)) {
+        }
+        else if (args[0].equals("Agent") && !args[1].equals(null))
+        {
             Client client = new Client(args[1], scanner);
         }
     }

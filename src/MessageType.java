@@ -1,7 +1,5 @@
 /**
  * If you create a Message, assign it a type. Those who receive messages will respond based on the MessageType.
- *
- *
  */
 
 public enum MessageType

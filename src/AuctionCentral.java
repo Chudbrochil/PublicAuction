@@ -1,14 +1,18 @@
 import java.util.HashMap;
 import java.util.Random;
 
-public class AuctionCentral {
+public class AuctionCentral
+{
 
 
     HashMap<AuctionHouse, String> map = new HashMap<AuctionHouse, String>();
     Random random = new Random();
-    public AuctionCentral(){
+
+    public AuctionCentral()
+    {
 
     }
+
     public void registerAgent(Agent agent)
     {
         System.out.println("Registering a new user...");
@@ -35,7 +39,8 @@ public class AuctionCentral {
     }
 
 
-    public HashMap<AuctionHouse, String> getMap() {
+    public HashMap<AuctionHouse, String> getMap()
+    {
         return map;
     }
 

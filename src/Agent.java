@@ -1,5 +1,4 @@
-import java.io.*;
-import java.net.Socket;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Agent implements Serializable
@@ -33,7 +32,8 @@ public class Agent implements Serializable
 
     }
 
-    public void setBankKey(String bankKey){
+    public void setBankKey(String bankKey)
+    {
         this.bankKey = bankKey;
     }
 
@@ -49,28 +49,34 @@ public class Agent implements Serializable
 
     }
 
-    public void setBiddingKey(String newKey){
+    public void setBiddingKey(String newKey)
+    {
         biddingKey = newKey;
     }
 
-    public String getBiddingKey(){
+    public String getBiddingKey()
+    {
         return biddingKey;
     }
 
-    public String getName(){
+    public String getName()
+    {
         return this.name;
     }
 
-    public void setAccountNum(int accountNum){
+    public void setAccountNum(int accountNum)
+    {
         this.accountNum = accountNum;
     }
 
-    public int getAccountNum(){
+    public int getAccountNum()
+    {
         return accountNum;
     }
 
 
-    public void setAccountBalance(int num){
+    public void setAccountBalance(int num)
+    {
         this.accountBalance = num;
     }
 
