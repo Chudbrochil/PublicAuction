@@ -74,7 +74,8 @@ public class Agent implements Serializable
         this.accountBalance = num;
     }
 
-    public double getAccountBalance(){
+    public double getAccountBalance()
+    {
         return accountBalance;
     }
 

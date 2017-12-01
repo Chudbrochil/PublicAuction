@@ -2,26 +2,44 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 public class Controller
 {
 
     @FXML
     private Label lblUserOutput, lblBalance;
 
+    Agent agent;
+
     @FXML
     private void initialize()
     {
-        lblBalance.setText("$1000.00");
+        Client client = new Client("Agent1");
 
+        agent = client.getAgent();
 
-
-
-
+        update();
 
 
 
         // TODO: Only for testing, delete as implementation continues
         //AuctionHouse ah = new AuctionHouse();
+    }
+
+    private void update()
+    {
+        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+        exec.scheduleAtFixedRate(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                lblBalance.setText(String.valueOf(agent.getAccountBalance()));
+            }
+        }, 0, 40, TimeUnit.MILLISECONDS);
     }
 
 

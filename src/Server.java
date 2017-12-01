@@ -41,7 +41,8 @@ public class Server {
 
     }
 
-    public Server() {
+    public Server()
+    {
         AuctionCentral ac = new AuctionCentral();
 
         while (true) {
@@ -68,7 +69,8 @@ public class Server {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         if (args[0].equals("Bank")) {
             Server s = new Server(4444);
         } else if (args[0].equals("AuctionCentral")) {
