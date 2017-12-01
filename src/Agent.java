@@ -19,9 +19,10 @@ public class Agent implements Serializable
     }
 
     // Returns true if bid is successful
-    public boolean placeBid()
+    public boolean placeBid(double bidAmt)
     {
         // TODO: For now just doing a withdrawal from bank
+        accountBalance -= bidAmt;
 
 
 

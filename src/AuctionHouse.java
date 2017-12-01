@@ -52,7 +52,7 @@ public class AuctionHouse implements Serializable
         {
             Item item = ItemDB.getRandomItem();
             myItems.put(item.ITEM_ID, item);
-            System.out.println("");
+            System.out.println(item.ITEM_NAME);
         }
     }
 
