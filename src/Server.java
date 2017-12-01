@@ -38,9 +38,10 @@ public class Server
                         agent.setRegistered(true);
                         bankOut.writeObject(agent);
                     }
-                    // If we are getting an agent again,
+                    // If we are getting an agent again, we must be doing a withdrawl //TODO: Remove this after we aren't doing withdrawl's
                     else
                     {
+                        // TODO: This 100 is hard-coded for now. We'll need to gather this value from a message.
                         bank.getMap().get(agent.getAccountNum()).setAmount(bank.getMap().get(agent.getAccountNum()).getAmount() - 100);
                         agent.setAccountBalance(agent.getAccountBalance() - 100.00);
                         System.out.println(bank.getMap().get(agent.getAccountNum()).getAmount());
@@ -125,7 +126,7 @@ public class Server
         {
             Server s = new Server(4444);
         }
-        else if (args[0].equals("AuctionCentral"))
+        else if (args[0].equals("AC"))
         {
             Server s = new Server();
         }

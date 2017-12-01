@@ -135,7 +135,7 @@ public class Client
     public static void main(String[] args)
     {
         Scanner scanner = new Scanner(System.in);
-        if (args[0].equals("AuctionHouse"))
+        if (args[0].equals("AH"))
         {
             Client client = new Client(false, args[1]);
         }
