@@ -31,6 +31,14 @@ public class Account
         }
     }
 
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
     // TODO: Implement "hold" mechanism
 
 

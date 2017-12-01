@@ -26,18 +26,19 @@ public class Server {
                 System.out.println("Bank Online");
 
                 Object object = bankIn.readObject();
-                System.out.println(object);
-                if(object instanceof Agent) {
-                   Agent agent;
-                   agent = (Agent) object;
 
-                   bank.registerAgent(agent);
-                   bankOut.writeObject(agent);
-               }
-               else if(object instanceof Integer){
-                 System.out.println(bank.getMap().get(((Integer) object).intValue()));
-               }
-//  System.out.println("Where do we reside");
+                if (object instanceof Agent) {
+                    Agent agent = (Agent) object;
+                    if (!agent.isRegistered()) {
+                        bank.registerAgent(agent);
+                        agent.setRegistered(true);
+                        bankOut.writeObject(agent);
+                    } else {
+                        bank.getMap().get(agent.getAccountNum()).setAmount(bank.getMap().get(agent.getAccountNum()).getAmount()-100);
+                      System.out.println(bank.getMap().get(agent.getAccountNum()).getAmount());
+                    }
+                }
+
 
             }
         } catch (Exception e) {
@@ -62,7 +63,7 @@ public class Server {
                 ObjectOutputStream centralOut = new ObjectOutputStream(otherPipeConnection.getOutputStream());
                 ObjectInputStream centralIn = new ObjectInputStream(otherPipeConnection.getInputStream());
 
-Object object = centralIn.readObject();
+                Object object = centralIn.readObject();
                 if (object instanceof Agent) {
 
 //                    otherPipeConnection = auctionCentralSocket.accept();
@@ -81,7 +82,7 @@ Object object = centralIn.readObject();
 //                otherPipeConnection = auctionCentralSocket.accept();
 //                centralOut = new ObjectOutputStream(otherPipeConnection.getOutputStream());
 //                centralIn = new ObjectInputStream(otherPipeConnection.getInputStream());
-              else if(object instanceof AuctionHouse) {
+                else if (object instanceof AuctionHouse) {
                     AuctionHouse ah;
                     ah = (AuctionHouse) object;
                     ac.registerAuctionHouse(ah);
