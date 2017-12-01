@@ -29,7 +29,7 @@ public class AuctionCentral {
 
     // Talks to bank to place hold for a particular agent with a particular bidding key
     // Returns true if the placeHold was successful (i.e. the agent has the $ and is a valid person)
-    public boolean placeHold(int biddingKey, float amount)
+    public boolean placeHold(int biddingKey, Double amount)
     {
         return true;
     }

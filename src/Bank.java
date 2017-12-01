@@ -20,7 +20,7 @@ public class Bank {
         agent.setAccountNum(rand.nextInt(1000) + 1);
         System.out.println("Account num: " + agent.getAccountNum() +"\n");
 
-        Account account = new Account(agent.getAccountNum(), (float) agent.getAccountBalance());
+        Account account = new Account(agent.getAccountNum(), (Double) agent.getAccountBalance());
         map.put(account, agent.getAccountNum());
 
     }

@@ -37,6 +37,7 @@ public class Controller
             @Override
             public void run()
             {
+                System.out.println(agent.getAccountBalance());
                 lblBalance.setText(String.valueOf(agent.getAccountBalance()));
             }
         }, 0, 40, TimeUnit.MILLISECONDS);

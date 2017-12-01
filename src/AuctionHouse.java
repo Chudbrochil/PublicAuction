@@ -1,6 +1,9 @@
 import IDs.AuctionHouseID;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -26,7 +29,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * ***
  */
 
-public class AuctionHouse implements Serializable
+public class AuctionHouse
 {
     private final String NAME;
     private String publicID;
@@ -34,17 +37,19 @@ public class AuctionHouse implements Serializable
     private HashMap<String, Item> myItems; //Item ID as key for the item.
     //private HashMap<String, Time>
     //private HashMap<>
+    private Client myClient;
     //private static int AuctionHouseID;
     
     /**
      * AuctionHouse()
      * Creates an AuctionHouse that has three random items for sale.
-
+     * @param name Name for this AuctionHouse
+     * @param client Client that will serve as AuctionHouse's connection to Agents, Bank, and AuctionCentral
      */
-    public AuctionHouse()
+    public AuctionHouse(String name, Client client)
     {
-//        NAME = name;
-
+        NAME = name;
+        myClient = client;
         myItems = new HashMap<>();
         
         //Give me items!
@@ -54,7 +59,6 @@ public class AuctionHouse implements Serializable
             myItems.put(item.ITEM_ID, item);
             System.out.println("");
         }
-        NAME = publicID = "ID";
     }
     
     /**
@@ -65,10 +69,8 @@ public class AuctionHouse implements Serializable
         publicID = publicid;
         secretKey = secretkey;
     }
-    public String getName(){
-        return NAME;
-    }
-    public void placeHold(String biddingKey, float amount)
+    
+    public void placeHold(String biddingKey, Double amount)
     {
     
     }
@@ -118,11 +120,11 @@ public class AuctionHouse implements Serializable
                     if(!line.startsWith("//"))
                     {
                         // TODO: This has no error checking against bad files, don't mess with the file :-)
-                        // TODO: Will error on input not like: string,string,float and extra blank lines at end of file
+                        // TODO: Will error on input not like: string,string,Double and extra blank lines at end of file
                         String[] elements = line.split(",");
                         String itemName = elements[0];
                         String imgPath = elements[1];
-                        Float minimumBid = Float.valueOf(elements[2]);
+                        Double minimumBid = Double.valueOf(elements[2]);
                         items.add(new Item(itemName, imgPath, minimumBid));
                     }
                 }

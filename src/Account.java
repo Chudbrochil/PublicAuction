@@ -6,21 +6,21 @@ import java.util.ArrayList;
 public class Account
 {
     private long accountNum;
-    private float amount;
-    private float temporaryHold;
+    private Double amount;
+    private Double temporaryHold;
 
     /**
      * Account initial constructor
      * @param accountNum
      * @param amount
      */
-    public Account(long accountNum, float amount)
+    public Account(long accountNum, Double amount)
     {
         this.accountNum = accountNum;
         this.amount = amount;
     }
 
-    public boolean deductAmount(float amountToDeduct)
+    public boolean deductAmount(Double amountToDeduct)
     {
         if(amount - amountToDeduct < 0)
         {
