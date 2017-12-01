@@ -1,3 +1,6 @@
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -33,4 +36,33 @@ public class Bank
         map.put(agent.getAccountNum(), account);
 
     }
+
+
+    /**
+     * getKey()
+     *
+     * This is the method for creating a secret key. The bank holds this as it is the "most secure" resource.
+     *
+     * @param name This is the name passed to the method to generate the secret key
+     * @return A "secret key". These will correspond to:
+     *          Agent gets a Bank key from the Bank
+     *          Agent gets a bidding key from the AuctionCentral
+     *          AuctionHouse gets an Auction key from the AuctionCentral
+     */
+    public static String getKey(String name)
+    {
+        String output = "";
+        try
+        {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(name.getBytes(StandardCharsets.UTF_8));
+            output = hash.toString();
+        }
+        catch(NoSuchAlgorithmException e) { System.out.println(e.getMessage()); }
+        return output;
+    }
+
+
+
+
 }
