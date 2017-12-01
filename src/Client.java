@@ -120,6 +120,7 @@ public class Client implements IAuctionCentral
 
             newUser = (Agent) in.readObject();
             System.out.println("Bidding Key = " + newUser.getBiddingKey());
+            agent = newUser;
 
         }
         catch (Exception e)

@@ -12,11 +12,12 @@ public class Controller
     private Label lblUserOutput, lblBalance;
 
     Agent agent;
+    Client client;
 
     @FXML
     private void initialize()
     {
-        Client client = new Client("Agent1");
+        client = new Client("Agent1");
         agent = client.getAgent();
         update();
     }
