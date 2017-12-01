@@ -74,6 +74,11 @@ public class AuctionHouse
     {
     
     }
+
+    public String getName()
+    {
+        return NAME;
+    }
     
     /**
      * placeBid()
