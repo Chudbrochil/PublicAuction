@@ -38,8 +38,7 @@ public class AuctionHouse implements Serializable
      * AuctionHouse()
      * Creates an AuctionHouse that has three random items for sale.
      *
-     * @param name   Name for this AuctionHouse
-
+     * @param name Name for this AuctionHouse
      */
     public AuctionHouse(String name)
     {
@@ -52,7 +51,7 @@ public class AuctionHouse implements Serializable
         {
             Item item = ItemDB.getRandomItem();
             myItems.put(item.ITEM_ID, item);
-            System.out.println(item.ITEM_NAME);
+            System.out.println(item.ITEM_NAME + " - Min price: " + item.MINIMUM_BID);
         }
     }
 
@@ -119,10 +118,9 @@ public class AuctionHouse implements Serializable
                 while ((line = reader.readLine()) != null)
                 {
                     // This allows for commenting in the ItemList
-                    if (!line.startsWith("//"))
+                    if (!line.startsWith("//") && !line.trim().isEmpty())
                     {
-                        // TODO: This has no error checking against bad files, don't mess with the file :-)
-                        // TODO: Will error on input not like: string,string,Double and extra blank lines at end of file
+                        // TODO: ItemList.txt is fragile, don't give it bad input
                         String[] elements = line.split(",");
                         String itemName = elements[0];
                         String imgPath = elements[1];

@@ -22,11 +22,15 @@ public class Controller
     @FXML
     private void initialize()
     {
-        client = new Client(true, "Agent1", null);
+        client = new Client(true, "Agent1");
         agent = client.getAgent();
         update();
     }
 
+    /**
+     * update()
+     * Method that will constantly be updating the UI to the user.
+     */
     private void update()
     {
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
@@ -37,21 +41,23 @@ public class Controller
             {
                 //System.out.println(agent.getAccountBalance());
                 // Platform syncs this command with the UI, fixes javafx thread bugs
-                Platform.runLater(() -> {lblBalance.setText(String.valueOf(agent.getAccountBalance()));});
+                Platform.runLater(() -> {
+                    lblBalance.setText(String.valueOf(agent.getAccountBalance()));
+                });
             }
         }, 0, 500, TimeUnit.MILLISECONDS);
     }
 
 
     /**
-     * User wants to place a bid
+     * placeBid()
+     * Handler for user clicking that they want to place a bid.
      */
     @FXML
     private void placeBid()
     {
-        lblUserOutput.setText("User pressed placeBid button.");
-        client.placeBid(Double.valueOf(tfBidAmount.getText()));
-        System.out.println(agent.getAccountBalance());
+        lblUserOutput.setText("Accepted bid for: " + tfBidAmount.getText());
+        client.placeBid(Double.valueOf(tfBidAmount.getText()), client.getAgent());
     }
 
     /**

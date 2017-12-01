@@ -10,71 +10,55 @@ public class Client
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private Socket bankSocket;
+    private Socket auctionCentralSocket;
 
-    public Client(boolean isAgent, String name, Scanner scanner)
+    public Client(boolean isAgent, String name)
     {
-        if(isAgent)
+        if(name == null) { name = "NONAME CLIENT"; }
+
+        try
         {
-            agent = new Agent(name);
-            System.out.println("You've chosen " + agent.getName() + " as your username");
-            try
+            auctionCentralSocket = new Socket("127.0.0.1", 5555);
+
+            if(isAgent)
             {
-                Socket bankSocket = new Socket("127.0.0.1", 4444);
-                Socket centralSocket = new Socket("127.0.0.1", 5555);
-
-                 out = new ObjectOutputStream(bankSocket.getOutputStream());
-                 in = new ObjectInputStream(bankSocket.getInputStream());
-
-                registerAgent(out, in, agent, centralSocket);
+                agentInit(name);
             }
-            catch (Exception e)
+            else
             {
-                e.printStackTrace();
-                e.getMessage();
-                e.getLocalizedMessage();
+                auctionHouseInit(name);
             }
         }
-
-        // TODO: Purely for spinning up agents on command line. Will be (likely) removed after GUI is hardened.
-        if(scanner != null)
+        catch(Exception e)
         {
-            System.out.println("Would you like to bid? Y/N");
-            String answer = scanner.nextLine();
-            if (answer.equals("Y"))
-            {
-                //put auction houses listings here
-            }
-            else if (answer.equals("N"))
-            {
-
-            }
-        }
-
-        if(isAgent == false)
-        {
-            auctionHouse = new AuctionHouse("AuctionHouse1");
-            System.out.println("You've created a new Auction House");
-
-            try
-            {
-                Socket auctionCentralSocket = new Socket("127.0.0.1", 5555);
-
-                 out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
-                 in = new ObjectInputStream(auctionCentralSocket.getInputStream());
-                registerAH(out, in, auctionHouse);
-            }
-            catch (Exception e)
-            {
-                e.getLocalizedMessage();
-                e.getMessage();
-                e.printStackTrace();
-            }
+            e.printStackTrace();
+            e.getMessage();
+            e.getLocalizedMessage();
         }
 
     }
 
+    private void agentInit(String name) throws Exception
+    {
+            agent = new Agent(name);
+            System.out.println("You've chosen " + agent.getName() + " as your username");
+            bankSocket = new Socket("127.0.0.1", 4444);
+            out = new ObjectOutputStream(bankSocket.getOutputStream());
+            in = new ObjectInputStream(bankSocket.getInputStream());
+            registerAgent(out, in, agent);
+    }
 
-    public void registerAgent(ObjectOutputStream out, ObjectInputStream in, Agent newUser, Socket centralSocket)
+    private void auctionHouseInit(String name) throws Exception
+    {
+        auctionHouse =  new AuctionHouse(name);
+        System.out.println("You've chosen " + auctionHouse.getName() + " as your auction house.");
+        out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
+        in = new ObjectInputStream(auctionCentralSocket.getInputStream());
+        registerAH(out, in, auctionHouse);
+    }
+
+
+    private void registerAgent(ObjectOutputStream out, ObjectInputStream in, Agent newUser)
     {
         try
         {
@@ -82,16 +66,16 @@ public class Client
 
             newUser = (Agent) in.readObject();
 
-            System.out.println("Account Amount = " + newUser.getAccountBalance());
+            System.out.println("Account Balance = " + newUser.getAccountBalance());
             System.out.println("Account Number = " + newUser.getAccountNum());
 
-            out = new ObjectOutputStream(centralSocket.getOutputStream());
-            in = new ObjectInputStream(centralSocket.getInputStream());
+            out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
+            in = new ObjectInputStream(auctionCentralSocket.getInputStream());
 
             out.writeObject(newUser);
 
             newUser = (Agent) in.readObject();
-            
+
             System.out.println("Bidding Key = " + newUser.getBiddingKey());
             agent = newUser;
         }
@@ -103,7 +87,7 @@ public class Client
         }
     }
 
-    public void registerAH(ObjectOutputStream out, ObjectInputStream in, AuctionHouse ah)
+    private void registerAH(ObjectOutputStream out, ObjectInputStream in, AuctionHouse ah)
     {
         try
         {
@@ -119,51 +103,57 @@ public class Client
         }
     }
 
-    public void registerAuctionHouse(AuctionHouse ah)
-    {
-        //registerAH //todo: Make i/o streams class variables?
-    }
-
     public Agent getAgent()
     {
         return agent; //TODO: CHECK FOR NULL SOMEWHERE IN HERE
     }
 
-    public static void main(String[] args)
-    {
-        Scanner scanner = new Scanner(System.in);
-        if (args[0].equals("AuctionHouse"))
-        {
-            Client client = new Client(false, args[0], null);
-        }
-        else if (args[0].equals("Agent") && !args[1].equals(null))
-        {
-            Client client = new Client(true, args[1], scanner);
-        }
-    }
 
-
+    /**
+     *  TODO: This is where method's for AuctionHouse and Agent will live. We need messaging here.
+     */
 
 
     public void placeBid(double bidAmt)
     {
-        try {
-             bankSocket = new Socket("127.0.0.1", 4444);
+        try
+        {
+            bankSocket = new Socket("127.0.0.1", 4444);
 
-             out = new ObjectOutputStream(bankSocket.getOutputStream());
-             in = new ObjectInputStream(bankSocket.getInputStream());
+            out = new ObjectOutputStream(bankSocket.getOutputStream());
+            in = new ObjectInputStream(bankSocket.getInputStream());
 
             out.writeObject(agent);
             agent = (Agent) in.readObject();
             System.out.println(agent.getAccountBalance() + "Inside client agent");
 
-        }catch (Exception e){
+            // TODO: We need to get a response from the bank that the bid went through
+            agent.setAccountBalance(agent.getAccountBalance() - bidAmt);
+
+        }
+        catch (Exception e)
+        {
             e.getMessage();
             e.getLocalizedMessage();
             e.printStackTrace();
         }
     }
 
+
+
+
+    public static void main(String[] args)
+    {
+        Scanner scanner = new Scanner(System.in);
+        if (args[0].equals("AH"))
+        {
+            Client client = new Client(false, args[1]);
+        }
+        else if (args[0].equals("Agent") && !args[1].equals(null))
+        {
+            Client client = new Client(true, args[1]);
+        }
+    }
 
 
 }

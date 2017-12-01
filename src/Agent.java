@@ -66,7 +66,7 @@ public class Agent implements Serializable
         return accountNum;
     }
 
-    public void setAccountBalance(double num)
+    public void setAccountBalance(Double num)
     {
         this.accountBalance = num;
     }
