@@ -91,6 +91,7 @@ public class Client
             out.writeObject(newUser);
 
             newUser = (Agent) in.readObject();
+            
             System.out.println("Bidding Key = " + newUser.getBiddingKey());
             agent = newUser;
 
@@ -108,9 +109,8 @@ public class Client
         try
         {
             out.writeObject(ah);
-
-
             ah = (AuctionHouse) in.readObject();
+
         }
         catch (Exception e)
         {

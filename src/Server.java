@@ -54,9 +54,13 @@ public class Server {
                 ObjectInputStream centralIn = new ObjectInputStream(otherPipeConnection.getInputStream());
 
 Object object = centralIn.readObject();
-
                 if (object instanceof Agent) {
-                    Agent agent = (Agent) centralIn.readObject();
+
+//                    otherPipeConnection = auctionCentralSocket.accept();
+//                    centralOut = new ObjectOutputStream(otherPipeConnection.getOutputStream());
+//                     centralIn = new ObjectInputStream(otherPipeConnection.getInputStream());
+
+                    Agent agent = (Agent) object;
                     System.out.println("Auction Central Online");
 
                     ac.registerAgent(agent);
