@@ -3,7 +3,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Client implements IAuctionCentral
+public class Client
 {
     private Agent agent;
     private AuctionHouse auctionHouse;
