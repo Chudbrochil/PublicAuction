@@ -27,6 +27,10 @@ public class Controller
         update();
     }
 
+    /**
+     * update()
+     * Method that will constantly be updating the UI to the user.
+     */
     private void update()
     {
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
@@ -46,7 +50,8 @@ public class Controller
 
 
     /**
-     * User wants to place a bid
+     * placeBid()
+     * Handler for user clicking that they want to place a bid.
      */
     @FXML
     private void placeBid()
