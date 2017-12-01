@@ -80,7 +80,7 @@ public class Client
      */
     public Client()
     {
-        AuctionHouse ah = new AuctionHouse("AuctionHouse1", this);
+        AuctionHouse ah = new AuctionHouse("AuctionHouse1");
         System.out.println("You've created a new Auction House");
 
         try

@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
@@ -26,7 +23,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * ***
  */
 
-public class AuctionHouse
+public class AuctionHouse implements Serializable
 {
     private final String NAME;
     private String publicID;
@@ -42,12 +39,12 @@ public class AuctionHouse
      * Creates an AuctionHouse that has three random items for sale.
      *
      * @param name   Name for this AuctionHouse
-     * @param client Client that will serve as AuctionHouse's connection to Agents, Bank, and AuctionCentral
+
      */
-    public AuctionHouse(String name, Client client)
+    public AuctionHouse(String name)
     {
         NAME = name;
-        myClient = client;
+//        myClient = client;
         myItems = new HashMap<>();
 
         //Give me items!

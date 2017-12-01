@@ -1,5 +1,7 @@
 import IDs.AuctionHouseID;
 
+import java.io.Serializable;
+
 /**
  * This class is a data class that holds the information related to a particular auction item.
  * <p>
@@ -8,7 +10,7 @@ import IDs.AuctionHouseID;
  * currentHighestBidderID is set to null when the object is first created and will be set when the first valid bid is made.
  */
 
-public class Item
+public class Item implements Serializable
 {
     public AuctionHouseID AUCTION_HOUSE_ID;      //IDs.ID of the AuctionHouse that holds this item
     public final Double MINIMUM_BID;         //Minimum bid to start at
