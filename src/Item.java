@@ -1,5 +1,3 @@
-import IDs.AuctionHouseID;
-
 import java.io.Serializable;
 
 /**
@@ -12,7 +10,7 @@ import java.io.Serializable;
 
 public class Item implements Serializable
 {
-    public AuctionHouseID AUCTION_HOUSE_ID;      //IDs.ID of the AuctionHouse that holds this item
+    public int AUCTION_HOUSE_ID;      //IDs.ID of the AuctionHouse that holds this item
     public final Double MINIMUM_BID;         //Minimum bid to start at
     private Double currentBid;               //CurrentBid on this item--the highest of all the bids. Will be 0 until first bid.
     public final String ITEM_NAME;          //Name of the item
