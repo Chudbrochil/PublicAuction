@@ -82,7 +82,7 @@ public class Client
 
             newUser = (Agent) in.readObject();
 
-            System.out.println("Account Amount = " + newUser.getAccountBalance());
+            System.out.println("Account Balance = " + newUser.getAccountBalance());
             System.out.println("Account Number = " + newUser.getAccountNum());
 
             out = new ObjectOutputStream(centralSocket.getOutputStream());
@@ -117,11 +117,6 @@ public class Client
             e.getLocalizedMessage();
             e.printStackTrace();
         }
-    }
-
-    public void registerAuctionHouse(AuctionHouse ah)
-    {
-        //registerAH //todo: Make i/o streams class variables?
     }
 
     public Agent getAgent()

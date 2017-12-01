@@ -17,7 +17,9 @@ public class AuctionCentral
     {
         System.out.println("Registering a new user...");
         System.out.println("User name: " + agent.getName());
-        agent.setBiddingKey(Bank.getKey(agent.getBankKey() + agent.getName())); //TODO: Fix this key.
+
+        // TODO: If you try to register an agent with AC before bank, this might do something weird.
+        agent.setBiddingKey(Bank.getKey(agent.getBankKey() + agent.getName()));
         System.out.println("Bidding key: " + agent.getBiddingKey() + "\n");
 
 
