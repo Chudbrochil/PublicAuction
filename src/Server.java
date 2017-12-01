@@ -1,24 +1,26 @@
 
-import sun.management.AgentConfigurationError;
-
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Server {
+public class Server
+{
 
 
     //constructor for  bank
-    public Server(int num) {
+    public Server(int num)
+    {
 
         Bank bank = new Bank();
 
         //do bank registration for agent
-        try {
+        try
+        {
 
             ServerSocket bankSocket = new ServerSocket(4444);
-            while (true) {
+            while (true)
+            {
 
                 Socket pipeConnection = bankSocket.accept();
                 ObjectOutputStream bankOut = new ObjectOutputStream(pipeConnection.getOutputStream());
@@ -27,20 +29,24 @@ public class Server {
 
                 Object object = bankIn.readObject();
                 System.out.println(object);
-                if(object instanceof Agent) {
-                   Agent agent;
-                   agent = (Agent) object;
+                if (object instanceof Agent)
+                {
+                    Agent agent;
+                    agent = (Agent) object;
 
-                   bank.registerAgent(agent);
-                   bankOut.writeObject(agent);
-               }
-               else if(object instanceof Integer){
-                 System.out.println(bank.getMap().get(((Integer) object).intValue()));
-               }
-//  System.out.println("Where do we reside");
+                    bank.registerAgent(agent);
+                    bankOut.writeObject(agent);
+                }
+                else if (object instanceof Integer)
+                {
+                    System.out.println(bank.getMap().get(((Integer) object).intValue()));
+                }
+                //  System.out.println("Where do we reside");
 
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
             e.getMessage();
             e.getLocalizedMessage();
@@ -49,21 +55,25 @@ public class Server {
 
     }
 
-    public Server() {
+    public Server()
+    {
         AuctionCentral ac = new AuctionCentral();
 
 
-        try {
+        try
+        {
             ServerSocket auctionCentralSocket = new ServerSocket(5555);
 
-            while (true) {
+            while (true)
+            {
 
                 Socket otherPipeConnection = auctionCentralSocket.accept();
                 ObjectOutputStream centralOut = new ObjectOutputStream(otherPipeConnection.getOutputStream());
                 ObjectInputStream centralIn = new ObjectInputStream(otherPipeConnection.getInputStream());
 
-Object object = centralIn.readObject();
-                if (object instanceof Agent) {
+                Object object = centralIn.readObject();
+                if (object instanceof Agent)
+                {
 
 //                    otherPipeConnection = auctionCentralSocket.accept();
 //                    centralOut = new ObjectOutputStream(otherPipeConnection.getOutputStream());
@@ -81,7 +91,8 @@ Object object = centralIn.readObject();
 //                otherPipeConnection = auctionCentralSocket.accept();
 //                centralOut = new ObjectOutputStream(otherPipeConnection.getOutputStream());
 //                centralIn = new ObjectInputStream(otherPipeConnection.getInputStream());
-              else if(object instanceof AuctionHouse) {
+                else if (object instanceof AuctionHouse)
+                {
                     AuctionHouse ah;
                     ah = (AuctionHouse) object;
                     ac.registerAuctionHouse(ah);
@@ -92,7 +103,9 @@ Object object = centralIn.readObject();
             }
 
 
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             e.getLocalizedMessage();
             e.getMessage();
             e.printStackTrace();
@@ -101,10 +114,14 @@ Object object = centralIn.readObject();
     }
 
 
-    public static void main(String[] args) {
-        if (args[0].equals("Bank")) {
+    public static void main(String[] args)
+    {
+        if (args[0].equals("Bank"))
+        {
             Server s = new Server(4444);
-        } else if (args[0].equals("AuctionCentral")) {
+        }
+        else if (args[0].equals("AuctionCentral"))
+        {
             Server s = new Server();
         }
     }

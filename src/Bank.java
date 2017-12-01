@@ -6,8 +6,6 @@ import java.util.Random;
 
 public class Bank
 {
-
-
     HashMap<Integer, Account> map = new HashMap<Integer, Account>();
     Random rand = new Random();
 
@@ -31,6 +29,8 @@ public class Bank
         System.out.println("Account Balance: " + agent.getAccountBalance());
         agent.setAccountNum(rand.nextInt(1000) + 1);
         System.out.println("Account num: " + agent.getAccountNum() + "\n");
+        agent.setBankKey(Bank.getKey(agent.getName()));
+        System.out.println("Agent Bank Key: " + agent.getBankKey());
 
         Account account = new Account(agent.getAccountNum(), agent.getAccountBalance());
         map.put(agent.getAccountNum(), account);

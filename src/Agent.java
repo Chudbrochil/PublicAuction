@@ -23,23 +23,9 @@ public class Agent implements Serializable
     {
         // TODO: For now just doing a withdrawal from bank
         accountBalance -= bidAmt;
-
-
-
         return true;
     }
 
-    // Is ran upon initialization of an agent, registers with bank
-    // and gets back accountNum, bankKey, accountBalance
-    private void getBankKey()
-    {
-
-    }
-
-    public void setBankKey(String bankKey)
-    {
-        this.bankKey = bankKey;
-    }
 
     // This gets called on auction central to get the latest list of auctionhouses;
     private void getUpdatedAHList()
@@ -53,6 +39,13 @@ public class Agent implements Serializable
 
     }
 
+    public void setBankKey(String bankKey)
+    {
+        this.bankKey = bankKey;
+    }
+
+    public String getBankKey() { return bankKey; }
+
     public void setBiddingKey(String newKey)
     {
         biddingKey = newKey;
@@ -61,11 +54,6 @@ public class Agent implements Serializable
     public String getBiddingKey()
     {
         return biddingKey;
-    }
-
-    public String getName()
-    {
-        return this.name;
     }
 
     public void setAccountNum(int accountNum)
@@ -78,16 +66,16 @@ public class Agent implements Serializable
         return accountNum;
     }
 
-
     public void setAccountBalance(int num)
     {
         this.accountBalance = num;
     }
 
-    public double getAccountBalance()
-    {
-        return accountBalance;
-    }
+    public double getAccountBalance() { return accountBalance; }
 
+    public String getName()
+    {
+        return this.name;
+    }
 
 }

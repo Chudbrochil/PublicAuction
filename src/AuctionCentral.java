@@ -17,7 +17,7 @@ public class AuctionCentral
     {
         System.out.println("Registering a new user...");
         System.out.println("User name: " + agent.getName());
-        agent.setBiddingKey("RANDOM STRING"); //TODO: Fix this key.
+        agent.setBiddingKey(Bank.getKey(agent.getBankKey() + agent.getName())); //TODO: Fix this key.
         System.out.println("Bidding key: " + agent.getBiddingKey() + "\n");
 
 
