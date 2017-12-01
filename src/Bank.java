@@ -4,12 +4,18 @@ import java.util.Random;
 public class Bank
 {
 
-    HashMap<Account, Integer> map = new HashMap<Account, Integer>();
+
+    HashMap<Integer, Account> map = new HashMap<Integer, Account>();
     Random rand = new Random();
+
 
     public Bank()
     {
 
+    }
+
+    public HashMap<Integer, Account> getMap() {
+        return map;
     }
 
 
@@ -24,7 +30,7 @@ public class Bank
         System.out.println("Account num: " + agent.getAccountNum() + "\n");
 
         Account account = new Account(agent.getAccountNum(), agent.getAccountBalance());
-        map.put(account, agent.getAccountNum());
+        map.put(agent.getAccountNum(), account);
 
     }
 }

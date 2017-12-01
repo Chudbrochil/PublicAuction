@@ -1,4 +1,6 @@
 
+import sun.management.AgentConfigurationError;
+
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
@@ -23,12 +25,19 @@ public class Server {
                 ObjectInputStream bankIn = new ObjectInputStream(pipeConnection.getInputStream());
                 System.out.println("Bank Online");
 
-                Agent agent;
-                agent = (Agent) bankIn.readObject();
+                Object object = bankIn.readObject();
+                System.out.println(object);
+                if(object instanceof Agent) {
+                   Agent agent;
+                   agent = (Agent) object;
 
-                bank.registerAgent(agent);
-                bankOut.writeObject(agent);
-//                    System.out.println("Where do we reside");
+                   bank.registerAgent(agent);
+                   bankOut.writeObject(agent);
+               }
+               else if(object instanceof Integer){
+                 System.out.println(bank.getMap().get(((Integer) object).intValue()));
+               }
+//  System.out.println("Where do we reside");
 
             }
         } catch (Exception e) {

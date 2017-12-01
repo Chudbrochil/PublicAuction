@@ -50,7 +50,7 @@ public class Controller
     private void placeBid()
     {
         lblUserOutput.setText("User pressed placeBid button.");
-        client.placeBid(Double.valueOf(tfBidAmount.getText()));
+        client.placeBid(Double.valueOf(tfBidAmount.getText()), client.getAgent());
     }
 
     /**

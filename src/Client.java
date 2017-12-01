@@ -7,7 +7,9 @@ public class Client
 {
     private Agent agent;
     private AuctionHouse auctionHouse;
-
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
+    private Socket bankSocket;
 
     public Client(boolean isAgent, String name, Scanner scanner)
     {
@@ -20,8 +22,8 @@ public class Client
                 Socket bankSocket = new Socket("127.0.0.1", 4444);
                 Socket centralSocket = new Socket("127.0.0.1", 5555);
 
-                ObjectOutputStream out = new ObjectOutputStream(bankSocket.getOutputStream());
-                ObjectInputStream in = new ObjectInputStream(bankSocket.getInputStream());
+                 out = new ObjectOutputStream(bankSocket.getOutputStream());
+                 in = new ObjectInputStream(bankSocket.getInputStream());
 
                 registerAgent(out, in, agent, centralSocket);
             }
@@ -57,8 +59,8 @@ public class Client
             {
                 Socket auctionCentralSocket = new Socket("127.0.0.1", 5555);
 
-                ObjectOutputStream out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
-                ObjectInputStream in = new ObjectInputStream(auctionCentralSocket.getInputStream());
+                 out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
+                 in = new ObjectInputStream(auctionCentralSocket.getInputStream());
                 registerAH(out, in, auctionHouse);
             }
             catch (Exception e)
@@ -143,9 +145,21 @@ public class Client
 
 
 
-    public void placeBid(double bidAmt)
+    public void placeBid(double bidAmt, Agent agent)
     {
-        agent.placeBid(bidAmt);
+        try {
+             bankSocket = new Socket("127.0.0.1", 4444);
+
+             out = new ObjectOutputStream(bankSocket.getOutputStream());
+             in = new ObjectInputStream(bankSocket.getInputStream());
+
+            out.writeObject(agent);
+
+        }catch (Exception e){
+            e.getMessage();
+            e.getLocalizedMessage();
+            e.printStackTrace();
+        }
     }
 
 
