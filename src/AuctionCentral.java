@@ -12,7 +12,7 @@ public class AuctionCentral {
     {
         System.out.println("Registering a new user...");
         System.out.println("User name: " + agent.getName());
-        agent.setBiddingKey(random.nextInt(1000) + 1);
+        agent.setBiddingKey("RANDOM STRING"); //TODO: Fix this key.
         System.out.println("Bidding key: " + agent.getBiddingKey() + "\n");
 
 

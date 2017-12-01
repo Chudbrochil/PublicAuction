@@ -42,8 +42,9 @@ public class Client implements IAuctionCentral {
 
     }
 
-    public Client() {
-        AuctionHouse ah = new AuctionHouse();
+    public Client()
+    {
+        AuctionHouse ah = new AuctionHouse("AuctionHouse1", this);
         System.out.println("You've created a new Auction House");
 
         try {

@@ -14,13 +14,15 @@ public class Agent implements Serializable
     private double accountBalance;
 
 
-    public Agent(String name){
+    public Agent(String name)
+    {
         this.name = name;
     }
 
     // Returns true if bid is successful
-    private boolean placeBid()
+    public boolean placeBid()
     {
+
         return true;
     }
 
