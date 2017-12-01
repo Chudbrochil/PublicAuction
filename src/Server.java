@@ -3,6 +3,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.Random;
 
 public class Server {
@@ -69,8 +70,12 @@ public class Server {
                 Agent agent = (Agent) centralIn.readObject();
                 System.out.println("Auction Central Online");
 
+
                 ac.registerAgent(agent);
                 centralOut.writeObject(agent);
+
+                centralOut.writeObject(ac.getMap());
+
             }
 
 

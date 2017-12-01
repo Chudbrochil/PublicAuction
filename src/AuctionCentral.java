@@ -3,7 +3,8 @@ import java.util.Random;
 
 public class AuctionCentral {
 
-    HashMap<AuctionHouse, Integer> map = new HashMap<>();
+
+    HashMap<AuctionHouse, String> map = new HashMap<AuctionHouse, String>();
     Random random = new Random();
     public AuctionCentral(){
 
@@ -21,6 +22,8 @@ public class AuctionCentral {
 
     public void registerAuctionHouse(AuctionHouse ah)
     {
+        map.put(ah, ah.getName());
+        ah.setIDs("public Id", "Secret key");
         //todo: implement. See Bank.registerAgent(Agent agent)
     }
 
@@ -29,6 +32,11 @@ public class AuctionCentral {
     public boolean placeHold(int biddingKey, float amount)
     {
         return true;
+    }
+
+
+    public HashMap<AuctionHouse, String> getMap() {
+        return map;
     }
 
 }

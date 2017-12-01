@@ -42,6 +42,7 @@ public class AuctionHouse implements Serializable
         {
             System.out.println(ItemDB.getRandomItem().ITEM_NAME);
         }
+        name = publicID = "ID";
     }
     
     /**
@@ -63,7 +64,9 @@ public class AuctionHouse implements Serializable
         secretKey = secretkey;
         
     }
-    
+    public String getName(){
+        return name;
+    }
     public void placeHold(String biddingKey, float amount)
     {
     
