@@ -56,18 +56,18 @@ public class Server {
                 ObjectOutputStream centralOut = new ObjectOutputStream(otherPipeConnection.getOutputStream());
                 ObjectInputStream centralIn = new ObjectInputStream(otherPipeConnection.getInputStream());
 
-                AuctionHouse ah;
-                ah = (AuctionHouse) centralIn.readObject();
-
-                ac.registerAuctionHouse(ah);
-
-                centralOut.writeObject(ah);
-                System.out.println("here we rare");
-
-
-                otherPipeConnection = auctionCentralSocket.accept();
-                centralOut = new ObjectOutputStream(otherPipeConnection.getOutputStream());
-                centralIn = new ObjectInputStream(otherPipeConnection.getInputStream());
+//                AuctionHouse ah;
+//                ah = (AuctionHouse) centralIn.readObject();
+//
+//                ac.registerAuctionHouse(ah);
+//
+//                centralOut.writeObject(ah);
+//                System.out.println("here we rare");
+//
+//
+//                otherPipeConnection = auctionCentralSocket.accept();
+//                centralOut = new ObjectOutputStream(otherPipeConnection.getOutputStream());
+//                centralIn = new ObjectInputStream(otherPipeConnection.getInputStream());
                 Agent agent = (Agent) centralIn.readObject();
                 System.out.println("Auction Central Online");
 

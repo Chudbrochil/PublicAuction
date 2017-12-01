@@ -17,12 +17,10 @@ public class Controller
     @FXML
     private void initialize()
     {
-        Agent agent = new Agent("Agent1");
-        //Client client = new Client("Agent1");
+        Client client = new Client("Agent1");
 
-        Client client = new Client(agent);
 
-        //agent = client.getAgent();
+        agent = client.getAgent();
 
         update();
 
