@@ -49,7 +49,7 @@ public class Controller
     @FXML
     private void placeBid()
     {
-        lblUserOutput.setText("User pressed placeBid button.");
+        lblUserOutput.setText("Accepted bid for: " + tfBidAmount.getText());
         client.placeBid(Double.valueOf(tfBidAmount.getText()), client.getAgent());
     }
 

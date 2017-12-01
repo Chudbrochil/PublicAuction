@@ -25,7 +25,7 @@ public class Bank
 
         System.out.println("Registering a new user.....");
         System.out.println("Account name: " + agent.getName());
-        agent.setAccountBalance(500);
+        agent.setAccountBalance(500.00);
         System.out.println("Account Balance: " + agent.getAccountBalance());
         agent.setAccountNum(rand.nextInt(1000) + 1);
         System.out.println("Account num: " + agent.getAccountNum() + "\n");
