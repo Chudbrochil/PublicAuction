@@ -8,7 +8,7 @@ public class Client
     private Agent agent;
     private AuctionHouse auctionHouse;
 
-    
+
     public Client(boolean isAgent, String name, Scanner scanner)
     {
         if(isAgent)
@@ -50,7 +50,7 @@ public class Client
 
         if(isAgent == false)
         {
-            AuctionHouse ah = new AuctionHouse("AuctionHouse1");
+            auctionHouse = new AuctionHouse("AuctionHouse1");
             System.out.println("You've created a new Auction House");
 
             try
@@ -59,8 +59,7 @@ public class Client
 
                 ObjectOutputStream out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
                 ObjectInputStream in = new ObjectInputStream(auctionCentralSocket.getInputStream());
-
-                registerAH(out, in, ah);
+                registerAH(out, in, auctionHouse);
             }
             catch (Exception e)
             {
@@ -69,7 +68,6 @@ public class Client
                 e.printStackTrace();
             }
         }
-
 
     }
 
@@ -94,7 +92,6 @@ public class Client
             
             System.out.println("Bidding Key = " + newUser.getBiddingKey());
             agent = newUser;
-
         }
         catch (Exception e)
         {
@@ -142,4 +139,15 @@ public class Client
             Client client = new Client(true, args[1], scanner);
         }
     }
+
+
+
+
+    public void placeBid(double bidAmt)
+    {
+        agent.placeBid(bidAmt);
+    }
+
+
+
 }

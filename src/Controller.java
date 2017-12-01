@@ -1,5 +1,6 @@
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -11,8 +12,11 @@ public class Controller
     @FXML
     private Label lblUserOutput, lblBalance;
 
-    Agent agent;
-    Client client;
+    @FXML
+    private TextField tfBidAmount;
+
+    Agent agent; // Inside class that keeps account information and item information
+    Client client; // Wrapper class for agent that opens sockets and communicates for agent
 
     @FXML
     private void initialize()
@@ -44,6 +48,7 @@ public class Controller
     private void placeBid()
     {
         lblUserOutput.setText("User pressed placeBid button.");
+        client.placeBid(Double.valueOf(tfBidAmount.getText()));
     }
 
     /**
