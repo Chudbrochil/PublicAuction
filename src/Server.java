@@ -3,6 +3,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.Random;
 
 public class Server {
@@ -45,27 +46,48 @@ public class Server {
     {
         AuctionCentral ac = new AuctionCentral();
 
-        while (true) {
-            try {
 
-                ServerSocket auctionCentralSocket = new ServerSocket(5555);
+        try {
+            ServerSocket auctionCentralSocket = new ServerSocket(5555);
+
+            while (true) {
 
                 Socket otherPipeConnection = auctionCentralSocket.accept();
                 ObjectOutputStream centralOut = new ObjectOutputStream(otherPipeConnection.getOutputStream());
                 ObjectInputStream centralIn = new ObjectInputStream(otherPipeConnection.getInputStream());
 
-                System.out.println("Auction Central Online");
+                AuctionHouse ah;
+                ah = (AuctionHouse) centralIn.readObject();
+
+                ac.registerAuctionHouse(ah);
+
+                centralOut.writeObject(ah);
+                System.out.println("here we rare");
+
+
+                otherPipeConnection = auctionCentralSocket.accept();
+                centralOut = new ObjectOutputStream(otherPipeConnection.getOutputStream());
+                centralIn = new ObjectInputStream(otherPipeConnection.getInputStream());
                 Agent agent = (Agent) centralIn.readObject();
+                System.out.println("Auction Central Online");
+
+
                 ac.registerAgent(agent);
                 centralOut.writeObject(agent);
 
+                centralOut.writeObject(ac.getMap());
 
-            } catch (Exception e) {
-                e.getLocalizedMessage();
-                e.getMessage();
-                e.printStackTrace();
             }
+
+
+
+
+        } catch (Exception e) {
+            e.getLocalizedMessage();
+            e.getMessage();
+            e.printStackTrace();
         }
+
     }
 
 
