@@ -70,7 +70,7 @@ public class AuctionHouse
         secretKey = secretkey;
     }
     
-    public void placeHold(String biddingKey, float amount)
+    public void placeHold(String biddingKey, Double amount)
     {
     
     }
@@ -120,11 +120,11 @@ public class AuctionHouse
                     if(!line.startsWith("//"))
                     {
                         // TODO: This has no error checking against bad files, don't mess with the file :-)
-                        // TODO: Will error on input not like: string,string,float and extra blank lines at end of file
+                        // TODO: Will error on input not like: string,string,Double and extra blank lines at end of file
                         String[] elements = line.split(",");
                         String itemName = elements[0];
                         String imgPath = elements[1];
-                        Float minimumBid = Float.valueOf(elements[2]);
+                        Double minimumBid = Double.valueOf(elements[2]);
                         items.add(new Item(itemName, imgPath, minimumBid));
                     }
                 }
