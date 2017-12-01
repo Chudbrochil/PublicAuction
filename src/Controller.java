@@ -20,7 +20,7 @@ public class Controller
         Agent agent = new Agent("Agent1");
         //Client client = new Client("Agent1");
 
-        Client client = new Client(agent);
+        Client client = new Client(agent.getName());
 
         //agent = client.getAgent();
 

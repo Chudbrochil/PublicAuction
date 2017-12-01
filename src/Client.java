@@ -48,9 +48,9 @@ public class Client implements IAuctionCentral
 
     }
 
-     public Client(Agent agent)
+     public Client(String name)
      {
-         //agent = new Agent(name);
+         agent = new Agent(name);
          System.out.println("You've chosen " + agent.getName() + " as your username");
          try
          {
