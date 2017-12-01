@@ -18,26 +18,15 @@ public class Client
 
         try
         {
-
             auctionCentralSocket = new Socket("127.0.0.1", 5555);
 
             if(isAgent)
             {
-                agent = new Agent(name);
-                System.out.println("You've chosen " + agent.getName() + " as your username");
-                bankSocket = new Socket("127.0.0.1", 4444);
-                out = new ObjectOutputStream(bankSocket.getOutputStream());
-                in = new ObjectInputStream(bankSocket.getInputStream());
-                registerAgent(out, in, agent);
+                agentInit(name);
             }
             else
             {
-
-                auctionHouse =  new AuctionHouse(name);
-                System.out.println("You've chosen " + auctionHouse.getName() + " as your auction house.");
-                out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
-                in = new ObjectInputStream(auctionCentralSocket.getInputStream());
-                registerAH(out, in, auctionHouse);
+                auctionHouseInit(name);
             }
         }
         catch(Exception e)
@@ -47,6 +36,25 @@ public class Client
             e.getLocalizedMessage();
         }
 
+    }
+
+    private void agentInit(String name) throws Exception
+    {
+            agent = new Agent(name);
+            System.out.println("You've chosen " + agent.getName() + " as your username");
+            bankSocket = new Socket("127.0.0.1", 4444);
+            out = new ObjectOutputStream(bankSocket.getOutputStream());
+            in = new ObjectInputStream(bankSocket.getInputStream());
+            registerAgent(out, in, agent);
+    }
+
+    private void auctionHouseInit(String name) throws Exception
+    {
+        auctionHouse =  new AuctionHouse(name);
+        System.out.println("You've chosen " + auctionHouse.getName() + " as your auction house.");
+        out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
+        in = new ObjectInputStream(auctionCentralSocket.getInputStream());
+        registerAH(out, in, auctionHouse);
     }
 
 
