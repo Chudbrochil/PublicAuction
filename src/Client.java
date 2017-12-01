@@ -105,6 +105,8 @@ public class Client
         try
         {
             out.writeObject(ah);
+
+
             ah = (AuctionHouse) in.readObject();
         }
         catch (Exception e)
@@ -128,7 +130,7 @@ public class Client
     public static void main(String[] args)
     {
         Scanner scanner = new Scanner(System.in);
-        if (args[0].equals("Auction House"))
+        if (args[0].equals("AuctionHouse"))
         {
             Client client = new Client(false, args[0], null);
         }
