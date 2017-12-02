@@ -16,20 +16,27 @@ public class Item implements Serializable
     public final String ITEM_NAME;          //Name of the item
     private String currentHighestBidderID;    //BIDDING_ID of Agent who holds the currentBid, which is winning. Will be null until first bid.
     private String imgPath;
-    public final String ITEM_ID;            //Unique item ID
-    private static int staticIDCounter = 1;
+    public int itemID;            //Unique item ID
 
-
-    public Item(String itemName, String imgPath, Double minimumBid)
+    public Item(String itemName, String imgPath, double minimumBid)
     {
         ITEM_NAME = itemName;
         this.imgPath = imgPath;
+        this.itemID = itemID;
         MINIMUM_BID = minimumBid;
         currentBid = 0.0;
         currentHighestBidderID = null;
-        ITEM_ID = staticIDCounter * 42 + ""; //actually make it look like a real ID, sorta.
-        staticIDCounter++;
     }
+
+    public Item(String itemName, String imgPath, Double minimumBid, int itemID)
+    {
+        this(itemName, imgPath, minimumBid);
+        this.itemID = itemID;
+    }
+
+    public void setItemID(int itemID) { this.itemID = itemID; }
+
+    public int getItemID() { return itemID; }
 
     public synchronized Double getCurrentBid()
     {

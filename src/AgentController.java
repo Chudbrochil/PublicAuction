@@ -1,6 +1,9 @@
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import java.util.ArrayList;
@@ -16,7 +19,10 @@ public class AgentController
     private Label lblBalance;
 
     @FXML
-    private TextArea taAgentOutput, taItemList;
+    private TextArea taAgentOutput;//, taItemList;
+
+    @FXML
+    private ListView lvItems;
 
     @FXML
     private TextField tfBidAmount;
@@ -46,14 +52,14 @@ public class AgentController
             {
                 // Getting the latest list of auction houses that are up and updates the item list
                 client.updateListOfAHs();
-                updateItemList();
 
                 // Platform syncs this command with the UI, fixes javafx thread bugs
                 Platform.runLater(() -> {
+                    updateItemList();
                     lblBalance.setText(String.valueOf(agent.getAccountBalance()));
                 });
             }
-        }, 0, 500, TimeUnit.MILLISECONDS);
+        }, 0, 250, TimeUnit.MILLISECONDS);
     }
 
 
@@ -78,25 +84,57 @@ public class AgentController
     private void updateItemList()
     {
         ArrayList<AuctionHouse> listOfAHs = agent.getAuctionHouses();
-
         ArrayList<Item> items = new ArrayList<>();
-
+        ObservableList<String> itemNames = FXCollections.observableArrayList();
         for(int i = 0; i < listOfAHs.size(); ++i)
         {
-            HashMap<String, Item> ahItems = listOfAHs.get(i).getItems();
-            items.addAll(ahItems.values());
+            HashMap<Integer, Item> ahItems = listOfAHs.get(i).getItems();
+            ArrayList<Item> listOfItems = new ArrayList<Item>(ahItems.values());
+
+            for(int j = 0; j < listOfItems.size(); ++j)
+            {
+                // Checking to make sure the global items list doesn't already have the item before adding it
+                if(!items.contains(listOfItems.get(j)))
+                {
+                    items.add(listOfItems.get(j));
+                    itemNames.add("Name: " + items.get(j).ITEM_NAME + " ID:" + items.get(j).itemID);
+                }
+            }
         }
 
+//        for(int i = 0; i < items.size(); ++i)
+//        {
+//            System.out.println("Name: " + items.get(i).ITEM_NAME + " ID:" + items.get(i).itemID);
+//            //lvItems.getItems().
+//            //itemNames.set(i, "Name: " + items.get(i).ITEM_NAME + " ID:" + items.get(i).itemID);
+//        }
 
-        String itemStrings = "";
-        // TODO: Debug
-        for(int i = 0; i < items.size(); ++i)
-        {
-            itemStrings += items.get(i).ITEM_NAME + "\n";
-        }
-        taItemList.setText(itemStrings);
+        lvItems.setItems(itemNames);
 
     }
+
+//    private void updateItemList()
+//    {
+//        ArrayList<AuctionHouse> listOfAHs = agent.getAuctionHouses();
+//
+//        ArrayList<Item> items = new ArrayList<>();
+//
+//        for(int i = 0; i < listOfAHs.size(); ++i)
+//        {
+//            HashMap<String, Item> ahItems = listOfAHs.get(i).getItems();
+//            items.addAll(ahItems.values());
+//        }
+//
+//
+//        String itemStrings = "";
+//        // TODO: Debug
+//        for(int i = 0; i < items.size(); ++i)
+//        {
+//            itemStrings += items.get(i).ITEM_NAME + "\n";
+//        }
+//        taItemList.setText(itemStrings);
+//
+//    }
 
     /**
      * TODO: UI elements needed...

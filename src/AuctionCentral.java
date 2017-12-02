@@ -32,9 +32,11 @@ public class AuctionCentral
         auctionHouseID++;
         String auctionHouseKey = Bank.getKey(auctionHouse.getName());
         auctionHouse.setIDs(auctionHouseID, auctionHouseKey);
+
         listOfAHs.add(auctionHouse);
         System.out.println("Auction house is registered...");
         System.out.println("ID: " + auctionHouseID + " AH Key: " + auctionHouseKey);
+        auctionHouse.populateItems();
 
 
         System.out.println("Current list of Auction Houses:");

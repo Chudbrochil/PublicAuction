@@ -29,12 +29,13 @@ public class AuctionHouse implements Serializable
     private final String NAME;
     private int publicID;
     private String ahKey; // Requested and received from Auction Central
-    private HashMap<String, Item> items; //Item ID as key for the item.
+    private HashMap<Integer, Item> items; //Item ID as key for the item.
     private HashSet<PendingBidRequest> pendingHolds; //placeBid calls this AuctionHouse is waiting on holds for to respond to
                                              //the message.
     //private HashMap<String, Time> itemTimers;
     //private HashMap<>
     //private static int AuctionHouseID;
+    private int itemCounter = 0;
 
     /**
      * AuctionHouse()
@@ -47,17 +48,30 @@ public class AuctionHouse implements Serializable
         NAME = name;
         items = new HashMap<>();
         pendingHolds = new HashSet();
+    }
 
-        //Give me items!
+    /**
+     * populateItems()
+     *
+     * This method fills the auctionHouse with 3 random items. This needs to be done after the auction house is
+     * registered so that the item can have it's auction house id set. This gives the item is "uniqueness"
+     *
+     */
+    public void populateItems()
+    {
+        System.out.println("Populating " + NAME + " with 3 random items.");
         for (int i = 0; i < 3; ++i)
         {
             Item item = ItemDB.getRandomItem();
-            items.put(item.ITEM_ID, item);
-            System.out.println(item.ITEM_NAME + " - Min price: " + item.MINIMUM_BID);
+            item.AUCTION_HOUSE_ID = publicID;
+            item.setItemID(itemCounter);
+            items.put(item.getItemID(), item);
+            System.out.println(item.ITEM_NAME + " - Min price: " + item.MINIMUM_BID + " itemID: " + item.getItemID());
+            itemCounter++;
         }
     }
 
-    public HashMap<String, Item> getItems()
+    public HashMap<Integer, Item> getItems()
     {
         return items;
     }
