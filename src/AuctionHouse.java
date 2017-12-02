@@ -28,7 +28,7 @@ public class AuctionHouse implements Serializable
 {
     private final String NAME;
     private int publicID;
-    private String secretKey; // Requested and received from Auction Central
+    private String ahKey; // Requested and received from Auction Central
     private HashMap<String, Item> items; //Item ID as key for the item.
     private HashSet<PendingBidRequest> pendingHolds; //placeBid calls this AuctionHouse is waiting on holds for to respond to
                                              //the message.
@@ -65,10 +65,10 @@ public class AuctionHouse implements Serializable
     /**
      * Called by an IAuctionCentral to set the PublicID and SecretKey
      */
-    public void setIDs(int publicID, String secretKey)
+    public void setIDs(int publicID, String ahKey)
     {
         this.publicID = publicID;
-        this.secretKey = secretKey;
+        this.ahKey = ahKey;
     }
 
     public int getPublicID()

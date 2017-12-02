@@ -30,9 +30,9 @@ public class Bank
      */
     public void registerAgent(String agentName, Account blankAccount)
     {
-        agentName = "TEST";
         int accountNum = rand.nextInt(10000 + 1);
-        double startingBalance = 500.00;
+        double startingBalance = 10000.00;
+        System.out.println("Name: " + agentName);
         String bankKey = Bank.getKey(agentName);
 
         blankAccount.setAccountNum(accountNum);
@@ -42,7 +42,7 @@ public class Bank
         System.out.println("\nRegistering a new user.....");
         System.out.println("Account Name: " + agentName);
 
-        System.out.println("Account Balance: " + blankAccount.getAccountBalance());
+        System.out.println("Starting Balance: " + blankAccount.getAccountBalance());
         System.out.println("Account Number: " + blankAccount.getAccountNum());
         System.out.println("Agent Bank Key: " + blankAccount.getBankKey());
 

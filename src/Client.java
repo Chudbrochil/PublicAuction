@@ -16,11 +16,24 @@ public class Client
     private Socket auctionCentralSocket;
     private TextArea taAgentOutput;
 
+    /**
+     * Client()
+     * Constructor useful for running on command line
+     * @param isAgent
+     * @param name
+     */
     public Client(boolean isAgent, String name)
     {
         this(isAgent, name, null);
     }
 
+    /**
+     * Client()
+     * Regular constructor for Client that gets called the Controller
+     * @param isAgent
+     * @param name
+     * @param taAgentOutput
+     */
     public Client(boolean isAgent, String name, TextArea taAgentOutput)
     {
         if (name == null)
@@ -58,7 +71,7 @@ public class Client
         bankSocket = new Socket("127.0.0.1", 4444);
         out = new ObjectOutputStream(bankSocket.getOutputStream());
         in = new ObjectInputStream(bankSocket.getInputStream());
-        registerAgent(out, in, agent);
+        registerAgent(out, in);
 
     }
 
@@ -68,31 +81,32 @@ public class Client
         System.out.println("You've chosen " + auctionHouse.getName() + " as your auction house.");
         out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
         in = new ObjectInputStream(auctionCentralSocket.getInputStream());
-        registerAH(out, in, auctionHouse);
+        registerAH(out, in);
     }
 
 
-    private void registerAgent(ObjectOutputStream out, ObjectInputStream in, Agent newUser)
+    private void registerAgent(ObjectOutputStream out, ObjectInputStream in)
     {
         try
         {
             // Registering with bank
-            out.writeObject(new Message(MessageType.REGISTER_AGENT, newUser.getName(), null));
+            out.writeObject(new Message(MessageType.REGISTER_AGENT, agent.getName(), new Account()));
             Message response = (Message) in.readObject();
-            newUser.setAccountInfo(response.getAccount());
+            agent.setAccountInfo(response.getAccount());
 
-            if(taAgentOutput != null) { taAgentOutput.appendText("Account Balance: " + newUser.getAccountBalance() + "\n"); }
-            if(taAgentOutput != null) { taAgentOutput.appendText("Account Number: " + newUser.getAccountNum() + "\n"); }
+            if(taAgentOutput != null) { taAgentOutput.appendText("Starting Balance: " + agent.getAccountBalance() + "\n"); }
+            if(taAgentOutput != null) { taAgentOutput.appendText("Account Number: " + agent.getAccountNum() + "\n"); }
 
             // Registering with AC
             out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
             in = new ObjectInputStream(auctionCentralSocket.getInputStream());
 
-            out.writeObject(agent);
-            newUser = (Agent) in.readObject();
+            out.writeObject(new Message(MessageType.REGISTER_AGENT, agent.getName(), agent.getBankKey(), ""));
 
-            if(taAgentOutput != null) { taAgentOutput.appendText("Bidding Key = " + newUser.getBiddingKey() + "\n"); }
-            agent = newUser;
+            response = (Message)in.readObject();
+            agent.setBiddingKey(response.getBiddingKey());
+
+            if(taAgentOutput != null) { taAgentOutput.appendText("Bidding Key: " + agent.getBiddingKey() + "\n"); }
         }
         catch (Exception e)
         {
@@ -102,13 +116,13 @@ public class Client
         }
     }
 
-    private void registerAH(ObjectOutputStream out, ObjectInputStream in, AuctionHouse ah)
+    private void registerAH(ObjectOutputStream out, ObjectInputStream in)
     {
         try
         {
-            out.writeObject(ah);
-            ah = (AuctionHouse) in.readObject();
-
+            out.writeObject(new Message(MessageType.REGISTER_AH, auctionHouse));
+            Message incomingMessage = (Message)in.readObject();
+            auctionHouse = incomingMessage.getAuctionHouse();
         }
         catch (Exception e)
         {
@@ -168,7 +182,7 @@ public class Client
             auctionCentralSocket = new Socket("127.0.0.1", 5555);
             out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
             in = new ObjectInputStream(auctionCentralSocket.getInputStream());
-            out.writeObject(new Message(MessageType.UPDATE_AHS, null));
+            out.writeObject(new Message(MessageType.UPDATE_AHS, new ArrayList<AuctionHouse>()));
 
             Message response = (Message)in.readObject();
 

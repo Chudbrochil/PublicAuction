@@ -27,8 +27,11 @@ public class Message implements Serializable
     //for type REGISTER_AGENT
     private Account account;
     private String name;
+    private String bankKey;
+    private String biddingKey;
 
     //for type REGISTER_AH
+    private AuctionHouse auctionHouse;
 
     
     //for type PLACE_HOLD
@@ -61,10 +64,12 @@ public class Message implements Serializable
         BIDDING_ID = null;
     }
 
-    // Constructor for a REGISTER_AGENT message
+    // Constructor for a REGISTER_AGENT message (to Bank)
     public Message(MessageType t, String name, Account account)
     {
         type = t;
+        this.name = name;
+        this.account = account;
 
         // not used
         ACCOUNT_NUM = 0;
@@ -74,12 +79,45 @@ public class Message implements Serializable
         AUCTION_HOUSE_ID = null;
     }
 
+    //Constructor for a REGISTER_AGENT message (to AC)
+    public Message(MessageType t, String name, String bankKey, String biddingKey)
+    {
+        type = t;
+
+        this.name = name;
+        this.bankKey = bankKey;
+        this.biddingKey = biddingKey;
+
+        // not used
+        ACCOUNT_NUM = 0;
+        BIDDING_AMOUNT = 0;
+        BIDDING_ID = null;
+        ITEM_ID = null;
+        AUCTION_HOUSE_ID = null;
+    }
+
+    //Constructor for a REGISTER_AH message (to AC)
+    public Message(MessageType t, AuctionHouse auctionHouse)
+    {
+        type = t;
+        this.setAuctionHouse(auctionHouse);
+
+        // not used
+        ACCOUNT_NUM = 0;
+        BIDDING_AMOUNT = 0;
+        BIDDING_ID = null;
+        ITEM_ID = null;
+        AUCTION_HOUSE_ID = null;
+
+    }
+
     //Constructor for UPDATE_AHS message
     public Message(MessageType t, ArrayList<AuctionHouse> listOfAHs)
     {
         type = t;
         listOfAHs = new ArrayList<>();
 
+        // not used
         BIDDING_AMOUNT = 0.0;
         ITEM_ID = null;
         AUCTION_HOUSE_ID = null;
@@ -110,6 +148,11 @@ public class Message implements Serializable
     
     public BidResponse getBidResponse() { return response; }
 
+
+    /**
+     * Getters/setters for private members encapsulated in messages
+     */
+
     public ArrayList<AuctionHouse> getListOfAHs() { return listOfAHs; }
 
     public void setListOfAHs(ArrayList<AuctionHouse> listOfAHs) { this.listOfAHs = listOfAHs; }
@@ -122,4 +165,15 @@ public class Message implements Serializable
 
     public void setName(String name) { this.name = name; }
 
+    public String getBankKey() { return bankKey; }
+
+    public void setBankKey(String bankKey) { this.bankKey = bankKey; }
+
+    public String getBiddingKey() { return biddingKey; }
+
+    public void setBiddingKey(String biddingKey) { this.biddingKey = biddingKey; }
+
+    public AuctionHouse getAuctionHouse() { return auctionHouse; }
+
+    public void setAuctionHouse(AuctionHouse auctionHouse) { this.auctionHouse = auctionHouse; }
 }

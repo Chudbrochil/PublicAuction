@@ -19,11 +19,11 @@ public class Server
         {
             if(isBank)
             {
-                bankInit();
+                bankLaunch();
             }
             else
             {
-                auctionCentralInit();
+                auctionCentralLaunch();
             }
         }
         catch (Exception e)
@@ -34,7 +34,7 @@ public class Server
         }
     }
 
-    private void bankInit() throws Exception
+    private void bankLaunch() throws Exception
     {
         Bank bank = new Bank();
         ServerSocket bankSocket = new ServerSocket(bankPort);
@@ -51,16 +51,10 @@ public class Server
             ObjectInputStream bankIn = new ObjectInputStream(pipeConnection.getInputStream());
             Object object = bankIn.readObject();
 
-            // Initializing an agent for the first time wtih the bank
-//            if (object instanceof Agent)
-//            {
-//                Agent agent = (Agent) object;
-//                bank.registerAgent(agent);
-//                bankOut.writeObject(agent);
-//            }
             if(object instanceof Message)
             {
                 Message incomingMessage = (Message)object;
+                // Performing a withdrawl for an agent
                 if(incomingMessage.getType() == MessageType.WITHDRAW)
                 {
                     // If we were able to deduct the bidding amount, then take it out, send a success back.
@@ -68,6 +62,7 @@ public class Server
                     {
                         incomingMessage.setBidResponse(BidResponse.ACCEPT);
                         System.out.println("Bank accepted withdrawl of " + incomingMessage.BIDDING_AMOUNT + " from acct#: " + incomingMessage.ACCOUNT_NUM);
+                        System.out.println("Current balance: " + bank.getAccountNumberToAccountMap().get(incomingMessage.ACCOUNT_NUM).getAccountBalance());
                     }
                     // If there wasn't enough money, send a rejection back.
                     else
@@ -77,12 +72,10 @@ public class Server
                     }
                     bankOut.writeObject(incomingMessage);
                 }
+                // Initializing an agent with an account (account#, balance, bankkey)
                 else if(incomingMessage.getType() == MessageType.REGISTER_AGENT)
                 {
-                    Account accountToOpen = new Account();
-                    bank.registerAgent(incomingMessage.getName(), accountToOpen);
-                    incomingMessage.setAccount(accountToOpen);
-                    System.out.println(incomingMessage.getAccount().getAccountBalance());
+                    bank.registerAgent(incomingMessage.getName(), incomingMessage.getAccount());
                     bankOut.writeObject(incomingMessage);
                 }
             }
@@ -95,7 +88,7 @@ public class Server
         }
     }
 
-    private void auctionCentralInit() throws Exception
+    private void auctionCentralLaunch() throws Exception
     {
         AuctionCentral ac = new AuctionCentral();
         ServerSocket auctionCentralSocket = new ServerSocket(auctionCentralPort);
@@ -113,29 +106,26 @@ public class Server
 
             Object object = centralIn.readObject();
 
-            if (object instanceof Agent)
-            {
-                Agent agent = (Agent) object;
-                ac.registerAgent(agent);
-                centralOut.writeObject(agent);
-            }
-            else if (object instanceof AuctionHouse)
-            {
-                AuctionHouse ah;
-                ah = (AuctionHouse) object;
-                ac.registerAuctionHouse(ah);
-                centralOut.writeObject(ah);
-            }
-
-
             if(object instanceof Message)
             {
                 Message incomingMessage = (Message)object;
+                // Updating the list of AHs to the agent
                 if(incomingMessage.getType() == MessageType.UPDATE_AHS)
                 {
                     incomingMessage.setListOfAHs(ac.getListOfAHs());
-                    centralOut.writeObject(incomingMessage);
                 }
+                // Registering a new agent with AC
+                else if(incomingMessage.getType() == MessageType.REGISTER_AGENT)
+                {
+                    String biddingKey = ac.registerAgent(incomingMessage.getName(), incomingMessage.getBankKey());
+                    incomingMessage.setBiddingKey(biddingKey);
+                }
+                // Registering a new AH with AC
+                else if(incomingMessage.getType() == MessageType.REGISTER_AH)
+                {
+                    ac.registerAuctionHouse(incomingMessage.getAuctionHouse());
+                }
+                centralOut.writeObject(incomingMessage);
             }
 
 
