@@ -6,8 +6,9 @@ import java.util.Random;
 
 public class Bank
 {
-    HashMap<Integer, Account> map = new HashMap<>();
-    Random rand = new Random();
+    private HashMap<Integer, Account> accountNumberToAccount = new HashMap<>();
+    private Random rand = new Random();
+
 
 
     public Bank()
@@ -15,9 +16,9 @@ public class Bank
 
     }
 
-    public HashMap<Integer, Account> getMap()
+    public HashMap<Integer, Account> getAccountNumberToAccountMap()
     {
-        return map;
+        return accountNumberToAccount;
     }
 
 
@@ -32,17 +33,17 @@ public class Bank
     public void registerAgent(Agent agent)
     {
 
-        System.out.println("Registering a new user.....");
-        System.out.println("Account name: " + agent.getName());
+        System.out.println("\nRegistering a new user.....");
+        System.out.println("Account Name: " + agent.getName());
         agent.setAccountBalance(500.00);
         System.out.println("Account Balance: " + agent.getAccountBalance());
         agent.setAccountNum(rand.nextInt(100000) + 1);
-        System.out.println("Account num: " + agent.getAccountNum() + "\n");
+        System.out.println("Account Number: " + agent.getAccountNum());
         agent.setBankKey(Bank.getKey(agent.getName()));
         System.out.println("Agent Bank Key: " + agent.getBankKey());
 
         Account account = new Account(agent.getAccountNum(), agent.getAccountBalance());
-        map.put(agent.getAccountNum(), account);
+        accountNumberToAccount.put(agent.getAccountNum(), account);
 
     }
 

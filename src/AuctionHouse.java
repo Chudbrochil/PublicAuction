@@ -63,6 +63,11 @@ public class AuctionHouse implements Serializable
         this.secretKey = secretKey;
     }
 
+    public int getPublicID()
+    {
+        return publicID;
+    }
+
     public void placeHold(String biddingKey, Double amount)
     {
 
