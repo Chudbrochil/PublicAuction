@@ -14,7 +14,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * (each item has an auction house IDs.ID, item IDs.ID, minimum bid, and current bid.)
  * It receives bids and acknowledges them. (Agents provide their
  * Successful bid: asks AuctionCentral to place/releaes a hold on the bidder's bank account
- * for an amount equal to the bid in question
+ * for an AMOUNT equal to the bid in question
  * A bid is successful and 'wins' if it is not overtaken in 30 seconds.
  * For a successful/winning bid, the AuctionHouse requests that AuctionCentral transfer the money to the AuctionHouse.
  * <p>
@@ -77,7 +77,7 @@ public class AuctionHouse implements Serializable
      * placeBid()
      * Called by an Agent to place a bid (or by a Client acting on behalf of an Agent)
      *
-     * @param biddingID      biddingID of the Agent who wishes to place a bid
+     * @param biddingID      BIDDING_ID of the Agent who wishes to place a bid
      * @param amount         Amount the bidder wishes to bid.
      * @param itemID         ID of the item the bidder wishes to bid on
      * @param auctionHouseID the ID of this auction house (needed by Client)
@@ -92,14 +92,11 @@ public class AuctionHouse implements Serializable
             return;
         }
 
-        //If it's a valid bid amount
+        //If it's a valid bid AMOUNT
         if (amount >= item.MINIMUM_BID && amount > item.getCurrentBid())
         {
             //Agent didn't bid enough USER OUTPUT
-            if(placeHold(biddingID, amount, auctionHouseID))
-            {
-                
-            }
+            //if(placeHold(BIDDING_ID, AMOUNT, AUCTION_HOUSE_ID))
         }
     }
 
