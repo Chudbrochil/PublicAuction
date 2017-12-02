@@ -80,6 +80,7 @@ public class Server
             ObjectInputStream centralIn = new ObjectInputStream(otherPipeConnection.getInputStream());
 
             Object object = centralIn.readObject();
+
             if (object instanceof Agent)
             {
 
@@ -102,12 +103,15 @@ public class Server
                 AuctionHouse ah;
                 ah = (AuctionHouse) object;
                 ac.registerAuctionHouse(ah);
+                ac.getListOfAHs().add(ah);
                 centralOut.writeObject(ah);
             }
 
-            else if(object instanceof ArrayList){
-                object = ac.getListOfAHs();
-                centralOut.writeObject(object);
+            else {
+
+
+                System.out.println(ac.getListOfAHs().size());
+                centralOut.writeObject(ac.getListOfAHs());
             }
 //                centralOut.writeObject(ac.getMap());
 

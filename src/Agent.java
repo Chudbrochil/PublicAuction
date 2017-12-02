@@ -91,4 +91,7 @@ public class Agent implements Serializable
     }
 
 
+    public void setAuctionHouses(ArrayList<AuctionHouse> auctionHouses) {
+        this.auctionHouses = auctionHouses;
+    }
 }

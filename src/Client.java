@@ -140,21 +140,26 @@ public class Client
     }
 
 
-    public void getListAH(ArrayList<AuctionHouse> list){
+    public ArrayList<AuctionHouse> getListAH(ArrayList list){
         try{
             auctionCentralSocket = new  Socket("127.0.0.1", 5555);
             out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
             in = new ObjectInputStream(auctionCentralSocket.getInputStream());
 
-            out.writeObject(list);
 
+            out.writeObject(list);
            list = (ArrayList<AuctionHouse>) in.readObject();
+
+
+            return list;
+
+
         }catch(Exception e){
             e.printStackTrace();
             e.getLocalizedMessage();
             e.getMessage();
         }
-
+        return null;
     }
 
     public static void main(String[] args)

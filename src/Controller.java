@@ -38,11 +38,14 @@ public class Controller
             @Override
             public void run()
             {
+                client.getAgent().setAuctionHouses(client.getListAH(agent.getAuctionHouses()));
+
+
                 // Platform syncs this command with the UI, fixes javafx thread bugs
                 Platform.runLater(() -> {
                     lblBalance.setText(String.valueOf(agent.getAccountBalance()));
                 });
-                client.getListAH(agent.getAuctionHouses());
+
             }
         }, 0, 500, TimeUnit.MILLISECONDS);
     }
