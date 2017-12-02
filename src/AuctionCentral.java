@@ -16,14 +16,14 @@ public class AuctionCentral
 
     public void registerAgent(Agent agent)
     {
-        System.out.println("Registering a new user...");
-        System.out.println("User name: " + agent.getName());
+        System.out.println("\nRegistering a new user...");
+        System.out.println("Name: " + agent.getName());
 
         // TODO: If you try to register an agent with AC before bank, this might throw an error
         String biddingKey = Bank.getKey(agent.getBankKey() + agent.getName());
         agent.setBiddingKey(biddingKey);
         biddingKeyToBankKey.put(biddingKey, agent.getBankKey());
-        System.out.println("Bidding key: " + agent.getBiddingKey() + "\n");
+        System.out.println("Bidding Key: " + agent.getBiddingKey() + "\n");
     }
 
 
@@ -37,10 +37,10 @@ public class AuctionCentral
         System.out.println("ID: " + auctionHouseID + " AH Key: " + auctionHouseKey);
 
 
-        System.out.println("Current list of auctionHouse's");
+        System.out.println("Current list of Auction Houses:");
         for(int i = 0; i < listOfAHs.size(); ++i)
         {
-            System.out.println(listOfAHs.get(i).getName());
+            System.out.println(listOfAHs.get(i).getName() + " - ID:" + listOfAHs.get(i).getPublicID());
         }
     }
 

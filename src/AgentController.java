@@ -2,8 +2,10 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 
 import java.net.ConnectException;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -23,8 +25,24 @@ public class AgentController
     @FXML
     private void initialize()
     {
-        client = new Client(true, "Agent1");
+        client = new Client(true, askName());
         update();
+    }
+
+    private String askName()
+    {
+        TextInputDialog dialog = new TextInputDialog("Name");
+        dialog.setTitle("Enter your name");
+        dialog.setContentText("Please enter your name.");
+        Optional<String> result = dialog.showAndWait();
+        if(result.isPresent())
+        {
+            return result.get();
+        }
+        else
+        {
+            return "Nameless Agent";
+        }
     }
 
     /**

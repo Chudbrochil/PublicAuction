@@ -67,9 +67,9 @@ public class Server
                 else
                 {
                     // TODO: This 100 is hard-coded for now. We'll need to gather this value from a message.
-                    bank.getMap().get(agent.getAccountNum()).setAmount(bank.getMap().get(agent.getAccountNum()).getAmount() - 100);
+                    bank.getAccountNumberToAccountMap().get(agent.getAccountNum()).setAmount(bank.getAccountNumberToAccountMap().get(agent.getAccountNum()).getAmount() - 100);
                     agent.setAccountBalance(agent.getAccountBalance() - 100.00);
-                    System.out.println(bank.getMap().get(agent.getAccountNum()).getAmount());
+                    System.out.println(bank.getAccountNumberToAccountMap().get(agent.getAccountNum()).getAmount());
                 }
             }
         }
