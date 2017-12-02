@@ -5,6 +5,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 
 import java.net.ConnectException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -58,11 +60,12 @@ public class AgentController
             public void run()
             {
                 agent = client.getAgent();
-                // TODO: Auction houses for some reason are not updating in real time
+                // TODO: (Jacob) Auction houses for some reason are not updating in real time
                 client.getAgent().setAuctionHouses(client.getListAH(agent.getAuctionHouses()));
                 System.out.println(client.getAgent().getAuctionHouses().get(0).getName());
                 System.out.println(client.getAgent().getAuctionHouses().get(1).getName());
                 // Platform syncs this command with the UI, fixes javafx thread bugs
+                // TODO: (Jacob) This balance isn't getting updated again...
                 Platform.runLater(() -> {
                     lblBalance.setText(String.valueOf(agent.getAccountBalance()));
                 });
@@ -80,6 +83,27 @@ public class AgentController
     {
         lblUserOutput.setText("Accepted bid for: " + tfBidAmount.getText());
         client.placeBid(Double.valueOf(tfBidAmount.getText()), client.getAgent());
+    }
+
+    private void updateItemList()
+    {
+        ArrayList<AuctionHouse> listOfAHs = agent.getAuctionHouses();
+
+        ArrayList<Item> items = new ArrayList<>();
+
+        for(int i = 0; i < listOfAHs.size(); ++i)
+        {
+            HashMap<String, Item> ahItems = listOfAHs.get(i).getItems();
+            items.addAll(ahItems.values());
+        }
+
+
+        // TODO: Debug
+        for(int i = 0; i < items.size(); ++i)
+        {
+            System.out.println(items.get(i).ITEM_NAME);
+        }
+
     }
 
     /**

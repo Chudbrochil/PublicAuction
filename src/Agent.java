@@ -36,7 +36,10 @@ public class Agent implements Serializable
     // Loops over the auctionHouses
     private void getAHItems()
     {
-
+//        for(int i = 0; i < auctionHouses.size(); ++i)
+//        {
+//            System.out.println("Item: " + auctionHouses.get(i).)
+//        }
     }
 
     public void setBankKey(String bankKey)
