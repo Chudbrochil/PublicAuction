@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 public class Item implements Serializable
 {
-    public int AUCTION_HOUSE_ID;      //IDs.ID of the AuctionHouse that holds this item
+    private int ahID;      //IDs.ID of the AuctionHouse that holds this item
     public final Double MINIMUM_BID;         //Minimum bid to start at
     private Double currentBid;               //CurrentBid on this item--the highest of all the bids. Will be 0 until first bid.
     public final String ITEM_NAME;          //Name of the item
@@ -22,7 +22,6 @@ public class Item implements Serializable
     {
         ITEM_NAME = itemName;
         this.imgPath = imgPath;
-        this.itemID = itemID;
         MINIMUM_BID = minimumBid;
         currentBid = 0.0;
         currentHighestBidderID = null;
@@ -61,4 +60,13 @@ public class Item implements Serializable
     }
 
 
+    public int getAhID()
+    {
+        return ahID;
+    }
+
+    public void setAhID(int ahID)
+    {
+        this.ahID = ahID;
+    }
 }

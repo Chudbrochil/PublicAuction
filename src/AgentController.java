@@ -96,11 +96,14 @@ public class AgentController
                 // Checking to make sure the global items list doesn't already have the item before adding it
                 if(!items.contains(listOfItems.get(j)))
                 {
+                    //System.out.println("Name: " + listOfItems.get(j).ITEM_NAME + " ID:" + listOfItems.get(j).itemID + " AH: " + listOfItems.get(j).getAhID());
                     items.add(listOfItems.get(j));
-                    itemNames.add("Name: " + items.get(j).ITEM_NAME + " ID:" + items.get(j).itemID);
+                    itemNames.add("Name: " + listOfItems.get(j).ITEM_NAME + " ID:" + listOfItems.get(j).itemID + " AH: " + listOfItems.get(j).getAhID());
                 }
             }
         }
+
+        // TODO: I'm still working in here, remove dead code when I come back
 
 //        for(int i = 0; i < items.size(); ++i)
 //        {

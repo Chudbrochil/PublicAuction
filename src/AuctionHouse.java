@@ -63,7 +63,7 @@ public class AuctionHouse implements Serializable
         for (int i = 0; i < 3; ++i)
         {
             Item item = ItemDB.getRandomItem();
-            item.AUCTION_HOUSE_ID = publicID;
+            item.setAhID(publicID);
             item.setItemID(itemCounter);
             items.put(item.getItemID(), item);
             System.out.println(item.ITEM_NAME + " - Min price: " + item.MINIMUM_BID + " itemID: " + item.getItemID());
