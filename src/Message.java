@@ -1,6 +1,7 @@
 /**
  * This is the object that can be sent between classes, storing information.
  * Check if a parameter is null. If it is and you're expecting to be able to use it, something has gone wrong.
+ *
  */
 public class Message
 {
@@ -13,6 +14,8 @@ public class Message
     public final String AUCTION_HOUSE_ID;   //the ID of this auction house (needed by Client)
     
     //for type PLACE_HOLD
+    //Everything for PLACE_BID and
+    private BidResponse response;
     
 
     public Message(MessageType t, String biddingID, double amount, String itemID, String auctionHouseID)

@@ -33,5 +33,10 @@ public enum MessageType
      *
      */
     
-    PLACE_BID;
+    
+    /**
+     * PLACE_BID
+     *      Created by an Agent and sent to AuctionHouse.
+     */
+    PLACE_BID, PLACE_HOLD;
 }
