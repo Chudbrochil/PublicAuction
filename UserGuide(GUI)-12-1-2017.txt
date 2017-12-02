@@ -1,0 +1,16 @@
+User's guide 12/1/2017 (Using a GUI)
+
+1.) Run Main(), select Bank
+2.) Run Main(), select Auction Central
+^^ These two NEED to be ran before spinning up AH's or Agent's.
+This is an assumption of this entire project that Bank/AC are always up.
+
+
+3.) Run Main(), select Auction House
+4.) Run Main(), select Agent
+    Agent will give you various abilities to look at items, do a withdrawl,
+    place a bid, etc.
+    
+    
+Feel free to do #3 and #4 in whatever order you'd like and as often as you'd like.
+The program is designed to have as many Agent's and AHs as you want.
