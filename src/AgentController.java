@@ -2,6 +2,8 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+
+import java.net.ConnectException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -38,6 +40,7 @@ public class AgentController
             public void run()
             {
                 agent = client.getAgent();
+                // TODO: Auction houses for some reason are not updating in real time
                 client.getAgent().setAuctionHouses(client.getListAH(agent.getAuctionHouses()));
                 System.out.println(client.getAgent().getAuctionHouses().get(0).getName());
                 System.out.println(client.getAgent().getAuctionHouses().get(1).getName());
@@ -45,7 +48,6 @@ public class AgentController
                 Platform.runLater(() -> {
                     lblBalance.setText(String.valueOf(agent.getAccountBalance()));
                 });
-//                client.getListAH(agent.getAuctionHouses());
             }
         }, 0, 500, TimeUnit.MILLISECONDS);
     }

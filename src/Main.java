@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -96,6 +97,17 @@ public class Main extends Application
             }
         };
         return out;
+    }
+
+    public static String returnNetworkInfo() throws Exception
+    {
+        String output = "";
+        InetAddress ipInfo = InetAddress.getLocalHost();
+
+        output += "Hostname: " + ipInfo.getHostName() + "\n";
+        output += "IP Address: " + ipInfo.getHostAddress();
+
+        return output;
     }
 
 
