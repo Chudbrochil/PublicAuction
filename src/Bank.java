@@ -9,8 +9,6 @@ public class Bank
     private HashMap<Integer, Account> accountNumberToAccount = new HashMap<>();
     private Random rand = new Random();
 
-
-
     public Bank()
     {
 
@@ -28,22 +26,27 @@ public class Bank
      * Initial registering of an agent by the bank.
      * The agent is given a starting balance, account number and bank key by the bank.
      *
-     * @param agent The agent we are registering with the bank.
+     * @param blankAccount The account we are opening for the agent
      */
-    public void registerAgent(Agent agent)
+    public void registerAgent(String agentName, Account blankAccount)
     {
+        agentName = "TEST";
+        int accountNum = rand.nextInt(10000 + 1);
+        double startingBalance = 500.00;
+        String bankKey = Bank.getKey(agentName);
+
+        blankAccount.setAccountNum(accountNum);
+        blankAccount.setAccountBalance(startingBalance);
+        blankAccount.setBankKey(bankKey);
 
         System.out.println("\nRegistering a new user.....");
-        System.out.println("Account Name: " + agent.getName());
-        agent.setAccountBalance(500.00);
-        System.out.println("Account Balance: " + agent.getAccountBalance());
-        agent.setAccountNum(rand.nextInt(100000) + 1);
-        System.out.println("Account Number: " + agent.getAccountNum());
-        agent.setBankKey(Bank.getKey(agent.getName()));
-        System.out.println("Agent Bank Key: " + agent.getBankKey());
+        System.out.println("Account Name: " + agentName);
 
-        Account account = new Account(agent.getAccountNum(), agent.getAccountBalance());
-        accountNumberToAccount.put(agent.getAccountNum(), account);
+        System.out.println("Account Balance: " + blankAccount.getAccountBalance());
+        System.out.println("Account Number: " + blankAccount.getAccountNum());
+        System.out.println("Agent Bank Key: " + blankAccount.getBankKey());
+
+        accountNumberToAccount.put(accountNum, blankAccount);
 
     }
 

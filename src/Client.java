@@ -76,18 +76,19 @@ public class Client
     {
         try
         {
-            out.writeObject(newUser);
-
-            newUser = (Agent) in.readObject();
+            // Registering with bank
+            out.writeObject(new Message(MessageType.REGISTER_AGENT, newUser.getName(), null));
+            Message response = (Message) in.readObject();
+            newUser.setAccountInfo(response.getAccount());
 
             if(taAgentOutput != null) { taAgentOutput.appendText("Account Balance: " + newUser.getAccountBalance() + "\n"); }
             if(taAgentOutput != null) { taAgentOutput.appendText("Account Number: " + newUser.getAccountNum() + "\n"); }
 
+            // Registering with AC
             out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
             in = new ObjectInputStream(auctionCentralSocket.getInputStream());
 
-            out.writeObject(newUser);
-
+            out.writeObject(agent);
             newUser = (Agent) in.readObject();
 
             if(taAgentOutput != null) { taAgentOutput.appendText("Bidding Key = " + newUser.getBiddingKey() + "\n"); }
@@ -143,11 +144,11 @@ public class Client
 
             if(response.getBidResponse() == BidResponse.ACCEPT)
             {
-                agent.deductAccountBalance(response.AMOUNT);
+                agent.deductAccountBalance(response.BIDDING_AMOUNT);
             }
             else
             {
-                if(taAgentOutput != null) { taAgentOutput.appendText("You don't have enough funds to withdraw " + response.AMOUNT + "\n"); }
+                if(taAgentOutput != null) { taAgentOutput.appendText("You don't have enough funds to withdraw " + response.BIDDING_AMOUNT + "\n"); }
             }
 
         }

@@ -14,14 +14,22 @@ public class Message implements Serializable
     
     //for type PLACE_BID
     public final String BIDDING_ID;         //BIDDING_ID of the Agent who wishes to place a bid
-    public final double AMOUNT;            // Amount the bidder wishes to bid.
+    public final double BIDDING_AMOUNT;            // Amount the bidder wishes to bid.
     public final String ITEM_ID;           //ID of the item the bidder wishes to bid on
     public final String AUCTION_HOUSE_ID;   //the ID of this auction house (needed by Client)
     
     //for type WITHDRAW
     public final int ACCOUNT_NUM;
 
+    //for type UPDATE_AHS
     private ArrayList<AuctionHouse> listOfAHs;
+
+    //for type REGISTER_AGENT
+    private Account account;
+    private String name;
+
+    //for type REGISTER_AH
+
     
     //for type PLACE_HOLD
     //Everything for PLACE_BID and
@@ -32,7 +40,7 @@ public class Message implements Serializable
     {
         type = t;
         BIDDING_ID = biddingID;
-        AMOUNT = amount;
+        BIDDING_AMOUNT = amount;
         ITEM_ID = itemID;
         AUCTION_HOUSE_ID = auctionHouseID;
 
@@ -45,12 +53,25 @@ public class Message implements Serializable
     {
         type = t;
         ACCOUNT_NUM = accountNum;
-        AMOUNT = amount;
+        BIDDING_AMOUNT = amount;
     
         //Unused with this Message type
         ITEM_ID = null;
         AUCTION_HOUSE_ID = null;
         BIDDING_ID = null;
+    }
+
+    // Constructor for a REGISTER_AGENT message
+    public Message(MessageType t, String name, Account account)
+    {
+        type = t;
+
+        // not used
+        ACCOUNT_NUM = 0;
+        BIDDING_AMOUNT = 0;
+        BIDDING_ID = null;
+        ITEM_ID = null;
+        AUCTION_HOUSE_ID = null;
     }
 
     //Constructor for UPDATE_AHS message
@@ -59,23 +80,12 @@ public class Message implements Serializable
         type = t;
         listOfAHs = new ArrayList<>();
 
-        AMOUNT = 0.0;
+        BIDDING_AMOUNT = 0.0;
         ITEM_ID = null;
         AUCTION_HOUSE_ID = null;
         BIDDING_ID = null;
         ACCOUNT_NUM = 0;
     }
-
-    public Message()
-    {
-        AMOUNT = 0.0;
-        ITEM_ID = null;
-        AUCTION_HOUSE_ID = null;
-        BIDDING_ID = null;
-        ACCOUNT_NUM = 0;
-        type = null;
-    }
-
     
     /**
      * setType()
@@ -103,4 +113,13 @@ public class Message implements Serializable
     public ArrayList<AuctionHouse> getListOfAHs() { return listOfAHs; }
 
     public void setListOfAHs(ArrayList<AuctionHouse> listOfAHs) { this.listOfAHs = listOfAHs; }
+
+    public Account getAccount() { return account; }
+
+    public void setAccount(Account account) { this.account = account; }
+
+    public String getName() { return name; }
+
+    public void setName(String name) { this.name = name; }
+
 }

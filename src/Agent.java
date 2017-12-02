@@ -25,6 +25,13 @@ public class Agent implements Serializable
         return true;
     }
 
+    public void setAccountInfo(Account account)
+    {
+        accountNum = account.getAccountNum();
+        accountBalance = account.getAccountBalance();
+        bankKey = account.getBankKey();
+    }
+
 
     // This gets called on auction central to get the latest list of auctionhouses;
     private void getUpdatedAHList()

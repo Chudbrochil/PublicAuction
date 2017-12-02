@@ -52,29 +52,37 @@ public class Server
             Object object = bankIn.readObject();
 
             // Initializing an agent for the first time wtih the bank
-            if (object instanceof Agent)
-            {
-                Agent agent = (Agent) object;
-                bank.registerAgent(agent);
-                bankOut.writeObject(agent);
-            }
-            else if(object instanceof Message)
+//            if (object instanceof Agent)
+//            {
+//                Agent agent = (Agent) object;
+//                bank.registerAgent(agent);
+//                bankOut.writeObject(agent);
+//            }
+            if(object instanceof Message)
             {
                 Message incomingMessage = (Message)object;
                 if(incomingMessage.getType() == MessageType.WITHDRAW)
                 {
                     // If we were able to deduct the bidding amount, then take it out, send a success back.
-                    if(bank.getAccountNumberToAccountMap().get(incomingMessage.ACCOUNT_NUM).deductAmount(incomingMessage.AMOUNT))
+                    if(bank.getAccountNumberToAccountMap().get(incomingMessage.ACCOUNT_NUM).deductAccountBalance(incomingMessage.BIDDING_AMOUNT))
                     {
                         incomingMessage.setBidResponse(BidResponse.ACCEPT);
-                        System.out.println("Bank accepted withdrawl of " + incomingMessage.AMOUNT + " from acct#: " + incomingMessage.ACCOUNT_NUM);
+                        System.out.println("Bank accepted withdrawl of " + incomingMessage.BIDDING_AMOUNT + " from acct#: " + incomingMessage.ACCOUNT_NUM);
                     }
                     // If there wasn't enough money, send a rejection back.
                     else
                     {
                         incomingMessage.setBidResponse(BidResponse.REJECT);
-                        System.out.println("Bank refused withdrawl of " + incomingMessage.AMOUNT + " from acct#: " + incomingMessage.ACCOUNT_NUM);
+                        System.out.println("Bank refused withdrawl of " + incomingMessage.BIDDING_AMOUNT + " from acct#: " + incomingMessage.ACCOUNT_NUM);
                     }
+                    bankOut.writeObject(incomingMessage);
+                }
+                else if(incomingMessage.getType() == MessageType.REGISTER_AGENT)
+                {
+                    Account accountToOpen = new Account();
+                    bank.registerAgent(incomingMessage.getName(), accountToOpen);
+                    incomingMessage.setAccount(accountToOpen);
+                    System.out.println(incomingMessage.getAccount().getAccountBalance());
                     bankOut.writeObject(incomingMessage);
                 }
             }
@@ -118,6 +126,7 @@ public class Server
                 ac.registerAuctionHouse(ah);
                 centralOut.writeObject(ah);
             }
+
 
             if(object instanceof Message)
             {
