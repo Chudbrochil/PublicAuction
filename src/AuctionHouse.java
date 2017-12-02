@@ -32,7 +32,7 @@ public class AuctionHouse implements Serializable
     private HashMap<String, Item> items; //Item ID as key for the item.
     private HashSet<PendingBidRequest> pendingHolds; //placeBid calls this AuctionHouse is waiting on holds for to respond to
                                              //the message.
-    //private HashMap<String, Time>
+    //private HashMap<String, Time> itemTimers;
     //private HashMap<>
     //private static int AuctionHouseID;
 
@@ -117,7 +117,6 @@ public class AuctionHouse implements Serializable
         if (amount >= item.MINIMUM_BID && amount > item.getCurrentBid())
         {
             //Agent didn't bid enough USER OUTPUT
-            //if(placeHold(BIDDING_ID, AMOUNT, AUCTION_HOUSE_ID))
             pendingHolds.add(new PendingBidRequest(biddingID, amount, itemID));
             return true;
         }
@@ -128,19 +127,19 @@ public class AuctionHouse implements Serializable
     /**
      * processHoldResponse()
      * Called by Client when a REQUEST_HOLD Message is received.
-     * @param biddingID
-     * @param amount
-     * @param itemID
-     * @param response
+     * @param biddingID      BIDDING_ID of the Agent who wishes to place a bid
+     * @param amount         Amount the bidder wishes to bid.
+     * @param itemID         ID of the item the bidder wishes to bid on
+     * @param response       BidResponse of
      * @return  null if response was REJECT.
      *          biddingID of the person whose bid was surpassed otherwise. Client should send a REQUEST_BID
-     *          BidResponse PASS to this biddingID.
+     *          BidResponse PASS to the returned biddingID and a REQUEST_BID BidResponseMessage ACCEPT to
+     *          *this* biddingID
      *          //todo: above
      */
     public String processHoldResponse(String biddingID, double amount, String itemID, BidResponse response)
     {
-        //Check if pendingHolds holds it.
-        
+        //todo: Anna: Check if pendingHolds holds it.
         if(response==BidResponse.REJECT) return null;
         
         else if(response==BidResponse.ACCEPT)
@@ -148,6 +147,7 @@ public class AuctionHouse implements Serializable
             Item item = items.get(itemID);
             String prevBidWinner = item.getCurrentHighestBidderID();
             item.setCurrentBidAndBidder(amount, biddingID);
+            restartBidTime(itemID);
             return prevBidWinner;
         }
         else
@@ -155,6 +155,16 @@ public class AuctionHouse implements Serializable
             System.err.println(toString()+" got a hold response of BidResponse "+ response+". Should be ACCEPT or REJECT.");
             return null;
         }
+    }
+    
+    /**
+     * @param itemID Item whose timer is being reset
+     */
+    private void restartBidTime(String itemID)
+    {
+        //Timer timer = itemTimers.get(itemID);
+        //items.
+        //todo
     }
     
     
