@@ -1,10 +1,14 @@
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -61,15 +65,39 @@ public class Main extends Application
         primaryStage.setOnCloseRequest(e -> System.exit(0));
     }
 
-
-
-
-    // TODO: Make a UI for AuctionHouse?
-
-
     public static void main(String[] args)
     {
         launch(args);
     }
+
+
+    /**
+     * getStandardOutCapture()
+     *
+     * This returns an outputstream that will capture text and display it on a text area.
+     * The text will generally be captured from standard out.
+     *
+     * @param taOutput TextArea we are writing to
+     * @return OutputStream that gets fed into stdout method
+     */
+    public static OutputStream getStandardOutCapture(TextArea taOutput)
+    {
+        OutputStream out = new OutputStream()
+        {
+            @Override
+            public void write(int b) throws IOException
+            {
+                appendText(String.valueOf((char)b));
+            }
+
+            public void appendText(String str)
+            {
+                Platform.runLater(() -> taOutput.appendText(str));
+            }
+        };
+        return out;
+    }
+
+
 
 }
