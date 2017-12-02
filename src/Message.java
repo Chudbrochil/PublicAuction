@@ -4,9 +4,9 @@
 public class Message
 {
     MessageType type;
-    
+
     public Message()
     {
-    
+
     }
 }

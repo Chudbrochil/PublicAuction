@@ -1,78 +1,129 @@
-
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-public class Server {
+public class Server
+{
 
-
-    //constructor for  bank
-    public Server(int num) {
-
-        Bank bank = new Bank();
-
-        //do bank registration for agent
-        try {
-
-            ServerSocket bankSocket = new ServerSocket(4444);
-            while (true) {
-
-                Socket pipeConnection = bankSocket.accept();
-                ObjectOutputStream bankOut = new ObjectOutputStream(pipeConnection.getOutputStream());
-                ObjectInputStream bankIn = new ObjectInputStream(pipeConnection.getInputStream());
-                System.out.println("Bank Online");
-
-                Agent agent;
-                agent = (Agent) bankIn.readObject();
-
-                bank.registerAgent(agent);
-                bankOut.writeObject(agent);
-//                    System.out.println("Where do we reside");
-
+    public Server(boolean isBank)
+    {
+        try
+        {
+            if(isBank)
+            {
+                bankInit();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            e.getMessage();
-            e.getLocalizedMessage();
+            else
+            {
+                auctionCentralInit();
+            }
         }
-
-
+        catch (Exception e)
+        {
+            e.getLocalizedMessage();
+            e.getMessage();
+            e.printStackTrace();
+        }
     }
 
-    public Server() {
+    private void bankInit() throws Exception
+    {
+        Bank bank = new Bank();
+        ServerSocket bankSocket = new ServerSocket(4444);
+        while (true)
+        {
+
+            Socket pipeConnection = bankSocket.accept();
+            ObjectOutputStream bankOut = new ObjectOutputStream(pipeConnection.getOutputStream());
+            ObjectInputStream bankIn = new ObjectInputStream(pipeConnection.getInputStream());
+            System.out.println("Bank Online");
+
+            Object object = bankIn.readObject();
+
+
+            if (object instanceof Agent)
+            {
+                Agent agent = (Agent) object;
+                // If this is the first time we are getting an agent, register it
+                if (!agent.isRegistered())
+                {
+                    bank.registerAgent(agent);
+                    agent.setRegistered(true);
+                    bankOut.writeObject(agent);
+                }
+                // If we are getting an agent again, we must be doing a withdrawl //TODO: Remove this after we aren't doing withdrawl's
+                else
+                {
+                    // TODO: This 100 is hard-coded for now. We'll need to gather this value from a message.
+                    bank.getMap().get(agent.getAccountNum()).setAmount(bank.getMap().get(agent.getAccountNum()).getAmount() - 100);
+                    agent.setAccountBalance(agent.getAccountBalance() - 100.00);
+                    System.out.println(bank.getMap().get(agent.getAccountNum()).getAmount());
+                }
+            }
+        }
+    }
+
+    private void auctionCentralInit() throws Exception
+    {
         AuctionCentral ac = new AuctionCentral();
+        ServerSocket auctionCentralSocket = new ServerSocket(5555);
 
-        while (true) {
-            try {
 
-                ServerSocket auctionCentralSocket = new ServerSocket(5555);
+        while (true)
+        {
 
-                Socket otherPipeConnection = auctionCentralSocket.accept();
-                ObjectOutputStream centralOut = new ObjectOutputStream(otherPipeConnection.getOutputStream());
-                ObjectInputStream centralIn = new ObjectInputStream(otherPipeConnection.getInputStream());
+            Socket otherPipeConnection = auctionCentralSocket.accept();
+            ObjectOutputStream centralOut = new ObjectOutputStream(otherPipeConnection.getOutputStream());
+            ObjectInputStream centralIn = new ObjectInputStream(otherPipeConnection.getInputStream());
 
+            Object object = centralIn.readObject();
+
+            if (object instanceof Agent)
+            {
+
+//                    otherPipeConnection = auctionCentralSocket.accept();
+//                    centralOut = new ObjectOutputStream(otherPipeConnection.getOutputStream());
+//                     centralIn = new ObjectInputStream(otherPipeConnection.getInputStream());
+
+                Agent agent = (Agent) object;
                 System.out.println("Auction Central Online");
-                Agent agent = (Agent) centralIn.readObject();
+
                 ac.registerAgent(agent);
                 centralOut.writeObject(agent);
-
-
-            } catch (Exception e) {
-                e.getLocalizedMessage();
-                e.getMessage();
-                e.printStackTrace();
             }
+
+//                otherPipeConnection = auctionCentralSocket.accept();
+//                centralOut = new ObjectOutputStream(otherPipeConnection.getOutputStream());
+//                centralIn = new ObjectInputStream(otherPipeConnection.getInputStream());
+            else if (object instanceof AuctionHouse)
+            {
+                AuctionHouse ah;
+                ah = (AuctionHouse) object;
+                ac.registerAuctionHouse(ah);
+                centralOut.writeObject(ah);
+            }
+
+            else {
+
+                centralOut.writeObject(ac.getListOfAHs());
+            }
+//                centralOut.writeObject(ac.getMap());
+
         }
     }
 
-
-    public static void main(String[] args) {
-        if (args[0].equals("Bank")) {
-            Server s = new Server(4444);
-        } else if (args[0].equals("AuctionCentral")) {
-            Server s = new Server();
+    public static void main(String[] args)
+    {
+        if (args[0].equals("Bank"))
+        {
+            Server s = new Server(true);
+        }
+        else if (args[0].equals("AC"))
+        {
+            Server s = new Server(false);
         }
     }
 

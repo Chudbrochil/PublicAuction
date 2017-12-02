@@ -1,0 +1,22 @@
+User's guide 12/1/2017
+
+1. First, you want to spin up a Bank and AuctionCentral.
+I prefer toput these both on the same command line using &
+
+Go into /out/production/PublicAuction
+java Server Bank &
+java Server AC &
+
+2. Now, if you want an AuctionHouse I recommend opening another shell
+java Client AH AH1
+
+3. Now, if you want an Agent, I personally recommend using the GUI but
+    you can use an agent on the shell also.
+    
+java Client Agent Agent1
+
+OR
+
+run Main(), this will give you a popup with an option to enter an amount to
+withdraw from the Bank. It is currently hard-coded in the bank to withdraw 100.00
+regardless of what you enter. This is what we need the messaging infrastructure for.

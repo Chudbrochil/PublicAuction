@@ -4,3 +4,9 @@ i7 Laptop, , 500
 Picasso Painting, , 100000
 Physics Textbook, , 200000
 Logitech Mouse, , 30
+Roman's MacBook, , 30
+Joel's fidget spinner, , 30
+Roman's Sports Coat, , 30
+A passing grade, , 30
+
+

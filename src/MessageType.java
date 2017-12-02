@@ -1,7 +1,5 @@
 /**
  * If you create a Message, assign it a type. Those who receive messages will respond based on the MessageType.
- *
- *
  */
 
 public enum MessageType
@@ -18,7 +16,7 @@ public enum MessageType
      *      Pass, Winner (Item, amount)
      *      "Hey, I'm going out of business." //closes. CLOSE_SOCKET_REQUEST
      *
-     * AuctionHouse to AutcionCentral
+     * AuctionHouse to AuctionCentral
      *      "Please place a hold on BidderID account for amount" //PLACE_HOLD, null boolean, BidderID, amount
      *      "I'm shutting down!" CLOSE_SOCKET_REQUEST //Every time AuctionCentral gets one of these, it pings agents? to say "These houses closed!"
      *                                                  //but it doesn't have a reference... :(

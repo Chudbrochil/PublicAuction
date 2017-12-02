@@ -1,34 +1,49 @@
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 
-public class AuctionCentral {
+public class AuctionCentral
+{
+    private HashMap<String, String> biddingKeyToBankKey;
+    private ArrayList<AuctionHouse> listOfAHs;
+    private static int auctionHouseID = 0;
 
-    HashMap<AuctionHouse, Integer> map = new HashMap<>();
-    Random random = new Random();
-    public AuctionCentral(){
+    public AuctionCentral()
+    {
+        biddingKeyToBankKey = new HashMap<>();
+        listOfAHs = new ArrayList<>();
 
     }
+
     public void registerAgent(Agent agent)
     {
         System.out.println("Registering a new user...");
         System.out.println("User name: " + agent.getName());
-        agent.setBiddingKey(random.nextInt(1000) + 1);
+
+        // TODO: If you try to register an agent with AC before bank, this might throw an error
+        String biddingKey = Bank.getKey(agent.getBankKey() + agent.getName());
+        agent.setBiddingKey(biddingKey);
+        biddingKeyToBankKey.put(biddingKey, agent.getBankKey());
         System.out.println("Bidding key: " + agent.getBiddingKey() + "\n");
-
-
     }
 
 
-    public void registerAuctionHouse(AuctionHouse ah)
+    public void registerAuctionHouse(AuctionHouse auctionHouse)
     {
-        //todo: implement. See Bank.registerAgent(Agent agent)
+        auctionHouseID++;
+        String auctionHouseKey = Bank.getKey(auctionHouse.getName());
+        auctionHouse.setIDs(auctionHouseID, auctionHouseKey);
+        listOfAHs.add(auctionHouse);
+        System.out.println("Auction house is registered...");
+        System.out.println("ID: " + auctionHouseID + " AH Key: " + auctionHouseKey);
+
+
+        System.out.println("Current list of auctionHouse's");
+        for(int i = 0; i < listOfAHs.size(); ++i)
+        {
+            System.out.println(listOfAHs.get(i).getName());
+        }
     }
 
-    // Talks to bank to place hold for a particular agent with a particular bidding key
-    // Returns true if the placeHold was successful (i.e. the agent has the $ and is a valid person)
-    public boolean placeHold(int biddingKey, float amount)
-    {
-        return true;
-    }
+    public ArrayList<AuctionHouse> getListOfAHs() { return listOfAHs; }
 
 }
