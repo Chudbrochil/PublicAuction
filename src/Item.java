@@ -14,7 +14,7 @@ public class Item implements Serializable
     public final Double MINIMUM_BID;         //Minimum bid to start at
     private Double currentBid;               //CurrentBid on this item--the highest of all the bids. Will be 0 until first bid.
     public final String ITEM_NAME;          //Name of the item
-    private String currentHighestBidderID;    //biddingID of Agent who holds the currentBid, which is winning. Will be null until first bid.
+    private String currentHighestBidderID;    //BIDDING_ID of Agent who holds the currentBid, which is winning. Will be null until first bid.
     private String imgPath;
     public final String ITEM_ID;            //Unique item ID
     private static int staticIDCounter = 1;
@@ -45,7 +45,7 @@ public class Item implements Serializable
      * setCurrentBidAndBidder()
      *
      * @param newBid
-     * @param newBiddingKey Agent who is making the bid of amount newBid
+     * @param newBiddingKey Agent who is making the bid of AMOUNT newBid
      */
     public synchronized void setCurrentBidAndBidder(Double newBid, String newBiddingKey)
     {
