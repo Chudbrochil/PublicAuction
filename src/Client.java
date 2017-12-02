@@ -1,6 +1,7 @@
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Client
@@ -46,6 +47,7 @@ public class Client
             out = new ObjectOutputStream(bankSocket.getOutputStream());
             in = new ObjectInputStream(bankSocket.getInputStream());
             registerAgent(out, in, agent);
+
     }
 
     private void auctionHouseInit(String name) throws Exception
@@ -138,7 +140,22 @@ public class Client
     }
 
 
+    public void getListAH(ArrayList<AuctionHouse> list){
+        try{
+            auctionCentralSocket = new  Socket("127.0.0.1", 5555);
+            out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
+            in = new ObjectInputStream(auctionCentralSocket.getInputStream());
 
+            out.writeObject(list);
+
+           list = (ArrayList<AuctionHouse>) in.readObject();
+        }catch(Exception e){
+            e.printStackTrace();
+            e.getLocalizedMessage();
+            e.getMessage();
+        }
+
+    }
 
     public static void main(String[] args)
     {

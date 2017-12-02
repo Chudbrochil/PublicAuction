@@ -86,4 +86,9 @@ public class Agent implements Serializable
         this.registered = registered;
     }
 
+    public ArrayList<AuctionHouse> getAuctionHouses() {
+        return auctionHouses;
+    }
+
+
 }

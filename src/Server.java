@@ -2,6 +2,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Server
 {
@@ -67,8 +69,8 @@ public class Server
     private void auctionCentralInit() throws Exception
     {
         AuctionCentral ac = new AuctionCentral();
-
         ServerSocket auctionCentralSocket = new ServerSocket(5555);
+
 
         while (true)
         {
@@ -101,6 +103,11 @@ public class Server
                 ah = (AuctionHouse) object;
                 ac.registerAuctionHouse(ah);
                 centralOut.writeObject(ah);
+            }
+
+            else if(object instanceof ArrayList){
+                object = ac.getListOfAHs();
+                centralOut.writeObject(object);
             }
 //                centralOut.writeObject(ac.getMap());
 

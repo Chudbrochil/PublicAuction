@@ -44,6 +44,7 @@ public class Controller
                 Platform.runLater(() -> {
                     lblBalance.setText(String.valueOf(agent.getAccountBalance()));
                 });
+                client.getListAH(agent.getAuctionHouses());
             }
         }, 0, 500, TimeUnit.MILLISECONDS);
     }

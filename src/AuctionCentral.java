@@ -29,6 +29,7 @@ public class AuctionCentral
     {
         ah.setIDs("public Id", "Secret key");
         System.out.println("Auction house is registered...");
+        listOfAHs.add(ah);
         //todo: implement. See Bank.registerAgent(Agent agent)
     }
 
