@@ -28,7 +28,7 @@ public class AuctionHouse implements Serializable
     private final String NAME;
     private int publicID;
     private String secretKey; // Requested and received from Auction Central
-    private HashMap<String, Item> myItems; //Item ID as key for the item.
+    private HashMap<String, Item> items; //Item ID as key for the item.
     //private HashMap<String, Time>
     //private HashMap<>
     //private static int AuctionHouseID;
@@ -43,15 +43,20 @@ public class AuctionHouse implements Serializable
     {
         NAME = name;
 //        myClient = client;
-        myItems = new HashMap<>();
+        items = new HashMap<>();
 
         //Give me items!
         for (int i = 0; i < 3; ++i)
         {
             Item item = ItemDB.getRandomItem();
-            myItems.put(item.ITEM_ID, item);
+            items.put(item.ITEM_ID, item);
             System.out.println(item.ITEM_NAME + " - Min price: " + item.MINIMUM_BID);
         }
+    }
+
+    public HashMap<String, Item> getItems()
+    {
+        return items;
     }
 
     /**
@@ -89,7 +94,7 @@ public class AuctionHouse implements Serializable
      */
     public void placeBid(String biddingID, double amount, String itemID, String auctionHouseID)
     {
-        Item item = myItems.get(itemID);
+        Item item = items.get(itemID);
         if (item == null)
         {
             //That item isn't for sale here USER OUTPUT
