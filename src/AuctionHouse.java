@@ -26,12 +26,11 @@ import java.util.concurrent.ThreadLocalRandom;
 public class AuctionHouse implements Serializable
 {
     private final String NAME;
-    private String publicID;
+    private int publicID;
     private String secretKey; // Requested and received from Auction Central
     private HashMap<String, Item> myItems; //Item ID as key for the item.
     //private HashMap<String, Time>
     //private HashMap<>
-    private Client myClient;
     //private static int AuctionHouseID;
 
     /**
@@ -58,10 +57,10 @@ public class AuctionHouse implements Serializable
     /**
      * Called by an IAuctionCentral to set the PublicID and SecretKey
      */
-    public void setIDs(String publicid, String secretkey)
+    public void setIDs(int publicID, String secretKey)
     {
-        publicID = publicid;
-        secretKey = secretkey;
+        this.publicID = publicID;
+        this.secretKey = secretKey;
     }
 
     public void placeHold(String biddingKey, Double amount)

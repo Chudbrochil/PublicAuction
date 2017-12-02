@@ -6,6 +6,7 @@ public class AuctionCentral
 {
     private HashMap<String, String> biddingKeyToBankKey;
     private ArrayList<AuctionHouse> listOfAHs;
+    private static int auctionHouseID = 0;
 
     public AuctionCentral()
     {
@@ -27,9 +28,11 @@ public class AuctionCentral
 
     public void registerAuctionHouse(AuctionHouse ah)
     {
-        ah.setIDs("public Id", "Secret key");
+        auctionHouseID++;
+        String auctionHouseKey = Bank.getKey(ah.getName());
+        ah.setIDs(auctionHouseID, auctionHouseKey);
         System.out.println("Auction house is registered...");
-        //todo: implement. See Bank.registerAgent(Agent agent)
+        System.out.println("ID: " + auctionHouseID + " AH Key: " + auctionHouseKey);
     }
 
     // Talks to bank to place hold for a particular agent with a particular bidding key
