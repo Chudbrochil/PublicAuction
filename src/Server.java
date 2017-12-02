@@ -103,14 +103,11 @@ public class Server
                 AuctionHouse ah;
                 ah = (AuctionHouse) object;
                 ac.registerAuctionHouse(ah);
-                ac.getListOfAHs().add(ah);
                 centralOut.writeObject(ah);
             }
 
             else {
 
-
-                System.out.println(ac.getListOfAHs().size());
                 centralOut.writeObject(ac.getListOfAHs());
             }
 //                centralOut.writeObject(ac.getMap());

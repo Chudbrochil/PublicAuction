@@ -38,11 +38,14 @@ public class AgentController
             public void run()
             {
                 agent = client.getAgent();
+                client.getAgent().setAuctionHouses(client.getListAH(agent.getAuctionHouses()));
+                System.out.println(client.getAgent().getAuctionHouses().get(0).getName());
+                System.out.println(client.getAgent().getAuctionHouses().get(1).getName());
                 // Platform syncs this command with the UI, fixes javafx thread bugs
                 Platform.runLater(() -> {
                     lblBalance.setText(String.valueOf(agent.getAccountBalance()));
                 });
-                client.getListAH(agent.getAuctionHouses());
+//                client.getListAH(agent.getAuctionHouses());
             }
         }, 0, 500, TimeUnit.MILLISECONDS);
     }

@@ -149,8 +149,6 @@ public class Client
 
             out.writeObject(list);
            list = (ArrayList<AuctionHouse>) in.readObject();
-
-
             return list;
 
 
