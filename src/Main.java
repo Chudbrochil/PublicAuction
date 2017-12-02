@@ -34,25 +34,25 @@ public class Main extends Application
         if(!result.isPresent() || result.get().equals("Agent"))
         {
             Parent root = FXMLLoader.load(getClass().getResource("AgentUI.fxml"));
-            primaryStage.setTitle("PublicAuction Agent Window");
+            primaryStage.setTitle("PublicAuction Agent");
             primaryStage.setScene(new Scene(root, 600, 400));
         }
         else if(result.get().equals("Auction House"))
         {
             Parent root = FXMLLoader.load(getClass().getResource("AuctionHouseUI.fxml"));
-            primaryStage.setTitle("PublicAuction AH Window");
+            primaryStage.setTitle("PublicAuction AH");
             primaryStage.setScene(new Scene(root, 600, 400));
         }
         else if(result.get().equals("Bank"))
         {
             Parent root = FXMLLoader.load(getClass().getResource("BankUI.fxml"));
-            primaryStage.setTitle("PublicAuction Bank Window");
+            primaryStage.setTitle("PublicAuction Bank");
             primaryStage.setScene(new Scene(root, 300, 600));
         }
         else if(result.get().equals("Auction Central"))
         {
             Parent root = FXMLLoader.load(getClass().getResource("AuctionCentralUI.fxml"));
-            primaryStage.setTitle("PublicAuction Auction Central Window");
+            primaryStage.setTitle("PublicAuction Auction Central");
             primaryStage.setScene(new Scene(root, 300, 600));
         }
 

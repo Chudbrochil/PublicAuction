@@ -8,6 +8,7 @@ import java.io.PrintStream;
 
 import static java.lang.System.out;
 
+// TODO: BankController and ACController are almost exactly the same. Please fix this...
 public class BankController
 {
 
@@ -18,11 +19,9 @@ public class BankController
     @FXML
     public void initialize()
     {
-        taOutput.setText("This is a bank.");
-
-        Server s = new Server(true);
-
-        OutputStream out = new OutputStream() {
+        // We are allowing standard out to be printed to our text area.
+        OutputStream out = new OutputStream()
+        {
             @Override
             public void write(int b) throws IOException
             {
@@ -31,6 +30,18 @@ public class BankController
         };
 
         System.setOut(new PrintStream(out, true));
+
+        // Because Bank runs a "while(true)" to catch incoming messages, it needs a new thread separate from the UI
+        Thread newThread = new Thread(new Runnable() {
+            @Override
+            public void run()
+            {
+                Server s = new Server(true);
+            }
+        });
+
+        newThread.start();
+
     }
 
     public void appendText(String str)
