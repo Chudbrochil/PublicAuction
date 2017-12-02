@@ -14,27 +14,33 @@
    <children>
       <VBox prefHeight="370.0" prefWidth="390.0">
          <children>
-            <HBox prefHeight="32.0" prefWidth="391.0">
-               <children>
-                  <Label prefHeight="17.0" prefWidth="50.0" text="Status:" />
-                  <Label fx:id="lblUserOutput" text="userOutput" />
-               </children>
-            </HBox>
-            <HBox prefHeight="35.0" prefWidth="391.0">
-               <children>
-                  <TextField fx:id="tfBidAmount" text="100.00" />
-                  <Button fx:id="btnPlaceBid" mnemonicParsing="false" onAction="#placeBid" text="Place Bid" />
-               </children>
-            </HBox>
             <HBox prefHeight="24.0" prefWidth="614.0">
                <children>
                   <Label prefHeight="17.0" prefWidth="50.0" text="Balance:" />
                   <Label fx:id="lblBalance" text="Cash" />
                </children>
             </HBox>
+            <HBox prefHeight="35.0" prefWidth="391.0">
+               <children>
+                  <TextField fx:id="tfBidAmount" text="100.00" />
+                  <Button fx:id="btnPlaceBid" mnemonicParsing="false" onAction="#btnPlaceBid" text="Place Bid" />
+                  <Button fx:id="btnWithdraw" mnemonicParsing="false" onAction="#btnWithdraw" text="Withdraw" />
+               </children>
+            </HBox>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Label prefHeight="17.0" prefWidth="50.0" text="Status:" />
+                  <TextArea fx:id="taAgentOutput" editable="false" prefHeight="200.0" prefWidth="200.0" />
+               </children>
+            </VBox>
          </children>
       </VBox>
-      <TextArea fx:id="taItemList" prefHeight="200.0" prefWidth="200.0" text="Items" GridPane.columnIndex="1" />
+      <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">
+         <children>
+            <Label text="Items" />
+            <TextArea fx:id="taItemList" prefHeight="352.0" prefWidth="100.0" />
+         </children>
+      </VBox>
    </children>
    <rowConstraints>
       <RowConstraints />

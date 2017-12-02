@@ -1,3 +1,5 @@
+import javafx.scene.control.TextArea;
+
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -12,16 +14,26 @@ public class Client
     private ObjectInputStream in;
     private Socket bankSocket;
     private Socket auctionCentralSocket;
+    private TextArea taAgentOutput;
 
     public Client(boolean isAgent, String name)
     {
-        if(name == null) { name = "NONAME CLIENT"; }
+        this(isAgent, name, null);
+    }
+
+    public Client(boolean isAgent, String name, TextArea taAgentOutput)
+    {
+        if (name == null)
+        {
+            name = "NONAME CLIENT";
+        }
+        this.taAgentOutput = taAgentOutput;
 
         try
         {
             auctionCentralSocket = new Socket("127.0.0.1", 5555);
 
-            if(isAgent)
+            if (isAgent)
             {
                 agentInit(name);
             }
@@ -30,7 +42,7 @@ public class Client
                 auctionHouseInit(name);
             }
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             e.printStackTrace();
             e.getMessage();
@@ -41,18 +53,18 @@ public class Client
 
     private void agentInit(String name) throws Exception
     {
-            agent = new Agent(name);
-            System.out.println("You've chosen " + agent.getName() + " as your username");
-            bankSocket = new Socket("127.0.0.1", 4444);
-            out = new ObjectOutputStream(bankSocket.getOutputStream());
-            in = new ObjectInputStream(bankSocket.getInputStream());
-            registerAgent(out, in, agent);
+        agent = new Agent(name);
+        if(taAgentOutput != null) { taAgentOutput.appendText("You've chosen " + agent.getName() + " as your name.\n"); }
+        bankSocket = new Socket("127.0.0.1", 4444);
+        out = new ObjectOutputStream(bankSocket.getOutputStream());
+        in = new ObjectInputStream(bankSocket.getInputStream());
+        registerAgent(out, in, agent);
 
     }
 
     private void auctionHouseInit(String name) throws Exception
     {
-        auctionHouse =  new AuctionHouse(name);
+        auctionHouse = new AuctionHouse(name);
         System.out.println("You've chosen " + auctionHouse.getName() + " as your auction house.");
         out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
         in = new ObjectInputStream(auctionCentralSocket.getInputStream());
@@ -68,8 +80,8 @@ public class Client
 
             newUser = (Agent) in.readObject();
 
-            System.out.println("Account Balance = " + newUser.getAccountBalance());
-            System.out.println("Account Number = " + newUser.getAccountNum());
+            if(taAgentOutput != null) { taAgentOutput.appendText("Account Balance: " + newUser.getAccountBalance() + "\n"); }
+            if(taAgentOutput != null) { taAgentOutput.appendText("Account Number: " + newUser.getAccountNum() + "\n"); }
 
             out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
             in = new ObjectInputStream(auctionCentralSocket.getInputStream());
@@ -78,7 +90,7 @@ public class Client
 
             newUser = (Agent) in.readObject();
 
-            System.out.println("Bidding Key = " + newUser.getBiddingKey());
+            if(taAgentOutput != null) { taAgentOutput.appendText("Bidding Key = " + newUser.getBiddingKey() + "\n"); }
             agent = newUser;
         }
         catch (Exception e)
@@ -112,11 +124,11 @@ public class Client
 
 
     /**
-     *  TODO: This is where method's for AuctionHouse and Agent will live. We need messaging here.
+     * TODO: This is where method's for AuctionHouse and Agent will live. We need messaging here.
      */
 
 
-    public void placeBid(double bidAmt, Agent agent)
+    public void withdraw(double bidAmt, Agent agent)
     {
         try
         {
@@ -125,10 +137,18 @@ public class Client
             out = new ObjectOutputStream(bankSocket.getOutputStream());
             in = new ObjectInputStream(bankSocket.getInputStream());
 
-            out.writeObject(agent);
+            // Sending a message of type Withdraw
+            out.writeObject(new Message(MessageType.WITHDRAW, agent.getAccountNum(), bidAmt));
+            Message response = (Message)in.readObject();
 
-            // TODO: We need to get a response from the bank that the bid went through
-            agent.setAccountBalance(agent.getAccountBalance() - bidAmt);
+            if(response.getBidResponse() == BidResponse.ACCEPT)
+            {
+                agent.deductAccountBalance(response.AMOUNT);
+            }
+            else
+            {
+                if(taAgentOutput != null) { taAgentOutput.appendText("You don't have enough funds to withdraw " + response.AMOUNT + "\n"); }
+            }
 
         }
         catch (Exception e)
@@ -140,24 +160,36 @@ public class Client
     }
 
 
-    public ArrayList<AuctionHouse> getListAH(ArrayList list){
-        try{
-            auctionCentralSocket = new  Socket("127.0.0.1", 5555);
+    public void updateListOfAHs()
+    {
+        try
+        {
+            auctionCentralSocket = new Socket("127.0.0.1", 5555);
             out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
             in = new ObjectInputStream(auctionCentralSocket.getInputStream());
+            out.writeObject(new Message(MessageType.UPDATE_AHS, null));
 
+            Message response = (Message)in.readObject();
 
-            out.writeObject(list);
-           list = (ArrayList<AuctionHouse>) in.readObject();
-            return list;
+            if(response.getType() == MessageType.UPDATE_AHS)
+            {
+                agent.setAuctionHouses(response.getListOfAHs());
+            }
+            else
+            {
 
+                // TODO: What if messages somehow get interleaved? Haven't tested this.
+                System.out.print("Whoops, received a message other than update AHs");
+            }
 
-        }catch(Exception e){
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
             e.getLocalizedMessage();
             e.getMessage();
         }
-        return null;
+
     }
 
     public static void main(String[] args)

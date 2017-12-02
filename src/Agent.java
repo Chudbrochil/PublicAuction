@@ -6,7 +6,6 @@ public class Agent implements Serializable
     private Bank bank;
     private AuctionCentral central;
     private ArrayList<AuctionHouse> auctionHouses;
-    private boolean registered = false;
     private int accountNum;
     private String bankKey, name;
     private String biddingKey;
@@ -74,19 +73,13 @@ public class Agent implements Serializable
         this.accountBalance = num;
     }
 
+    public void deductAccountBalance(Double num) { accountBalance -= num; }
+
     public double getAccountBalance() { return accountBalance; }
 
     public String getName()
     {
         return this.name;
-    }
-
-    public boolean isRegistered() {
-        return registered;
-    }
-
-    public void setRegistered(boolean registered) {
-        this.registered = registered;
     }
 
     public ArrayList<AuctionHouse> getAuctionHouses() {

@@ -3,40 +3,40 @@
 public class Account
 {
     private long accountNum;
-    private Double amount;
+    private Double balance;
     private Double temporaryHold;
 
     /**
      * Account initial constructor
      *
      * @param accountNum
-     * @param amount
+     * @param balance
      */
-    public Account(long accountNum, Double amount)
+    public Account(long accountNum, Double balance)
     {
         this.accountNum = accountNum;
-        this.amount = amount;
+        this.balance = balance;
     }
 
     public boolean deductAmount(Double amountToDeduct)
     {
-        if (amount - amountToDeduct < 0)
+        if (balance - amountToDeduct < 0)
         {
             return false;
         }
         else
         {
-            amount -= amountToDeduct;
+            balance -= amountToDeduct;
             return true;
         }
     }
 
-    public Double getAmount() {
-        return amount;
+    public Double getBalance() {
+        return balance;
     }
 
-    public void setAmount(Double amount) {
-        this.amount = amount;
+    public void setBalance(Double balance) {
+        this.balance = balance;
     }
 
     // TODO: Implement "hold" mechanism

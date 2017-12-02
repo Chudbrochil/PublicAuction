@@ -1,13 +1,10 @@
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
-
-import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -16,7 +13,10 @@ public class AgentController
 {
 
     @FXML
-    private Label lblUserOutput, lblBalance;
+    private Label lblBalance;
+
+    @FXML
+    private TextArea taAgentOutput, taItemList;
 
     @FXML
     private TextField tfBidAmount;
@@ -27,7 +27,8 @@ public class AgentController
     @FXML
     private void initialize()
     {
-        client = new Client(true, Main.askName());
+        client = new Client(true, Main.askName(), taAgentOutput);
+        agent = client.getAgent();
         update();
     }
 
@@ -43,13 +44,11 @@ public class AgentController
             @Override
             public void run()
             {
-                agent = client.getAgent();
-                // TODO: (Jacob) Auction houses for some reason are not updating in real time
-                client.getAgent().setAuctionHouses(client.getListAH(agent.getAuctionHouses()));
-                System.out.println(client.getAgent().getAuctionHouses().get(0).getName());
-                System.out.println(client.getAgent().getAuctionHouses().get(1).getName());
+                // Getting the latest list of auction houses that are up and updates the item list
+                client.updateListOfAHs();
+                updateItemList();
+
                 // Platform syncs this command with the UI, fixes javafx thread bugs
-                // TODO: (Jacob) This balance isn't getting updated again...
                 Platform.runLater(() -> {
                     lblBalance.setText(String.valueOf(agent.getAccountBalance()));
                 });
@@ -58,15 +57,22 @@ public class AgentController
     }
 
 
+
+    @FXML
+    private void btnWithdraw()
+    {
+        taAgentOutput.appendText("Accepted withdraw for: " + tfBidAmount.getText() + "\n");
+        client.withdraw(Double.valueOf(tfBidAmount.getText()), agent);
+    }
+
     /**
      * placeBid()
      * Handler for user clicking that they want to place a bid.
      */
     @FXML
-    private void placeBid()
+    private void btnPlaceBid()
     {
-        lblUserOutput.setText("Accepted bid for: " + tfBidAmount.getText());
-        client.placeBid(Double.valueOf(tfBidAmount.getText()), client.getAgent());
+
     }
 
     private void updateItemList()
@@ -82,11 +88,13 @@ public class AgentController
         }
 
 
+        String itemStrings = "";
         // TODO: Debug
         for(int i = 0; i < items.size(); ++i)
         {
-            System.out.println(items.get(i).ITEM_NAME);
+            itemStrings += items.get(i).ITEM_NAME + "\n";
         }
+        taItemList.setText(itemStrings);
 
     }
 

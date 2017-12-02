@@ -1,9 +1,12 @@
+import java.io.Serializable;
+import java.util.ArrayList;
+
 /**
  * This is the object that can be sent between classes, storing information.
  * Check if a parameter is null. If it is and you're expecting to be able to use it, something has gone wrong.
  *
  */
-public class Message
+public class Message implements Serializable
 {
     //General needs
     private MessageType type;
@@ -16,7 +19,9 @@ public class Message
     public final String AUCTION_HOUSE_ID;   //the ID of this auction house (needed by Client)
     
     //for type WITHDRAW
-    public final String ACCOUNT_NUM;
+    public final int ACCOUNT_NUM;
+
+    private ArrayList<AuctionHouse> listOfAHs;
     
     //for type PLACE_HOLD
     //Everything for PLACE_BID and
@@ -30,13 +35,13 @@ public class Message
         AMOUNT = amount;
         ITEM_ID = itemID;
         AUCTION_HOUSE_ID = auctionHouseID;
-        
+
         //Unused with this Message type
-        ACCOUNT_NUM = null;
+        ACCOUNT_NUM = 0;
     }
     
     //Constructor for a WITHDRAW message
-    public Message(MessageType t, String accountNum, double amount)
+    public Message(MessageType t, int accountNum, double amount)
     {
         type = t;
         ACCOUNT_NUM = accountNum;
@@ -47,6 +52,30 @@ public class Message
         AUCTION_HOUSE_ID = null;
         BIDDING_ID = null;
     }
+
+    //Constructor for UPDATE_AHS message
+    public Message(MessageType t, ArrayList<AuctionHouse> listOfAHs)
+    {
+        type = t;
+        listOfAHs = new ArrayList<>();
+
+        AMOUNT = 0.0;
+        ITEM_ID = null;
+        AUCTION_HOUSE_ID = null;
+        BIDDING_ID = null;
+        ACCOUNT_NUM = 0;
+    }
+
+    public Message()
+    {
+        AMOUNT = 0.0;
+        ITEM_ID = null;
+        AUCTION_HOUSE_ID = null;
+        BIDDING_ID = null;
+        ACCOUNT_NUM = 0;
+        type = null;
+    }
+
     
     /**
      * setType()
@@ -70,4 +99,8 @@ public class Message
     public void setBidResponse(BidResponse r){response = r;}
     
     public BidResponse getBidResponse() { return response; }
+
+    public ArrayList<AuctionHouse> getListOfAHs() { return listOfAHs; }
+
+    public void setListOfAHs(ArrayList<AuctionHouse> listOfAHs) { this.listOfAHs = listOfAHs; }
 }

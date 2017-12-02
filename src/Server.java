@@ -11,7 +11,6 @@ public class Server
 
     private static int bankPort = 4444;
     private static int auctionCentralPort = 5555;
-
     public Server(boolean isBank)
     {
         // TODO: isListening is a stand-in for having a Bank/AC being spun down and up. This may be an extra feature...
@@ -45,7 +44,6 @@ public class Server
         System.out.println(Main.returnNetworkInfo());
         System.out.println("Port: " + bankPort);
 
-
         while (true)
         {
             Socket pipeConnection = bankSocket.accept();
@@ -53,25 +51,39 @@ public class Server
             ObjectInputStream bankIn = new ObjectInputStream(pipeConnection.getInputStream());
             Object object = bankIn.readObject();
 
+            // Initializing an agent for the first time wtih the bank
             if (object instanceof Agent)
             {
                 Agent agent = (Agent) object;
-                // If this is the first time we are getting an agent, register it
-                if (!agent.isRegistered())
+                bank.registerAgent(agent);
+                bankOut.writeObject(agent);
+            }
+            else if(object instanceof Message)
+            {
+                Message incomingMessage = (Message)object;
+                if(incomingMessage.getType() == MessageType.WITHDRAW)
                 {
-                    bank.registerAgent(agent);
-                    agent.setRegistered(true);
-                    bankOut.writeObject(agent);
-                }
-                // If we are getting an agent again, we must be doing a withdrawl //TODO: Remove this after we aren't doing withdrawl's
-                else
-                {
-                    // TODO: This 100 is hard-coded for now. We'll need to gather this value from a message.
-                    bank.getAccountNumberToAccountMap().get(agent.getAccountNum()).setAmount(bank.getAccountNumberToAccountMap().get(agent.getAccountNum()).getAmount() - 100);
-                    agent.setAccountBalance(agent.getAccountBalance() - 100.00);
-                    System.out.println(bank.getAccountNumberToAccountMap().get(agent.getAccountNum()).getAmount());
+                    // If we were able to deduct the bidding amount, then take it out, send a success back.
+                    if(bank.getAccountNumberToAccountMap().get(incomingMessage.ACCOUNT_NUM).deductAmount(incomingMessage.AMOUNT))
+                    {
+                        incomingMessage.setBidResponse(BidResponse.ACCEPT);
+                        System.out.println("Bank accepted withdrawl of " + incomingMessage.AMOUNT + " from acct#: " + incomingMessage.ACCOUNT_NUM);
+                    }
+                    // If there wasn't enough money, send a rejection back.
+                    else
+                    {
+                        incomingMessage.setBidResponse(BidResponse.REJECT);
+                        System.out.println("Bank refused withdrawl of " + incomingMessage.AMOUNT + " from acct#: " + incomingMessage.ACCOUNT_NUM);
+                    }
+                    bankOut.writeObject(incomingMessage);
                 }
             }
+            else
+            {
+                System.out.println("Bank received unrecognized message.");
+            }
+
+
         }
     }
 
@@ -107,10 +119,17 @@ public class Server
                 centralOut.writeObject(ah);
             }
 
-            else {
-
-                centralOut.writeObject(ac.getListOfAHs());
+            if(object instanceof Message)
+            {
+                Message incomingMessage = (Message)object;
+                if(incomingMessage.getType() == MessageType.UPDATE_AHS)
+                {
+                    incomingMessage.setListOfAHs(ac.getListOfAHs());
+                    centralOut.writeObject(incomingMessage);
+                }
             }
+
+
 
         }
     }
