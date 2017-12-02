@@ -5,7 +5,9 @@
  */
 public class Message
 {
-    MessageType type;
+    //General needs
+    private MessageType type;
+    private BidResponse response;
     
     //for type PLACE_BID
     public final String BIDDING_ID;         //BIDDING_ID of the Agent who wishes to place a bid
@@ -13,11 +15,14 @@ public class Message
     public final String ITEM_ID;           //ID of the item the bidder wishes to bid on
     public final String AUCTION_HOUSE_ID;   //the ID of this auction house (needed by Client)
     
+    //for type WITHDRAW
+    public final String ACCOUNT_NUM;
+    
     //for type PLACE_HOLD
     //Everything for PLACE_BID and
-    private BidResponse response;
+    //private BidResponse response;
     
-
+    //Constructor for a PLACE_BID message
     public Message(MessageType t, String biddingID, double amount, String itemID, String auctionHouseID)
     {
         type = t;
@@ -25,11 +30,28 @@ public class Message
         AMOUNT = amount;
         ITEM_ID = itemID;
         AUCTION_HOUSE_ID = auctionHouseID;
+        
+        //Unused with this Message type
+        ACCOUNT_NUM = null;
+    }
+    
+    //Constructor for a WITHDRAW message
+    public Message(MessageType t, String accountNum, double amount)
+    {
+        type = t;
+        ACCOUNT_NUM = accountNum;
+        AMOUNT = amount;
+    
+        //Unused with this Message type
+        ITEM_ID = null;
+        AUCTION_HOUSE_ID = null;
+        BIDDING_ID = null;
     }
     
     /**
+     * setType()
      * @param t Type of Message.
-     * For when you want to keep the same items but need a different Message type.
+     * For when you want to keep the same field values but need a different Message type.
      */
     public void setType(MessageType t)
     {
@@ -45,4 +67,7 @@ public class Message
         return type;
     }
     
+    public void setBidResponse(BidResponse r){response = r;}
+    
+    public BidResponse getBidResponse() { return response; }
 }

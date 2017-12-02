@@ -35,8 +35,12 @@ public enum MessageType
     
     
     /**
+     * WITHDRAW
+     *      This is a test message that Agent sends to Bank to have money withdrawn from their account. (Agent sends Bank
+     *      Message with AccountNum and amount.) Then the Bank responds with the same message, setting the BID_RESPONSE in Message
+     *      relative to whether the money was there to withdraw or not.
      * PLACE_BID
      *      Created by an Agent and sent to AuctionHouse.
      */
-    PLACE_BID, PLACE_HOLD;
+    WITHDRAW, PLACE_BID, PLACE_HOLD;
 }
