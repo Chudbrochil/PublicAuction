@@ -2,7 +2,6 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -39,7 +38,6 @@ public class Controller
             @Override
             public void run()
             {
-                //System.out.println(agent.getAccountBalance());
                 // Platform syncs this command with the UI, fixes javafx thread bugs
                 Platform.runLater(() -> {
                     lblBalance.setText(String.valueOf(agent.getAccountBalance()));
