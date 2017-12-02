@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -29,6 +30,8 @@ public class AuctionHouse implements Serializable
     private int publicID;
     private String secretKey; // Requested and received from Auction Central
     private HashMap<String, Item> items; //Item ID as key for the item.
+    private HashSet<PendingBidRequest> pendingHolds; //placeBid calls this AuctionHouse is waiting on holds for to respond to
+                                             //the message.
     //private HashMap<String, Time>
     //private HashMap<>
     //private static int AuctionHouseID;
@@ -42,8 +45,8 @@ public class AuctionHouse implements Serializable
     public AuctionHouse(String name)
     {
         NAME = name;
-//        myClient = client;
         items = new HashMap<>();
+        pendingHolds = new HashSet();
 
         //Give me items!
         for (int i = 0; i < 3; ++i)
@@ -73,11 +76,6 @@ public class AuctionHouse implements Serializable
         return publicID;
     }
 
-    public void placeHold(String biddingKey, Double amount)
-    {
-
-    }
-
     public String getName()
     {
         return NAME;
@@ -85,21 +83,34 @@ public class AuctionHouse implements Serializable
 
     /**
      * placeBid()
-     * Called by an Agent to place a bid (or by a Client acting on behalf of an Agent)
-     *
+     * Called by an Agent to place a bid (or by a Client when a PLACE_BID Message is received)
      * @param biddingID      BIDDING_ID of the Agent who wishes to place a bid
      * @param amount         Amount the bidder wishes to bid.
      * @param itemID         ID of the item the bidder wishes to bid on
      * @param auctionHouseID the ID of this auction house (needed by Client)
+     * @return true if Client should move ahead and request a hold to be placed.
+     *         false if something went wrong (not this AuctionHouse's ID, the item doesn't exist here,
+     *         the Agent bid too little,) in which case the Client can send a bidResponse REJECT Message
+     *         right back to the Agent.
+     *         //todo: above
      */
-    public void placeBid(String biddingID, double amount, String itemID, String auctionHouseID)
+    public boolean placeBid(String biddingID, double amount, String itemID, String auctionHouseID)
     {
+        //Safechecking
+        if(!auctionHouseID.equals(publicID))
+        {
+            //Not the right AuctionHouse USER OUTPUT
+            System.err.println(toString()+" received a placeBid request for auctionHouseID "+auctionHouseID+" which does" +
+                "not match its public ID "+publicID+". Returning.");
+            return false;
+        }
         Item item = items.get(itemID);
         if (item == null)
         {
             //That item isn't for sale here USER OUTPUT
-            System.err.println("Bidding ID " + biddingID + " tried to bid on " + itemID + ", which is not an item in " + NAME + ".");
-            return;
+            System.err.println("Bidding ID " + biddingID + " tried to bid on " + itemID + ", which is not an item in " +
+                NAME + ". Returning");
+            return false;
         }
 
         //If it's a valid bid AMOUNT
@@ -107,9 +118,74 @@ public class AuctionHouse implements Serializable
         {
             //Agent didn't bid enough USER OUTPUT
             //if(placeHold(BIDDING_ID, AMOUNT, AUCTION_HOUSE_ID))
+            pendingHolds.add(new PendingBidRequest(biddingID, amount, itemID));
+            return true;
+        }
+        //todo: else, USER OUTPUT whoops, bid more.
+        else return false;
+    }
+    
+    /**
+     * processHoldResponse()
+     * Called by Client when a REQUEST_HOLD Message is received.
+     * @param biddingID
+     * @param amount
+     * @param itemID
+     * @param response
+     * @return  null if response was REJECT.
+     *          biddingID of the person whose bid was surpassed otherwise. Client should send a REQUEST_BID
+     *          BidResponse PASS to this biddingID.
+     *          //todo: above
+     */
+    public String processHoldResponse(String biddingID, double amount, String itemID, BidResponse response)
+    {
+        //Check if pendingHolds holds it.
+        
+        if(response==BidResponse.REJECT) return null;
+        
+        else if(response==BidResponse.ACCEPT)
+        {
+            Item item = items.get(itemID);
+            String prevBidWinner = item.getCurrentHighestBidderID();
+            item.setCurrentBidAndBidder(amount, biddingID);
+            return prevBidWinner;
+        }
+        else
+        {
+            System.err.println(toString()+" got a hold response of BidResponse "+ response+". Should be ACCEPT or REJECT.");
+            return null;
         }
     }
-
+    
+    
+    private class PendingBidRequest
+    {
+        public final String BIDDING_ID;
+        public final double AMOUNT;
+        public final String ITEM_ID;
+        
+        public PendingBidRequest(String bID, double amt, String iID)
+        {
+            BIDDING_ID = bID;
+            AMOUNT = amt;
+            ITEM_ID = iID;
+        }
+        
+        @Override
+        public boolean equals(Object obj)
+        {
+            if(obj instanceof PendingBidRequest)
+            {
+                PendingBidRequest br = (PendingBidRequest)obj;
+                return this.BIDDING_ID == br.BIDDING_ID && this.AMOUNT == br.AMOUNT && this.ITEM_ID == br.ITEM_ID;
+            }
+            else return false;
+        }
+        
+        //TODO: override hash to use in Set.
+    }
+    
+    
     private static class ItemDB
     {
         private static ArrayList<Item> items;

@@ -40,7 +40,8 @@ public enum MessageType
      *      Message with AccountNum and amount.) Then the Bank responds with the same message, setting the BID_RESPONSE in Message
      *      relative to whether the money was there to withdraw or not.
      * PLACE_BID
-     *      Created by an Agent and sent to AuctionHouse.
+     *      Created by an Agent and sent to AuctionHouse. The Agent sends the AuctionHouse (biddingID, amount, itemID, auctionHouseID).
+     *      //todo: For now, AuctionHouse will simply record the bid.
      */
     WITHDRAW, PLACE_BID, PLACE_HOLD;
 }
