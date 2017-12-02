@@ -35,6 +35,13 @@ public class AuctionCentral
         listOfAHs.add(auctionHouse);
         System.out.println("Auction house is registered...");
         System.out.println("ID: " + auctionHouseID + " AH Key: " + auctionHouseKey);
+
+
+        System.out.println("Current list of auctionHouse's");
+        for(int i = 0; i < listOfAHs.size(); ++i)
+        {
+            System.out.println(listOfAHs.get(i).getName());
+        }
     }
 
     public ArrayList<AuctionHouse> getListOfAHs() { return listOfAHs; }

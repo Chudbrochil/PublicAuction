@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane prefHeight="600.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="AuctionCentralController">
+    <children>
+        <TextArea fx:id="taOutput" layoutX="1.0" prefHeight="600.0" prefWidth="300.0" editable="false" />
+    </children>
+</AnchorPane>
