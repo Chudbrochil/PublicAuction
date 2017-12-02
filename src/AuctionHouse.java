@@ -97,7 +97,10 @@ public class AuctionHouse
         if(amount >= item.MINIMUM_BID && amount > item.getCurrentBid())
         {
             //Agent didn't bid enough USER OUTPUT
-            //if(placeHold())
+            if(placeHold(biddingID, amount, auctionHouseID))
+            {
+                
+            }
         }
     }
 
