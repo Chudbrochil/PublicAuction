@@ -5,6 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextInputDialog;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -46,7 +47,7 @@ public class Main extends Application
         {
             Parent root = FXMLLoader.load(getClass().getResource("AuctionHouseUI.fxml"));
             primaryStage.setTitle("Auction House");
-            primaryStage.setScene(new Scene(root, 600, 400));
+            primaryStage.setScene(new Scene(root, 300, 600));
         }
         else if(result.get().equals("Bank"))
         {
@@ -108,6 +109,22 @@ public class Main extends Application
         output += "IP Address: " + ipInfo.getHostAddress();
 
         return output;
+    }
+
+    public static String askName()
+    {
+        TextInputDialog dialog = new TextInputDialog("Name");
+        dialog.setTitle("Enter your name");
+        dialog.setContentText("Please enter your name.");
+        Optional<String> result = dialog.showAndWait();
+        if(result.isPresent())
+        {
+            return result.get();
+        }
+        else
+        {
+            return "Nameless Object";
+        }
     }
 
 

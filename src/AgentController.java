@@ -27,24 +27,8 @@ public class AgentController
     @FXML
     private void initialize()
     {
-        client = new Client(true, askName());
+        client = new Client(true, Main.askName());
         update();
-    }
-
-    private String askName()
-    {
-        TextInputDialog dialog = new TextInputDialog("Name");
-        dialog.setTitle("Enter your name");
-        dialog.setContentText("Please enter your name.");
-        Optional<String> result = dialog.showAndWait();
-        if(result.isPresent())
-        {
-            return result.get();
-        }
-        else
-        {
-            return "Nameless Agent";
-        }
     }
 
     /**
