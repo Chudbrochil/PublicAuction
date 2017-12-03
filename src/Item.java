@@ -16,7 +16,19 @@ public class Item implements Serializable
     public final String ITEM_NAME;          //Name of the item
     private String currentHighestBidderID;    //BIDDING_ID of Agent who holds the currentBid, which is winning. Will be null until first bid.
     private String imgPath;
-    public int itemID;            //Unique item ID
+    private int itemID;            //Unique item ID
+
+    // Copy constructor
+    public Item(Item anotherItem)
+    {
+        this.ahID = anotherItem.ahID;
+        this.MINIMUM_BID = anotherItem.MINIMUM_BID;
+        this.currentBid = anotherItem.currentBid;
+        this.ITEM_NAME = anotherItem.ITEM_NAME;
+        this.currentHighestBidderID = anotherItem.currentHighestBidderID;
+        this.imgPath = anotherItem.imgPath;
+        this.itemID = anotherItem.itemID;
+    }
 
     public Item(String itemName, String imgPath, double minimumBid)
     {
@@ -68,5 +80,15 @@ public class Item implements Serializable
     public void setAhID(int ahID)
     {
         this.ahID = ahID;
+    }
+
+    public boolean equals(Object obj)
+    {
+        Item itemToCompare = (Item) obj;
+        if(itemToCompare.getAhID() == this.ahID && itemToCompare.getItemID() == this.itemID)
+        {
+            return true;
+        }
+        else { return false; }
     }
 }

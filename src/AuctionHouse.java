@@ -24,7 +24,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * ***
  */
 
-public class AuctionHouse implements Serializable
+public class AuctionHouse
 {
     private final String NAME;
     private int publicID;
@@ -34,7 +34,7 @@ public class AuctionHouse implements Serializable
                                              //the message.
     //private HashMap<String, Time> itemTimers;
     //private HashMap<>
-    //private static int AuctionHouseID;
+
     private int itemCounter = 0;
 
     /**
@@ -48,6 +48,7 @@ public class AuctionHouse implements Serializable
         NAME = name;
         items = new HashMap<>();
         pendingHolds = new HashSet();
+        populateItems();
     }
 
     /**
@@ -63,9 +64,8 @@ public class AuctionHouse implements Serializable
         for (int i = 0; i < 3; ++i)
         {
             Item item = ItemDB.getRandomItem();
-            item.setAhID(publicID);
             item.setItemID(itemCounter);
-            items.put(item.getItemID(), item);
+            items.put(itemCounter, item);
             System.out.println(item.ITEM_NAME + " - Min price: " + item.MINIMUM_BID + " itemID: " + item.getItemID());
             itemCounter++;
         }
@@ -83,6 +83,11 @@ public class AuctionHouse implements Serializable
     {
         this.publicID = publicID;
         this.ahKey = ahKey;
+        ArrayList<Item> listOfItems = new ArrayList<Item>(items.values());
+        for(int i = 0; i < listOfItems.size(); ++i)
+        {
+            listOfItems.get(i).setAhID(this.publicID);
+        }
     }
 
     public int getPublicID()
@@ -180,8 +185,8 @@ public class AuctionHouse implements Serializable
         //items.
         //todo
     }
-    
-    
+
+
     private class PendingBidRequest
     {
         public final String BIDDING_ID;
@@ -247,7 +252,9 @@ public class AuctionHouse implements Serializable
 
         private static Item getRandomItem()
         {
-            return items.get(ThreadLocalRandom.current().nextInt(0, items.size()));
+            // I have to create a copy of the original object so that we don't end up with duplicate
+            // objects if we random pick the same item.
+            return new Item(items.get(ThreadLocalRandom.current().nextInt(0, items.size())));
         }
     }
 

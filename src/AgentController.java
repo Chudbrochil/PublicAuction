@@ -19,7 +19,7 @@ public class AgentController
     private Label lblBalance;
 
     @FXML
-    private TextArea taAgentOutput;//, taItemList;
+    private TextArea taAgentOutput;
 
     @FXML
     private ListView lvItems;
@@ -96,55 +96,21 @@ public class AgentController
                 // Checking to make sure the global items list doesn't already have the item before adding it
                 if(!items.contains(listOfItems.get(j)))
                 {
-                    //System.out.println("Name: " + listOfItems.get(j).ITEM_NAME + " ID:" + listOfItems.get(j).itemID + " AH: " + listOfItems.get(j).getAhID());
                     items.add(listOfItems.get(j));
-                    itemNames.add("Name: " + listOfItems.get(j).ITEM_NAME + " ID:" + listOfItems.get(j).itemID + " AH: " + listOfItems.get(j).getAhID());
+                    itemNames.add("Name: " + listOfItems.get(j).ITEM_NAME + " ID:" + listOfItems.get(j).getItemID() + " AH: " + listOfItems.get(j).getAhID());
                 }
             }
         }
-
-        // TODO: I'm still working in here, remove dead code when I come back
-
-//        for(int i = 0; i < items.size(); ++i)
-//        {
-//            System.out.println("Name: " + items.get(i).ITEM_NAME + " ID:" + items.get(i).itemID);
-//            //lvItems.getItems().
-//            //itemNames.set(i, "Name: " + items.get(i).ITEM_NAME + " ID:" + items.get(i).itemID);
-//        }
 
         lvItems.setItems(itemNames);
 
     }
 
-//    private void updateItemList()
-//    {
-//        ArrayList<AuctionHouse> listOfAHs = agent.getAuctionHouses();
-//
-//        ArrayList<Item> items = new ArrayList<>();
-//
-//        for(int i = 0; i < listOfAHs.size(); ++i)
-//        {
-//            HashMap<String, Item> ahItems = listOfAHs.get(i).getItems();
-//            items.addAll(ahItems.values());
-//        }
-//
-//
-//        String itemStrings = "";
-//        // TODO: Debug
-//        for(int i = 0; i < items.size(); ++i)
-//        {
-//            itemStrings += items.get(i).ITEM_NAME + "\n";
-//        }
-//        taItemList.setText(itemStrings);
-//
-//    }
 
     /**
      * TODO: UI elements needed...
      *
      * 1. A list of available items from the auction houses... OPTIONAL: status next to each item, currentBid etc.
-     * 2. A way to select an item... at the start this could be a field that takes an int index.
-     *
      */
 
 
