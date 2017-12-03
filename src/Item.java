@@ -82,13 +82,9 @@ public class Item implements Serializable
         this.ahID = ahID;
     }
 
-    public boolean equals(Object obj)
+    @Override
+    public String toString()
     {
-        Item itemToCompare = (Item) obj;
-        if(itemToCompare.getAhID() == this.ahID && itemToCompare.getItemID() == this.itemID)
-        {
-            return true;
-        }
-        else { return false; }
+        return ITEM_NAME + " itemID: " + itemID + " ahID: " + ahID;
     }
 }

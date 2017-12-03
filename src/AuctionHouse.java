@@ -24,7 +24,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * ***
  */
 
-public class AuctionHouse
+public class AuctionHouse implements Serializable
 {
     private final String NAME;
     private int publicID;

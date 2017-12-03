@@ -1,4 +1,6 @@
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -35,6 +37,12 @@ public class AgentController
     {
         client = new Client(true, Main.askName(), taAgentOutput);
         agent = client.getAgent();
+        lvItems.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                System.out.println(newValue);
+            }
+        });
         update();
     }
 
@@ -97,11 +105,13 @@ public class AgentController
                 if(!items.contains(listOfItems.get(j)))
                 {
                     items.add(listOfItems.get(j));
-                    itemNames.add("Name: " + listOfItems.get(j).ITEM_NAME + " ID:" + listOfItems.get(j).getItemID() + " AH: " + listOfItems.get(j).getAhID());
+                    itemNames.add(listOfItems.get(j).toString());
                 }
             }
         }
 
+
+        //lvItems.getItems().setAll(items); // This puts the actual items on the listview, but causes constant updates and makes the listview basically unclickable
         lvItems.setItems(itemNames);
 
     }
