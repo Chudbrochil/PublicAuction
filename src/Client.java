@@ -15,6 +15,10 @@ public class Client
     private Socket bankSocket;
     private Socket auctionCentralSocket;
     private TextArea taAgentOutput;
+    private boolean bankConnected;
+    private boolean acConnected;
+    private String bankHostname;
+    private String acHostname;
 
     /**
      * Client()
@@ -24,7 +28,9 @@ public class Client
      */
     public Client(boolean isAgent, String name)
     {
+
         this(isAgent, name, null);
+
     }
 
     /**
@@ -36,6 +42,11 @@ public class Client
      */
     public Client(boolean isAgent, String name, TextArea taAgentOutput)
     {
+        bankConnected = false;
+        acConnected = false;
+
+
+
         if (name == null)
         {
             name = "NONAME CLIENT";
@@ -220,5 +231,15 @@ public class Client
         }
     }
 
+    public void setBankHostname(String bankHostname)
+    {
+        this.bankHostname = bankHostname;
+    }
 
+    public void setAcHostname(String acHostname)
+    {
+        this.acHostname = acHostname;
+    }
+
+    public boolean getAcConnected() { return acConnected; }
 }

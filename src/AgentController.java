@@ -24,6 +24,9 @@ public class AgentController
     private TextArea taAgentOutput;
 
     @FXML
+    private TextField tfBankIP, tfAuctionCentralIP;
+
+    @FXML
     private ListView lvItems;
 
     @FXML
@@ -59,7 +62,7 @@ public class AgentController
             public void run()
             {
                 // Getting the latest list of auction houses that are up and updates the item list
-                client.updateListOfAHs();
+                client.updateListOfAHs(); // TODO: If we're connected to auctioncentral, do this
 
                 // Platform syncs this command with the UI, fixes javafx thread bugs
                 Platform.runLater(() -> {

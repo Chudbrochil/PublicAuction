@@ -128,8 +128,6 @@ public class Server
                 centralOut.writeObject(incomingMessage);
             }
 
-
-
         }
     }
 
