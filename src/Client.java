@@ -323,6 +323,22 @@ public class Client
         setBankHostname("127.0.0.1");
         setAcHostname("127.0.0.1");
     }
+    //Sends mssage to ac from ah to say item was sold.
+//    public void itemSold(Item item, Double totalBid, Agent agent) {
+//        try {
+//            auctionCentralSocket = new Socket("127.0.0.1", 5555);
+//            out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
+//            in = new ObjectInputStream(auctionCentralSocket.getInputStream());
+//            out.writeObject(new Message(MessageType.ITEM_SOLD, item.getItemID(), auctionHouse, agent.getBiddingKey(), totalBid));
+//
+//            Message response = (Message) in.readObject();
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            e.getLocalizedMessage();
+//            e.getMessage();
+//        }
+//    }
 
     /**
      * main()

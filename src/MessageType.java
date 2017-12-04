@@ -43,5 +43,5 @@ public enum MessageType
      *      Created by an Agent and sent to AuctionHouse. The Agent sends the AuctionHouse (biddingID, amount, itemID, auctionHouseID).
      *      //todo: For now, AuctionHouse will simply record the bid.
      */
-    WITHDRAW, PLACE_BID, PLACE_HOLD, UPDATE_AHS, REGISTER_AGENT, REGISTER_AH;
+    WITHDRAW, PLACE_BID, PLACE_HOLD, UPDATE_AHS, REGISTER_AGENT, REGISTER_AH, ITEM_SOLD;
 }

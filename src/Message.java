@@ -103,7 +103,20 @@ public class Message implements Serializable
         BIDDING_AMOUNT = 0.0;
         ITEM_ID = 0;
     }
-    
+
+    //ITEM SOLD Constructor
+//    public Message(MessageType t, int item, AuctionHouse ah, String bI, Double b)
+//    {
+//        type = t;
+//        AUCTION_HOUSE_ID = ah.getName();
+//        BIDDING_ID = bI;
+//        BIDDING_AMOUNT = b;
+//        ITEM_ID = item;
+//        // not used
+//        bankKey = null;
+//    }
+
+
     /**
      * setType()
      * @param t Type of Message.
