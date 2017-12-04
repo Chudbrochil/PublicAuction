@@ -142,7 +142,7 @@ public class Client
 
     public void placeAHbid(double bidAmount, Agent agent, Item item){
      try{
-         auctionCentralSocket = new Socket("127.0.0.1", 5555);
+         auctionCentralSocket = new Socket(acHostname, Main.auctionCentralPort);
          out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
          in = new ObjectInputStream(auctionCentralSocket.getInputStream());
 
