@@ -13,9 +13,9 @@ public class Message implements Serializable
     private BidResponse response;
     
     //for type PLACE_BID
-    public final double BIDDING_AMOUNT;            // Amount the bidder wishes to bid.
-    public final int ITEM_ID;           //ID of the item the bidder wishes to bid on
-    private String auctionHousePublicID;
+    private double bidAmount;            // Amount the bidder wishes to bid.
+    private int itemID;           //ID of the item the bidder wishes to bid on
+    private int auctionHousePublicID;
 
     //for type UPDATE_AHS
     private ArrayList<AuctionHouse> listOfAHs;
@@ -45,25 +45,22 @@ public class Message implements Serializable
     //private BidResponse response;
     
     //Constructor for a PLACE_BID message
-    public Message(MessageType t, String biddingKey, double amount, int itemID, int auctionHousePublicID)
+    public Message(MessageType t, String biddingKey, double bidAmount, int itemID, int auctionHousePublicID)
     {
         type = t;
         this.biddingKey = biddingKey;
-        BIDDING_AMOUNT = amount;
-        ITEM_ID = itemID;
-        auctionHousePublicID = auctionHousePublicID;
+        this.setBidAmount(bidAmount);
+        this.setItemID(itemID);
+        this.setAuctionHousePublicID(auctionHousePublicID);
 
     }
     
     //Constructor for a WITHDRAW message
-    public Message(MessageType t, String bankKey, double amount)
+    public Message(MessageType t, String bankKey, double bidAmount)
     {
         type = t;
         this.bankKey = bankKey;
-        BIDDING_AMOUNT = amount;
-    
-        //Unused with this Message type
-        ITEM_ID = 0;
+        this.setBidAmount(bidAmount);
     }
 
     // Constructor for a REGISTER_AGENT message (to Bank)
@@ -72,10 +69,6 @@ public class Message implements Serializable
         type = t;
         this.name = name;
         this.account = account;
-
-        // not used
-        BIDDING_AMOUNT = 0;
-        ITEM_ID = 0;
     }
 
     //Constructor for a REGISTER_AGENT message (to AC)
@@ -86,10 +79,6 @@ public class Message implements Serializable
         this.name = name;
         this.bankKey = bankKey;
         this.biddingKey = biddingKey;
-
-        // not used
-        ITEM_ID = 0;
-        BIDDING_AMOUNT = 0;
     }
 
     //Constructor for a REGISTER_AH message (to AC)
@@ -97,10 +86,6 @@ public class Message implements Serializable
     {
         type = t;
         this.setAuctionHouse(auctionHouse);
-
-        // not used
-        BIDDING_AMOUNT = 0;
-        ITEM_ID = 0;
     }
 
     //Constructor for UPDATE_AHS message
@@ -108,12 +93,21 @@ public class Message implements Serializable
     {
         type = t;
         listOfAHs = new ArrayList<>();
-
-        // not used
-        BIDDING_AMOUNT = 0.0;
-        ITEM_ID = 0;
     }
-    
+
+    //ITEM SOLD Constructor
+//    public Message(MessageType t, int item, AuctionHouse ah, String bI, Double b)
+//    {
+//        type = t;
+//        AUCTION_HOUSE_ID = ah.getName();
+//        BIDDING_ID = bI;
+//        BIDDING_AMOUNT = b;
+//        ITEM_ID = item;
+//        // not used
+//        bankKey = null;
+//    }
+
+
     /**
      * setType()
      * @param t Type of Message.
@@ -165,4 +159,34 @@ public class Message implements Serializable
     public AuctionHouse getAuctionHouse() { return auctionHouse; }
 
     public void setAuctionHouse(AuctionHouse auctionHouse) { this.auctionHouse = auctionHouse; }
+
+    public double getBidAmount()
+    {
+        return bidAmount;
+    }
+
+    public void setBidAmount(double bidAmount)
+    {
+        this.bidAmount = bidAmount;
+    }
+
+    public int getItemID()
+    {
+        return itemID;
+    }
+
+    public void setItemID(int itemID)
+    {
+        this.itemID = itemID;
+    }
+
+    public int getAuctionHousePublicID()
+    {
+        return auctionHousePublicID;
+    }
+
+    public void setAuctionHousePublicID(int auctionHousePublicID)
+    {
+        this.auctionHousePublicID = auctionHousePublicID;
+    }
 }

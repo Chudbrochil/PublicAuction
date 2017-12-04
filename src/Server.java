@@ -115,7 +115,6 @@ public class Server
         AuctionCentral ac = new AuctionCentral();
         ServerSocket auctionCentralSocket = new ServerSocket(Main.auctionCentralPort);
 
-
         isListening = true;
         System.out.println("Auction Central online.");
         System.out.println(Main.returnNetworkInfo());
@@ -163,6 +162,17 @@ public class Server
                     Message bankResponse = (Message) centralIn.readObject();
 
                 }
+                //                else if(incomingMessage.getType() == MessageType.ITEM_SOLD)
+//                {
+//                    Socket bankSocket = new Socket("127.0.0.1", 4444);
+//
+//                    out = new ObjectOutputStream(bankSocket.getOutputStream());
+//                    in = new ObjectInputStream(bankSocket.getInputStream());
+//
+//                    // Sending a message of type Withdraw
+//                    out.writeObject(new Message(MessageType.WITHDRAW, incomingMessage, bidAmt));
+//                }
+
                 centralOut.writeObject(incomingMessage);
             }
 

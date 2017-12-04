@@ -95,22 +95,25 @@ public class AgentController
         ArrayList<AuctionHouse> listOfAHs = agent.getAuctionHouses();
         ArrayList<Item> items = new ArrayList<>();
         ObservableList<String> itemNames = FXCollections.observableArrayList();
-        for(int i = 0; i < listOfAHs.size(); ++i)
-        {
-            HashMap<Integer, Item> ahItems = listOfAHs.get(i).getItems();
-            ArrayList<Item> listOfItems = new ArrayList<Item>(ahItems.values());
 
-            for(int j = 0; j < listOfItems.size(); ++j)
+        if(!listOfAHs.isEmpty())
+        {
+            for(int i = 0; i < listOfAHs.size(); ++i)
             {
-                // Checking to make sure the global items list doesn't already have the item before adding it
-                if(!items.contains(listOfItems.get(j)))
+                HashMap<Integer, Item> ahItems = listOfAHs.get(i).getItems();
+                ArrayList<Item> listOfItems = new ArrayList<Item>(ahItems.values());
+
+                for(int j = 0; j < listOfItems.size(); ++j)
                 {
-                    items.add(listOfItems.get(j));
-                    itemNames.add(listOfItems.get(j).toString());
+                    // Checking to make sure the global items list doesn't already have the item before adding it
+                    if(!items.contains(listOfItems.get(j)))
+                    {
+                        items.add(listOfItems.get(j));
+                        itemNames.add(listOfItems.get(j).toString());
+                    }
                 }
             }
         }
-
 
         //lvItems.getItems().setAll(items); // This puts the actual items on the listview, but causes constant updates and makes the listview basically unclickable
         lvItems.setItems(itemNames);

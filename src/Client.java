@@ -195,12 +195,12 @@ public class Client
 
                 if(response.getBidResponse() == BidResponse.ACCEPT)
                 {
-                    agent.deductAccountBalance(response.BIDDING_AMOUNT);
+                    agent.deductAccountBalance(response.getBidAmount());
                     if(taAgentOutput != null) { taAgentOutput.appendText("Withdraw accepted. New balance: " + agent.getAccountBalance() + "\n"); }
                 }
                 else
                 {
-                    if(taAgentOutput != null) { taAgentOutput.appendText("You don't have enough funds to withdraw " + response.BIDDING_AMOUNT + "\n"); }
+                    if(taAgentOutput != null) { taAgentOutput.appendText("You don't have enough funds to withdraw " + response.getBidAmount() + "\n"); }
                 }
             }
 
@@ -291,11 +291,11 @@ public class Client
             if(isAgent && bankConnected)
             {
                 registerAgentWithAC();
-                taAgentOutput.appendText("Connecting and registering with AC at: " + acHostname + ":" + Main.auctionCentralPort + "\n");
+                System.out.println("Connecting and registering with AC at: " + acHostname + ":" + Main.auctionCentralPort + "\n");
             }
             else if(isAgent && !bankConnected)
             {
-                taAgentOutput.appendText("Cannot connect to AC. Register with bank first to get your bank key.\n");
+                System.out.println("Cannot connect to AC. Register with bank first to get your bank key.\n");
             }
             else { registerAHWithAC(); }
         }
@@ -323,6 +323,22 @@ public class Client
         setBankHostname("127.0.0.1");
         setAcHostname("127.0.0.1");
     }
+    //Sends mssage to ac from ah to say item was sold.
+//    public void itemSold(Item item, Double totalBid, Agent agent) {
+//        try {
+//            auctionCentralSocket = new Socket("127.0.0.1", 5555);
+//            out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
+//            in = new ObjectInputStream(auctionCentralSocket.getInputStream());
+//            out.writeObject(new Message(MessageType.ITEM_SOLD, item.getItemID(), auctionHouse, agent.getBiddingKey(), totalBid));
+//
+//            Message response = (Message) in.readObject();
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            e.getLocalizedMessage();
+//            e.getMessage();
+//        }
+//    }
 
     /**
      * main()
