@@ -151,6 +151,7 @@ public class AgentController
     @FXML
     private void btnPlaceBid() // TODO: handle bad input?
     {
+        // TODO: This is a terrible hack, fix later. Actually add real items/observable list to listview instead...
         Item item = new Item();
         for(int i = 0; i < itemsAsList.size(); ++i)
         {
