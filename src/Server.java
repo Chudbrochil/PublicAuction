@@ -85,6 +85,34 @@ public class Server
                     System.out.println("Acct#: " + account.getAccountNum() + " BankKey: " + account.getBankKey() + " New Balance: " + account.getAccountBalance());
                     bankOut.writeObject(incomingMessage);
                 }
+                //When we place a bid
+                 else if(incomingMessage.getType() == MessageType.PLACE_BID)
+                {
+                    Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
+                    // If we were able to deduct the bidding amount, then take it out, send a success back.
+                    if(account.deductAccountBalance(incomingMessage.getBidAmount()))
+                    {
+                        incomingMessage.setBidResponse(BidResponse.ACCEPT);
+                        incomingMessage.setType(MessageType.PLACE_HOLD);
+                        bankOut.writeObject(incomingMessage);
+                    }
+                    // If there wasn't enough money, send a rejection back.
+                    else
+                    {
+                        incomingMessage.setBidResponse(BidResponse.REJECT);
+                        incomingMessage.setType(MessageType.PLACE_HOLD);
+                        bankOut.writeObject(incomingMessage);
+                    }
+                    System.out.println("Acct#: " + account.getAccountNum() + " BankKey: " + account.getBankKey() + " New Balance: " + account.getAccountBalance());
+                    bankOut.writeObject(incomingMessage);
+                }
+                // Initializing an agent with an account (account#, balance, bankkey)
+                else if(incomingMessage.getType() == MessageType.REGISTER_AGENT)
+                {
+                    System.out.println("Got a message register_agent from " + incomingMessage.getName());
+                    bank.registerAgent(incomingMessage.getName(), incomingMessage.getAccount());
+                    bankOut.writeObject(incomingMessage);
+                }
                 // Initializing an agent with an account (account#, balance, bankkey)
                 else if(incomingMessage.getType() == MessageType.REGISTER_AGENT)
                 {
@@ -126,7 +154,6 @@ public class Server
             ObjectInputStream centralIn = new ObjectInputStream(otherPipeConnection.getInputStream());
 
 
-            Socket bankSocket = new Socket("127.0.0.1", Main.bankPort);
 
 
 
@@ -153,12 +180,19 @@ public class Server
                 }
                 else if(incomingMessage.getType() == MessageType.PLACE_BID)
                 {
-                    centralOut = new ObjectOutputStream(bankSocket.getOutputStream());
-                    centralIn = new ObjectInputStream(bankSocket.getInputStream());
+                    Socket bankSocket = new Socket("127.0.0.1", Main.bankPort);
+                    ObjectOutputStream outToBank = new ObjectOutputStream(bankSocket.getOutputStream());
+                    ObjectInputStream inFromBank = new ObjectInputStream(bankSocket.getInputStream());
 
-                    centralOut.writeObject(incomingMessage);
+                    incomingMessage.setBankKey(ac.getBiddingKeyToBankKey().get(incomingMessage.getBiddingKey()));
+                    outToBank.writeObject(incomingMessage);
 
-                    Message bankResponse = (Message) centralIn.readObject();
+
+                    Message bankResponse = (Message) inFromBank.readObject();
+                    bankResponse.setBiddingKey(ac.getBankKeyToBiddingKey().get(incomingMessage.getBankKey()));
+
+                    centralOut.writeObject(bankResponse);
+
 
                 }
                 //                else if(incomingMessage.getType() == MessageType.ITEM_SOLD)
