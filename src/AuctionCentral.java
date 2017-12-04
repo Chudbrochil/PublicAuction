@@ -18,6 +18,7 @@ public class AuctionCentral
     public AuctionCentral()
     {
         biddingKeyToBankKey = new HashMap<>();
+        bankKeyToBiddingKey = new HashMap<>();
         listOfAHs = new ArrayList<>();
 
     }
@@ -39,6 +40,7 @@ public class AuctionCentral
         System.out.println("Name: " + agentName);
         String biddingKey = Bank.getKey(agentName + bankKey);
         biddingKeyToBankKey.put(biddingKey, bankKey);
+        bankKeyToBiddingKey.put(bankKey, biddingKey);
         System.out.println("Bidding Key: " + biddingKey + "\n");
         return biddingKey;
     }

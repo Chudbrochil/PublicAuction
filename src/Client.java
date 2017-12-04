@@ -89,6 +89,7 @@ public class Client
         out.writeObject(new Message(MessageType.REGISTER_AGENT, agent.getName(), new Account()));
         Message response = (Message) in.readObject();
         agent.setAccountInfo(response.getAccount());
+        System.out.println(agent.getBankKey());
 
         if(taAgentOutput != null) { taAgentOutput.appendText("Starting Balance: " + agent.getAccountBalance() + "\n"); }
         if(taAgentOutput != null) { taAgentOutput.appendText("Account Number: " + agent.getAccountNum() + "\n"); }
@@ -146,7 +147,7 @@ public class Client
          out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
          in = new ObjectInputStream(auctionCentralSocket.getInputStream());
 
-        out.writeObject(new Message(MessageType.PLACE_BID, biddingKey, bidAmount, item.getItemID(), item.getAhID()));
+         out.writeObject(new Message(MessageType.PLACE_BID, biddingKey, bidAmount, item.getItemID(), item.getAhID()));
         Message response = (Message) in.readObject();
 
          if(response.getBidResponse() == BidResponse.ACCEPT) {

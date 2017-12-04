@@ -61,7 +61,7 @@ public class AgentController
         lvItems.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                System.out.println(newValue);
+//                System.out.println(newValue);
             }
         });
         update();
@@ -143,9 +143,18 @@ public class AgentController
     @FXML
     private void btnPlaceBid() // TODO: handle bad input?
     {
+
+        Item item = new Item("Testing item", null, 100.00, 1);
+        client.placeAHBid(150, agent.getBiddingKey(), item);
+//            client.placeAHBid(Double.valueOf(tfBidAmount.getText()), agent.getBiddingKey(), currentlySelectedItem);
+
+
         if(currentlySelectedItem != null)
         {
-            client.placeAHBid(Double.valueOf(tfBidAmount.getText()), agent.getBiddingKey(), currentlySelectedItem);
+            System.out.println("In the button place bid");
+
+
+
         }
     }
 
