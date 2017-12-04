@@ -48,7 +48,6 @@ public class Client
         bankConnected = false;
         acConnected = false;
 
-
         if (name == null)
         {
             name = "NONAME CLIENT";
@@ -67,9 +66,7 @@ public class Client
         }
 
         // Console only supports localhost connections for now.
-        // TODO: Add console connectivity?
-        // TODO: Add AH individual connectivity on UI same as Agent
-        if(taAgentOutput == null || isAgent == false)
+        if(taAgentOutput == null && isAgent)
         {
             connectLocalhost();
         }
@@ -87,10 +84,8 @@ public class Client
      */
     private void registerAgentWithBank() throws IOException, ClassNotFoundException
     {
-        // Registering with bank
         out = new ObjectOutputStream(bankSocket.getOutputStream());
         in = new ObjectInputStream(bankSocket.getInputStream());
-
         out.writeObject(new Message(MessageType.REGISTER_AGENT, agent.getName(), new Account()));
         Message response = (Message) in.readObject();
         agent.setAccountInfo(response.getAccount());
@@ -111,7 +106,6 @@ public class Client
      */
     private void registerAgentWithAC() throws IOException, ClassNotFoundException
     {
-        // Registering with AC
         out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
         in = new ObjectInputStream(auctionCentralSocket.getInputStream());
         out.writeObject(new Message(MessageType.REGISTER_AGENT, agent.getName(), agent.getBankKey(), ""));
@@ -314,7 +308,7 @@ public class Client
      */
     public static void main(String[] args)
     {
-        if (args[0].equals("AH"))
+        if (args[0].equals("AH") && !args[1].equals(null))
         {
             Client client = new Client(false, args[1]);
         }
