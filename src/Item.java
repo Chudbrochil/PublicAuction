@@ -111,4 +111,8 @@ public class Item implements Serializable
     {
         this.itemName = itemName;
     }
+
+    public void setCurrentHighestBidderID(String currentHighestBidderID) {
+        this.currentHighestBidderID = currentHighestBidderID;
+    }
 }
