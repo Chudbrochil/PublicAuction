@@ -87,10 +87,8 @@ public class Client
      */
     private void registerAgentWithBank() throws IOException, ClassNotFoundException
     {
-        // Registering with bank
         out = new ObjectOutputStream(bankSocket.getOutputStream());
         in = new ObjectInputStream(bankSocket.getInputStream());
-
         out.writeObject(new Message(MessageType.REGISTER_AGENT, agent.getName(), new Account()));
         Message response = (Message) in.readObject();
         agent.setAccountInfo(response.getAccount());
@@ -111,7 +109,6 @@ public class Client
      */
     private void registerAgentWithAC() throws IOException, ClassNotFoundException
     {
-        // Registering with AC
         out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
         in = new ObjectInputStream(auctionCentralSocket.getInputStream());
         out.writeObject(new Message(MessageType.REGISTER_AGENT, agent.getName(), agent.getBankKey(), ""));

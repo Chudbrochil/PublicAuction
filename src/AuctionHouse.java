@@ -77,7 +77,12 @@ public class AuctionHouse implements Serializable
     }
 
     /**
-     * Called by an IAuctionCentral to set the PublicID and SecretKey
+     * setIDs()
+     *
+     * Sets the publicID and auction house key of this auction house.
+     *
+     * @param publicID ID given to AH from the auction central
+     * @param ahKey Key given to aH from the auction central
      */
     public void setIDs(int publicID, String ahKey)
     {
@@ -213,8 +218,14 @@ public class AuctionHouse implements Serializable
         
         //TODO: override hash to use in Set.
     }
-    
-    
+
+    /**
+     * itemDB inner Class
+     *
+     * Reads a static file to populate items into an array.
+     * Has a method getRandomItem() to grab a random copy of one of these items.
+     * This design is opposed to hosting a real SQL database and sending updates to it. Instead we have a file.
+     */
     private static class ItemDB
     {
         private static ArrayList<Item> items;
@@ -250,10 +261,17 @@ public class AuctionHouse implements Serializable
             }
         }
 
+        /**
+         * getRandomItem()
+         *
+         * Picks a random item from the itemList gotten from ItemList.txt and then returns a copy of it.
+         * If it were to return the actual memory object then we would have comparison conflicts elsewhere in
+         * the code base. Item name's don't have to be unique but their memory addresses have to be.
+         *
+         * @return Copy of a random item
+         */
         private static Item getRandomItem()
         {
-            // I have to create a copy of the original object so that we don't end up with duplicate
-            // objects if we random pick the same item.
             return new Item(items.get(ThreadLocalRandom.current().nextInt(0, items.size())));
         }
     }

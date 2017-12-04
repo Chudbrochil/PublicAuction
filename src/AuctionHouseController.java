@@ -1,5 +1,6 @@
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 
 import java.io.PrintStream;
 
@@ -8,6 +9,11 @@ public class AuctionHouseController
 
     @FXML
     TextArea taOutput;
+
+    @FXML
+    TextField tfAuctionCentralIP;
+
+    Client client;
 
     @FXML
     public void initialize()
@@ -22,11 +28,17 @@ public class AuctionHouseController
             @Override
             public void run()
             {
-                Client c = new Client(false, name);
+                client = new Client(false, name);
             }
 
         });
 
         newThread.start();
+    }
+
+    @FXML
+    private void btnConnectAC()
+    {
+        client.setAcHostname(tfAuctionCentralIP.getText()); // TODO: handle bad input?
     }
 }
