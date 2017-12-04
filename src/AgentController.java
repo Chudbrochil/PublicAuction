@@ -67,7 +67,7 @@ public class AgentController
 
     /**
      * update()
-     * Method that will constantly be updating the UI to the user.
+     * Method that will constantly be updating the UI to the user. Runs on an executor thread.
      */
     private void update()
     {
@@ -90,6 +90,11 @@ public class AgentController
         }, 0, 250, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * updateItemList()
+     *
+     * Updates the GUI with the current list of items from each auction house.
+     */
     private void updateItemList()
     {
         ArrayList<AuctionHouse> listOfAHs = agent.getAuctionHouses();

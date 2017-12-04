@@ -98,7 +98,6 @@ public class Server
                 System.out.println("Bank received unrecognized message.");
             }
 
-
         }
     }
 
