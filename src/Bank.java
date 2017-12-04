@@ -6,7 +6,7 @@ import java.util.Random;
 
 public class Bank
 {
-    private HashMap<Integer, Account> accountNumberToAccount = new HashMap<>();
+    private HashMap<String, Account> bankKeyToAccount = new HashMap<>();
     private Random rand = new Random();
 
     public Bank()
@@ -14,9 +14,9 @@ public class Bank
 
     }
 
-    public HashMap<Integer, Account> getAccountNumberToAccountMap()
+    public HashMap<String, Account> getBankKeyToAccount()
     {
-        return accountNumberToAccount;
+        return bankKeyToAccount;
     }
 
 
@@ -46,7 +46,7 @@ public class Bank
         System.out.println("Account Number: " + blankAccount.getAccountNum());
         System.out.println("Agent Bank Key: " + blankAccount.getBankKey());
 
-        accountNumberToAccount.put(accountNum, blankAccount);
+        bankKeyToAccount.put(bankKey, blankAccount);
 
     }
 

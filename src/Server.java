@@ -2,8 +2,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Server
 {
@@ -55,19 +53,20 @@ public class Server
                 // Performing a withdrawl for an agent
                 if(incomingMessage.getType() == MessageType.WITHDRAW)
                 {
+                    Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
                     // If we were able to deduct the bidding amount, then take it out, send a success back.
-                    if(bank.getAccountNumberToAccountMap().get(incomingMessage.ACCOUNT_NUM).deductAccountBalance(incomingMessage.BIDDING_AMOUNT))
+                    if(account.deductAccountBalance(incomingMessage.BIDDING_AMOUNT))
                     {
                         incomingMessage.setBidResponse(BidResponse.ACCEPT);
-                        System.out.println("Bank accepted withdrawl of " + incomingMessage.BIDDING_AMOUNT + " from acct#: " + incomingMessage.ACCOUNT_NUM);
-                        System.out.println("Current balance: " + bank.getAccountNumberToAccountMap().get(incomingMessage.ACCOUNT_NUM).getAccountBalance());
+                        System.out.println("Bank accepted withdrawl of " + incomingMessage.BIDDING_AMOUNT + " from:\n");
                     }
                     // If there wasn't enough money, send a rejection back.
                     else
                     {
                         incomingMessage.setBidResponse(BidResponse.REJECT);
-                        System.out.println("Bank refused withdrawl of " + incomingMessage.BIDDING_AMOUNT + " from acct#: " + incomingMessage.ACCOUNT_NUM);
+                        System.out.println("Bank refused withdrawl of " + incomingMessage.BIDDING_AMOUNT + " from:\n");
                     }
+                    System.out.println("Acct#: " + account.getAccountNum() + " BankKey: " + account.getBankKey() + " New Balance: " + account.getAccountBalance());
                     bankOut.writeObject(incomingMessage);
                 }
                 // Initializing an agent with an account (account#, balance, bankkey)

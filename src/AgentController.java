@@ -122,7 +122,7 @@ public class AgentController
     @FXML
     private void btnWithdraw() // TODO: handle bad input?
     {
-        taAgentOutput.appendText("Accepted withdraw for: " + tfBidAmount.getText() + "\n");
+        taAgentOutput.appendText("Submitted withdraw request to bank for: " + tfBidAmount.getText() + "\n");
         client.withdraw(Double.valueOf(tfBidAmount.getText()), agent);
     }
 

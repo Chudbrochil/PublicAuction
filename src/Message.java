@@ -17,9 +17,6 @@ public class Message implements Serializable
     public final double BIDDING_AMOUNT;            // Amount the bidder wishes to bid.
     public final String ITEM_ID;           //ID of the item the bidder wishes to bid on
     public final String AUCTION_HOUSE_ID;   //the ID of this auction house (needed by Client)
-    
-    //for type WITHDRAW
-    public final int ACCOUNT_NUM;
 
     //for type UPDATE_AHS
     private ArrayList<AuctionHouse> listOfAHs;
@@ -47,15 +44,13 @@ public class Message implements Serializable
         ITEM_ID = itemID;
         AUCTION_HOUSE_ID = auctionHouseID;
 
-        //Unused with this Message type
-        ACCOUNT_NUM = 0;
     }
     
     //Constructor for a WITHDRAW message
-    public Message(MessageType t, int accountNum, double amount)
+    public Message(MessageType t, String bankKey, double amount)
     {
         type = t;
-        ACCOUNT_NUM = accountNum;
+        this.bankKey = bankKey;
         BIDDING_AMOUNT = amount;
     
         //Unused with this Message type
@@ -72,7 +67,6 @@ public class Message implements Serializable
         this.account = account;
 
         // not used
-        ACCOUNT_NUM = 0;
         BIDDING_AMOUNT = 0;
         BIDDING_ID = null;
         ITEM_ID = null;
@@ -89,7 +83,6 @@ public class Message implements Serializable
         this.biddingKey = biddingKey;
 
         // not used
-        ACCOUNT_NUM = 0;
         BIDDING_AMOUNT = 0;
         BIDDING_ID = null;
         ITEM_ID = null;
@@ -103,7 +96,6 @@ public class Message implements Serializable
         this.setAuctionHouse(auctionHouse);
 
         // not used
-        ACCOUNT_NUM = 0;
         BIDDING_AMOUNT = 0;
         BIDDING_ID = null;
         ITEM_ID = null;
@@ -122,7 +114,6 @@ public class Message implements Serializable
         ITEM_ID = null;
         AUCTION_HOUSE_ID = null;
         BIDDING_ID = null;
-        ACCOUNT_NUM = 0;
     }
     
     /**

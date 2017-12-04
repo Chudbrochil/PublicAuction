@@ -128,12 +128,13 @@ public class Client
                 in = new ObjectInputStream(bankSocket.getInputStream());
 
                 // Sending a message of type Withdraw
-                out.writeObject(new Message(MessageType.WITHDRAW, agent.getAccountNum(), bidAmt));
+                out.writeObject(new Message(MessageType.WITHDRAW, agent.getBankKey(), bidAmt));
                 Message response = (Message)in.readObject();
 
                 if(response.getBidResponse() == BidResponse.ACCEPT)
                 {
                     agent.deductAccountBalance(response.BIDDING_AMOUNT);
+                    if(taAgentOutput != null) { taAgentOutput.appendText("Withdraw accepted. New balance: " + agent.getAccountBalance() + "\n"); }
                 }
                 else
                 {
