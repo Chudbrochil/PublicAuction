@@ -65,6 +65,13 @@ public class AuctionCentral
         }
     }
 
+    /**
+     * getListOfAHs()
+     *
+     * Retrieves the list of auction houses registered with auction central.
+     *
+     * @return List of auction houses.
+     */
     public ArrayList<AuctionHouse> getListOfAHs() { return listOfAHs; }
 
 }

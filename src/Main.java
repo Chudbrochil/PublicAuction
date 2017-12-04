@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -25,7 +26,16 @@ public class Main extends Application
         typeSelect(primaryStage);
     }
 
-    private void typeSelect(Stage primaryStage) throws Exception
+    /**
+     * typeSelect()
+     *
+     * A dialog box appears that asks if you'd like an Agent, Auction House, Bank or Auction Central.
+     * From there we open the corresponding FXML file that has the controller set inside it.
+     *
+     * @param primaryStage The stage that we are going to launch the GUI onto.
+     * @throws IOException Throws if we fail to open the fxml file
+     */
+    private void typeSelect(Stage primaryStage) throws IOException
     {
         ArrayList<String> auctionDisplays = new ArrayList<>();
         auctionDisplays.add("Agent");
@@ -69,12 +79,6 @@ public class Main extends Application
         primaryStage.setOnCloseRequest(e -> System.exit(0));
     }
 
-    public static void main(String[] args)
-    {
-        launch(args);
-    }
-
-
     /**
      * getStandardOutCapture()
      *
@@ -102,17 +106,34 @@ public class Main extends Application
         return out;
     }
 
-    public static String returnNetworkInfo() throws Exception
+    /**
+     * returnNetworkInfo()
+     *
+     * Gets hostname and IP for a process.
+     *
+     * @return A string corresponding to this process' Hostname and IP Address.
+     */
+    public static String returnNetworkInfo()
     {
         String output = "";
-        InetAddress ipInfo = InetAddress.getLocalHost();
-
-        output += "Hostname: " + ipInfo.getHostName() + "\n";
-        output += "IP Address: " + ipInfo.getHostAddress();
-
+        try
+        {
+            InetAddress ipInfo = InetAddress.getLocalHost();
+            output += "Hostname: " + ipInfo.getHostName() + "\n";
+            output += "IP Address: " + ipInfo.getHostAddress();
+        }
+        catch(UnknownHostException e) { System.out.println(e.getMessage()); }
         return output;
     }
 
+    /**
+     * askName()
+     *
+     * Opens a dialog box that asks for a user's name. Then this method returns the entered name.
+     * This is useful for both Auction House and Agent where a name will be used.
+     *
+     * @return The name entered in the dialog box.
+     */
     public static String askName()
     {
         TextInputDialog dialog = new TextInputDialog("Name");
@@ -129,6 +150,9 @@ public class Main extends Application
         }
     }
 
-
+    public static void main(String[] args)
+    {
+        launch(args);
+    }
 
 }

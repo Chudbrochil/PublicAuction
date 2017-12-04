@@ -47,7 +47,6 @@ public class Bank
         System.out.println("Agent Bank Key: " + blankAccount.getBankKey());
 
         bankKeyToAccount.put(bankKey, blankAccount);
-
     }
 
 

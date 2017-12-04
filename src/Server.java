@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
@@ -7,6 +8,13 @@ public class Server
 {
     private boolean isListening;
 
+    /**
+     * Server()
+     *
+     * Server constructor
+     *
+     * @param isBank Boolean representing if this is a bank or not. True if bank, false if it's AC.
+     */
     public Server(boolean isBank)
     {
         // TODO: isListening is a stand-in for having a Bank/AC being spun down and up. This may be an extra feature...
@@ -30,7 +38,15 @@ public class Server
         }
     }
 
-    private void bankLaunch() throws Exception
+    /**
+     * bankLaunch()
+     *
+     * Launchs a bank object and opens a socket for listening for messages
+     *
+     * @throws IOException Can be thrown from bad input/output in the streams
+     * @throws ClassNotFoundException Can be thrown from bad cast from readObject()
+     */
+    private void bankLaunch() throws IOException, ClassNotFoundException
     {
         Bank bank = new Bank();
         ServerSocket bankSocket = new ServerSocket(Main.bankPort);
@@ -86,7 +102,15 @@ public class Server
         }
     }
 
-    private void auctionCentralLaunch() throws Exception
+    /**
+     * auctionCentralLaunch()
+     *
+     * Launchs an Auction Central and opens a socket for listening to messages.
+     *
+     * @throws IOException Can be thrown from bad input/output in the streams
+     * @throws ClassNotFoundException Can be thrown from bad cast from readObject()
+     */
+    private void auctionCentralLaunch() throws IOException, ClassNotFoundException
     {
         AuctionCentral ac = new AuctionCentral();
         ServerSocket auctionCentralSocket = new ServerSocket(Main.auctionCentralPort);
@@ -129,7 +153,11 @@ public class Server
         }
     }
 
-    // Useful for running things on command line only.
+    /**
+     * main()
+     *
+     * Strictly for spinning up Servers on the command line. Mostly used for debugging.
+     */
     public static void main(String[] args)
     {
         if (args[0].equals("Bank"))
