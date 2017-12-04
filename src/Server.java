@@ -106,20 +106,14 @@ public class Server
                     System.out.println("Acct#: " + account.getAccountNum() + " BankKey: " + account.getBankKey() + " New Balance: " + account.getAccountBalance());
                     bankOut.writeObject(incomingMessage);
                 }
-                // Initializing an agent with an account (account#, balance, bankkey)
+                // Initializing an agent with an account (name, account#, balance, bankkey)
                 else if(incomingMessage.getType() == MessageType.REGISTER_AGENT)
                 {
-                    System.out.println("Got a message register_agent from " + incomingMessage.getName());
-                    bank.registerAgent(incomingMessage.getName(), incomingMessage.getAccount());
+                    System.out.println("Got a message register_agent from " + incomingMessage.getAccount().getName());
+                    bank.registerAgent(incomingMessage.getAccount());
                     bankOut.writeObject(incomingMessage);
                 }
-                // Initializing an agent with an account (account#, balance, bankkey)
-                else if(incomingMessage.getType() == MessageType.REGISTER_AGENT)
-                {
-                    System.out.println("Got a message register_agent from " + incomingMessage.getName());
-                    bank.registerAgent(incomingMessage.getName(), incomingMessage.getAccount());
-                    bankOut.writeObject(incomingMessage);
-                }
+
             }
             else
             {

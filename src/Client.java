@@ -86,7 +86,7 @@ public class Client
     {
         out = new ObjectOutputStream(bankSocket.getOutputStream());
         in = new ObjectInputStream(bankSocket.getInputStream());
-        out.writeObject(new Message(MessageType.REGISTER_AGENT, agent.getName(), new Account()));
+        out.writeObject(new Message(MessageType.REGISTER_AGENT, new Account(agent.getName())));
         Message response = (Message) in.readObject();
         agent.setAccountInfo(response.getAccount());
 

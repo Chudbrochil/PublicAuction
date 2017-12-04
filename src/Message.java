@@ -53,10 +53,9 @@ public class Message implements Serializable
     }
 
     // Constructor for a REGISTER_AGENT message (to Bank)
-    public Message(MessageType t, String name, Account account)
+    public Message(MessageType t, Account account)
     {
         type = t;
-        this.name = name;
         this.account = account;
     }
 

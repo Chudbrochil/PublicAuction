@@ -1,6 +1,7 @@
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -19,6 +20,12 @@ public class Bank
         return bankKeyToAccount;
     }
 
+    public String getAgentsAsString()
+    {
+        ArrayList<Account> accounts = new ArrayList<Account>(bankKeyToAccount.values());
+        return "";
+    }
+
 
     /**
      * registerAgent()
@@ -28,19 +35,19 @@ public class Bank
      *
      * @param blankAccount The account we are opening for the agent
      */
-    public void registerAgent(String agentName, Account blankAccount)
+    public void registerAgent(Account blankAccount)
     {
         int accountNum = rand.nextInt(10000 + 1);
         double startingBalance = 10000.00;
-        System.out.println("Name: " + agentName);
-        String bankKey = Bank.getKey(agentName);
+        System.out.println("Name: " + blankAccount.getName());
+        String bankKey = Bank.getKey(blankAccount.getName());
 
         blankAccount.setAccountNum(accountNum);
         blankAccount.setAccountBalance(startingBalance);
         blankAccount.setBankKey(bankKey);
 
         System.out.println("\nRegistering a new user.....");
-        System.out.println("Account Name: " + agentName);
+        System.out.println("Account Name: " + blankAccount.getName());
 
         System.out.println("Starting Balance: " + blankAccount.getAccountBalance());
         System.out.println("Account Number: " + blankAccount.getAccountNum());

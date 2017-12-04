@@ -8,8 +8,12 @@ public class Account implements Serializable
     private Double accountBalance;
     private Double temporaryHold;
     private String bankKey;
+    private String name;
 
-    public Account(){}
+    public Account(String name)
+    {
+        this.setName(name);
+    }
 
 
     /**
@@ -18,11 +22,12 @@ public class Account implements Serializable
      * @param accountNum
      * @param accountBalance
      */
-    public Account(int accountNum, Double accountBalance, String bankKey)
+    public Account(int accountNum, Double accountBalance, String bankKey, String name)
     {
         this.accountNum = accountNum;
         this.accountBalance = accountBalance;
         this.bankKey = bankKey;
+        this.setName(name);
     }
 
     public boolean deductAccountBalance(Double amountToDeduct)
@@ -59,6 +64,16 @@ public class Account implements Serializable
     public void setBankKey(String bankKey) { this.bankKey = bankKey; }
 
     public String getBankKey() { return bankKey; }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
 
 
     // TODO: Implement "hold" mechanism
