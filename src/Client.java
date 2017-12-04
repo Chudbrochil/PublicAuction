@@ -147,15 +147,14 @@ public class Client
          out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
          in = new ObjectInputStream(auctionCentralSocket.getInputStream());
 
-         out.writeObject(new Message(MessageType.PLACE_BID, biddingKey, bidAmount, item.getItemID(), item.getAhID()));
+         out.writeObject(new Message(MessageType.PLACE_BID, biddingKey, bidAmount, item));
         Message response = (Message) in.readObject();
 
-         if(response.getBidResponse() == BidResponse.ACCEPT) {
-            System.out.println("We made it back");
+         if(response.getBidResponse() == BidResponse.ACCEPT && response.getItem().getCurrentBid() < response.getBidAmount()) {
+             response.getItem().setCurrentHighestBidderID(response.getName());
          }
-         else{
-            System.out.println("We made it back");
-         }
+
+         out.writeObject(response);
 
      }catch(Exception e){
          e.getMessage();

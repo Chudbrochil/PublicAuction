@@ -224,6 +224,12 @@ public class Server
                     Message bankResponse = (Message) inFromBank.readObject();
                     bankResponse.setBiddingKey(auctionCentral.getBankKeyToBiddingKey().get(incomingMessage.getBankKey()));
 
+                    if(bankResponse.getBidResponse() == BidResponse.ACCEPT)
+                    {
+                        //update item field
+
+                    }
+
                     centralOut.writeObject(bankResponse);
 
 

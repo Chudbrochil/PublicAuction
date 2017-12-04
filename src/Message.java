@@ -16,6 +16,7 @@ public class Message implements Serializable
     private double bidAmount;            // Amount the bidder wishes to bid.
     private int itemID;           //ID of the item the bidder wishes to bid on
     private int auctionHousePublicID;
+    private Item item;
 
     //for type UPDATE_AHS
     private ArrayList<AuctionHouse> listOfAHs;
@@ -35,13 +36,14 @@ public class Message implements Serializable
     //private BidResponse response;
     
     //Constructor for a PLACE_BID message
-    public Message(MessageType t, String biddingKey, double bidAmount, int itemID, int auctionHousePublicID)
+    public Message(MessageType t, String biddingKey, double bidAmount, Item item)
     {
         type = t;
         this.biddingKey = biddingKey;
         this.bidAmount = bidAmount;
         this.itemID = itemID;
         this.auctionHousePublicID = auctionHousePublicID;
+        this.item = item;
     }
     
     //Constructor for a WITHDRAW message and PLACE_HOLD
@@ -176,5 +178,9 @@ public class Message implements Serializable
     public void setAuctionHousePublicID(int auctionHousePublicID)
     {
         this.auctionHousePublicID = auctionHousePublicID;
+    }
+
+    public Item getItem() {
+        return item;
     }
 }
