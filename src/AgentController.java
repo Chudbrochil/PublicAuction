@@ -65,8 +65,9 @@ public class AgentController
         lvItems.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                System.out.println(newValue);
+                //System.out.println(newValue);
                 currentlySelectedItemString = newValue;
+//
             }
         });
         update();
@@ -135,8 +136,6 @@ public class AgentController
 
 
 
-
-
     @FXML
     private void btnWithdraw() // TODO: handle bad input?
     {
@@ -151,11 +150,16 @@ public class AgentController
     @FXML
     private void btnPlaceBid() // TODO: handle bad input?
     {
-        // TODO: This is a terrible hack, fix later. Actually add real items/observable list to listview instead...
+
+//        Item item1 = new Item("Testing item", null, 100.00, 1);
+//        client.placeAHBid(150, agent.getBiddingKey(), item1);
+//            client.placeAHBid(Double.valueOf(tfBidAmount.getText()), agent.getBiddingKey(), currentlySelectedItem);
+
+
         Item item = new Item();
         for(int i = 0; i < itemsAsList.size(); ++i)
         {
-            if(currentlySelectedItemString.equals(itemsAsList.get(i).toString()));
+            if (currentlySelectedItemString.equals(itemsAsList.get(i).toString())) ;
             {
                 System.out.println(item.toString());
                 item = itemsAsList.get(i);
