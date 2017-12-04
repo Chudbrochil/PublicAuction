@@ -85,6 +85,7 @@ public class Client
     }
 
 
+    //ToDO: Seperate register agent for auction central and bank so that we don't throw a connection reset error
     private void registerAgent(ObjectOutputStream out, ObjectInputStream in)
     {
         try

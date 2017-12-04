@@ -46,6 +46,7 @@ public class AgentController
             {
                 // Getting the latest list of auction houses that are up and updates the item list
                 client.updateListOfAHs();
+
                 updateItemList();
 
                 // Platform syncs this command with the UI, fixes javafx thread bugs
