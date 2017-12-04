@@ -10,26 +10,44 @@ import java.io.Serializable;
 
 public class Item implements Serializable
 {
-    public int AUCTION_HOUSE_ID;      //IDs.ID of the AuctionHouse that holds this item
+    private int ahID;      //IDs.ID of the AuctionHouse that holds this item
     public final Double MINIMUM_BID;         //Minimum bid to start at
     private Double currentBid;               //CurrentBid on this item--the highest of all the bids. Will be 0 until first bid.
     public final String ITEM_NAME;          //Name of the item
     private String currentHighestBidderID;    //BIDDING_ID of Agent who holds the currentBid, which is winning. Will be null until first bid.
     private String imgPath;
-    public final String ITEM_ID;            //Unique item ID
-    private static int staticIDCounter = 1;
+    private int itemID;            //Unique item ID
 
+    // Copy constructor
+    public Item(Item anotherItem)
+    {
+        this.ahID = anotherItem.ahID;
+        this.MINIMUM_BID = anotherItem.MINIMUM_BID;
+        this.currentBid = anotherItem.currentBid;
+        this.ITEM_NAME = anotherItem.ITEM_NAME;
+        this.currentHighestBidderID = anotherItem.currentHighestBidderID;
+        this.imgPath = anotherItem.imgPath;
+        this.itemID = anotherItem.itemID;
+    }
 
-    public Item(String itemName, String imgPath, Double minimumBid)
+    public Item(String itemName, String imgPath, double minimumBid)
     {
         ITEM_NAME = itemName;
         this.imgPath = imgPath;
         MINIMUM_BID = minimumBid;
         currentBid = 0.0;
         currentHighestBidderID = null;
-        ITEM_ID = staticIDCounter * 42 + ""; //actually make it look like a real ID, sorta.
-        staticIDCounter++;
     }
+
+    public Item(String itemName, String imgPath, Double minimumBid, int itemID)
+    {
+        this(itemName, imgPath, minimumBid);
+        this.itemID = itemID;
+    }
+
+    public void setItemID(int itemID) { this.itemID = itemID; }
+
+    public int getItemID() { return itemID; }
 
     public synchronized Double getCurrentBid()
     {
@@ -54,4 +72,19 @@ public class Item implements Serializable
     }
 
 
+    public int getAhID()
+    {
+        return ahID;
+    }
+
+    public void setAhID(int ahID)
+    {
+        this.ahID = ahID;
+    }
+
+    @Override
+    public String toString()
+    {
+        return ITEM_NAME + " itemID: " + itemID + " ahID: " + ahID;
+    }
 }

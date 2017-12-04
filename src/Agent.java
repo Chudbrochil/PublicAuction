@@ -1,7 +1,7 @@
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Agent implements Serializable
+public class Agent
 {
     private Bank bank;
     private AuctionCentral central;
@@ -11,6 +11,8 @@ public class Agent implements Serializable
     private String biddingKey;
     private double accountBalance;
 
+
+    // TODO:
 
     public Agent(String name)
     {

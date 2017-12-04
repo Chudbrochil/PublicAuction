@@ -2,15 +2,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Server
 {
     private boolean isListening;
 
-    private static int bankPort = 4444;
-    private static int auctionCentralPort = 5555;
     public Server(boolean isBank)
     {
         // TODO: isListening is a stand-in for having a Bank/AC being spun down and up. This may be an extra feature...
@@ -37,12 +33,12 @@ public class Server
     private void bankLaunch() throws Exception
     {
         Bank bank = new Bank();
-        ServerSocket bankSocket = new ServerSocket(bankPort);
+        ServerSocket bankSocket = new ServerSocket(Main.bankPort);
         isListening = true;
 
         System.out.println("Bank online.");
         System.out.println(Main.returnNetworkInfo());
-        System.out.println("Port: " + bankPort);
+        System.out.println("Port: " + Main.bankPort);
 
         while (true)
         {
@@ -57,24 +53,26 @@ public class Server
                 // Performing a withdrawl for an agent
                 if(incomingMessage.getType() == MessageType.WITHDRAW)
                 {
+                    Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
                     // If we were able to deduct the bidding amount, then take it out, send a success back.
-                    if(bank.getAccountNumberToAccountMap().get(incomingMessage.ACCOUNT_NUM).deductAccountBalance(incomingMessage.BIDDING_AMOUNT))
+                    if(account.deductAccountBalance(incomingMessage.BIDDING_AMOUNT))
                     {
                         incomingMessage.setBidResponse(BidResponse.ACCEPT);
-                        System.out.println("Bank accepted withdrawl of " + incomingMessage.BIDDING_AMOUNT + " from acct#: " + incomingMessage.ACCOUNT_NUM);
-                        System.out.println("Current balance: " + bank.getAccountNumberToAccountMap().get(incomingMessage.ACCOUNT_NUM).getAccountBalance());
+                        System.out.println("Bank accepted withdrawl of " + incomingMessage.BIDDING_AMOUNT + " from:\n");
                     }
                     // If there wasn't enough money, send a rejection back.
                     else
                     {
                         incomingMessage.setBidResponse(BidResponse.REJECT);
-                        System.out.println("Bank refused withdrawl of " + incomingMessage.BIDDING_AMOUNT + " from acct#: " + incomingMessage.ACCOUNT_NUM);
+                        System.out.println("Bank refused withdrawl of " + incomingMessage.BIDDING_AMOUNT + " from:\n");
                     }
+                    System.out.println("Acct#: " + account.getAccountNum() + " BankKey: " + account.getBankKey() + " New Balance: " + account.getAccountBalance());
                     bankOut.writeObject(incomingMessage);
                 }
                 // Initializing an agent with an account (account#, balance, bankkey)
                 else if(incomingMessage.getType() == MessageType.REGISTER_AGENT)
                 {
+                    System.out.println("Got a message register_agent from " + incomingMessage.getName());
                     bank.registerAgent(incomingMessage.getName(), incomingMessage.getAccount());
                     bankOut.writeObject(incomingMessage);
                 }
@@ -91,12 +89,12 @@ public class Server
     private void auctionCentralLaunch() throws Exception
     {
         AuctionCentral ac = new AuctionCentral();
-        ServerSocket auctionCentralSocket = new ServerSocket(auctionCentralPort);
+        ServerSocket auctionCentralSocket = new ServerSocket(Main.auctionCentralPort);
 
         isListening = true;
         System.out.println("Auction Central online.");
         System.out.println(Main.returnNetworkInfo());
-        System.out.println("Port: " + auctionCentralPort);
+        System.out.println("Port: " + Main.auctionCentralPort);
 
         while (true)
         {
@@ -127,8 +125,6 @@ public class Server
                 }
                 centralOut.writeObject(incomingMessage);
             }
-
-
 
         }
     }

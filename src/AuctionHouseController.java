@@ -24,6 +24,7 @@ public class AuctionHouseController
             {
                 Client c = new Client(false, name);
             }
+
         });
 
         newThread.start();
