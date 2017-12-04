@@ -17,6 +17,22 @@ import java.util.concurrent.TimeUnit;
 public class AgentController
 {
 
+    /**
+     * UI TODO's
+     *
+     * REQUIRED
+     * 1. List of items agent has already won.
+     * 2. Display for what they have on hold. (i.e. Temp Hold: $544.12)
+     *
+     *
+     *
+     * OPTIONAL
+     * 1. Status next to each item, highlight red for "in-progress"? Could even update currentbid on item
+     * 2. Make scenarios running on timers... i.e. at 20s turn on an auction house. at 40s turn on 2 more, etc.
+     * 3. Consolidate the other Controller's/FXML's
+     * 4. Error-handling/input-checking on captured fields
+     */
+
     @FXML
     private Label lblBalance;
 
@@ -62,34 +78,16 @@ public class AgentController
             public void run()
             {
                 // Getting the latest list of auction houses that are up and updates the item list
-                client.updateListOfAHs(); // TODO: If we're connected to auctioncentral, do this
+                if(client.getAcConnected()) client.updateListOfAHs();
 
                 // Platform syncs this command with the UI, fixes javafx thread bugs
                 Platform.runLater(() -> {
-                    updateItemList();
+                    // If the client has connected to the bank and ac already, update your items
+                    if(client.getAcConnected()) updateItemList();
                     lblBalance.setText(String.valueOf(agent.getAccountBalance()));
                 });
             }
         }, 0, 250, TimeUnit.MILLISECONDS);
-    }
-
-
-
-    @FXML
-    private void btnWithdraw()
-    {
-        taAgentOutput.appendText("Accepted withdraw for: " + tfBidAmount.getText() + "\n");
-        client.withdraw(Double.valueOf(tfBidAmount.getText()), agent);
-    }
-
-    /**
-     * placeBid()
-     * Handler for user clicking that they want to place a bid.
-     */
-    @FXML
-    private void btnPlaceBid()
-    {
-
     }
 
     private void updateItemList()
@@ -120,21 +118,42 @@ public class AgentController
     }
 
 
-    /**
-     * TODO: UI elements needed...
-     *
-     * 1. A list of available items from the auction houses... OPTIONAL: status next to each item, currentBid etc.
-     */
 
+    @FXML
+    private void btnWithdraw() // TODO: handle bad input?
+    {
+        taAgentOutput.appendText("Accepted withdraw for: " + tfBidAmount.getText() + "\n");
+        client.withdraw(Double.valueOf(tfBidAmount.getText()), agent);
+    }
 
     /**
-     * TODO: Make scenarios running on timers.... OPTIONAL?
-     * i.e
-     * 0s Turn on 3 auction houses
-     * 45s turn on 1 auction house
-     * 90s turn off auction house 1
-     *
+     * placeBid()
+     * Handler for user clicking that they want to place a bid.
      */
+    @FXML
+    private void btnPlaceBid() // TODO: handle bad input?
+    {
+
+    }
+
+    @FXML
+    private void btnConnectLocalhost()
+    {
+        client.connectLocalhost();
+    }
+
+    @FXML
+    private void btnConnectBank()
+    {
+        client.setBankHostname(tfBankIP.getText()); // TODO: handle bad input?
+    }
+
+    @FXML
+    private void btnConnectAC()
+    {
+        client.setAcHostname(tfAuctionCentralIP.getText()); // TODO: handle bad input?
+    }
+
 
 
 }

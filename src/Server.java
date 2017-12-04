@@ -9,8 +9,10 @@ public class Server
 {
     private boolean isListening;
 
-    private static int bankPort = 4444;
-    private static int auctionCentralPort = 5555;
+    public static int bankPort = 4444;
+    public static int auctionCentralPort = 5555;
+
+
     public Server(boolean isBank)
     {
         // TODO: isListening is a stand-in for having a Bank/AC being spun down and up. This may be an extra feature...
