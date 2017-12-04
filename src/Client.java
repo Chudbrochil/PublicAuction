@@ -140,6 +140,31 @@ public class Client
     public Agent getAgent() { return agent; }
 
 
+    public void placeAHbid(double bidAmount, Agent agent, Item item){
+     try{
+         auctionCentralSocket = new Socket("127.0.0.1", 5555);
+         out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
+         in = new ObjectInputStream(auctionCentralSocket.getInputStream());
+
+        out.writeObject(new Message(MessageType.PLACE_BID, agent.getBiddingKey(), bidAmount, item.getItemID(), item.getAhID()));
+        Message response = (Message) in.readObject();
+
+         if(response.getBidResponse() == BidResponse.ACCEPT) {
+            //fill in
+         }
+         else{
+            //fill in
+         }
+
+     }catch(Exception e){
+         e.getMessage();
+         e.printStackTrace();
+         e.getLocalizedMessage();
+     }
+
+    }
+
+
     /**
      * AuctionHouse and Agent messaging methods live here
      */

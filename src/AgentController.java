@@ -133,7 +133,6 @@ public class AgentController
     @FXML
     private void btnPlaceBid() // TODO: handle bad input?
     {
-
     }
 
     @FXML
