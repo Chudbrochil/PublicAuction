@@ -74,7 +74,7 @@ public class Server
                     if(account.deductAccountBalance(incomingMessage.getBidAmount()))
                     {
                         incomingMessage.setBidResponse(BidResponse.ACCEPT);
-                        System.out.println("Bank accepted withdrawl of " + incomingMessage.getBidAmount() + " from:");
+                        System.out.println("Bank accepted withdrawl of " + incomingMessage.getBidAmount() + " from:\n");
                     }
                     // If there wasn't enough money, send a rejection back.
                     else
@@ -125,6 +125,11 @@ public class Server
             ObjectOutputStream centralOut = new ObjectOutputStream(otherPipeConnection.getOutputStream());
             ObjectInputStream centralIn = new ObjectInputStream(otherPipeConnection.getInputStream());
 
+
+            Socket bankSocket = new Socket("127.0.0.1", Main.bankPort);
+
+
+
             Object object = centralIn.readObject();
 
             if(object instanceof Message)
@@ -145,6 +150,16 @@ public class Server
                 else if(incomingMessage.getType() == MessageType.REGISTER_AH)
                 {
                     ac.registerAuctionHouse(incomingMessage.getAuctionHouse());
+                }
+                else if(incomingMessage.getType() == MessageType.PLACE_BID)
+                {
+                    centralOut = new ObjectOutputStream(bankSocket.getOutputStream());
+                    centralIn = new ObjectInputStream(bankSocket.getInputStream());
+
+                    centralOut.writeObject(incomingMessage);
+
+                    Message bankResponse = (Message) centralIn.readObject();
+
                 }
                 //                else if(incomingMessage.getType() == MessageType.ITEM_SOLD)
 //                {
