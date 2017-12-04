@@ -151,8 +151,8 @@ public class AgentController
     private void btnPlaceBid() // TODO: handle bad input?
     {
 
-        Item item1 = new Item("Testing item", null, 100.00, 1);
-        client.placeAHBid(150, agent.getBiddingKey(), item1);
+//        Item item1 = new Item("Testing item", null, 100.00, 1);
+//        client.placeAHBid(150, agent.getBiddingKey(), item1);
 //            client.placeAHBid(Double.valueOf(tfBidAmount.getText()), agent.getBiddingKey(), currentlySelectedItem);
 
 
