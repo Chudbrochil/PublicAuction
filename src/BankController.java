@@ -1,11 +1,7 @@
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import java.io.PrintStream;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 // TODO: BankController and ACController are almost exactly the same. Please fix this...
 public class BankController

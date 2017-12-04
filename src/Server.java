@@ -115,13 +115,13 @@ public class Server
                     if(account.deductAccountBalance(incomingMessage.getBidAmount()))
                     {
                         incomingMessage.setBidResponse(BidResponse.ACCEPT);
-                        System.out.println("Bank accepted withdrawl of " + incomingMessage.getBidAmount() + " from:\n");
+                        System.out.println("Bank accepted withdrawl of " + incomingMessage.getBidAmount() + " on account:\n");
                     }
                     // If there wasn't enough money, send a rejection back.
                     else
                     {
                         incomingMessage.setBidResponse(BidResponse.REJECT);
-                        System.out.println("Bank refused withdrawl of " + incomingMessage.getBidAmount() + " from:\n");
+                        System.out.println("Bank refused withdrawl of " + incomingMessage.getBidAmount() + " on account:\n");
                     }
                     System.out.println(account.toString());
                     bankOut.writeObject(incomingMessage);
@@ -130,12 +130,14 @@ public class Server
                  else if(incomingMessage.getType() == MessageType.PLACE_BID)
                 {
                     Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
+                    System.out.println("MESSAGE: PLACE_BID - FROM: " + account.getName());
                     // If we were able to deduct the bidding amount, then take it out, send a success back.
                     if(account.deductAccountBalance(incomingMessage.getBidAmount()))
                     {
                         incomingMessage.setBidResponse(BidResponse.ACCEPT);
                         incomingMessage.setType(MessageType.PLACE_HOLD);
                         bankOut.writeObject(incomingMessage);
+                        System.out.println("Bank has placed a hold on account:\n");
                     }
                     // If there wasn't enough money, send a rejection back.
                     else
@@ -143,6 +145,7 @@ public class Server
                         incomingMessage.setBidResponse(BidResponse.REJECT);
                         incomingMessage.setType(MessageType.PLACE_HOLD);
                         bankOut.writeObject(incomingMessage);
+                        System.out.println("Bank has refused a hold on account:\n");
                     }
                     System.out.println(account.toString());
                     bankOut.writeObject(incomingMessage);
