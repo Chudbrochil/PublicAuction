@@ -68,10 +68,15 @@ public class Server
             public void run()
             {
                 Platform.runLater(() -> {
-                    if(isBank && bank.getAgentsAsString() != null)
+                    if(isBank)
                     {
                         lblClientsList.setText(bank.getAgentsAsString());
                     }
+                    else
+                    {
+                        lblClientsList.setText(auctionCentral.getListOfAHsAsString());
+                    }
+
 
                 });
             }
@@ -181,9 +186,8 @@ public class Server
         ServerSocket auctionCentralSocket = new ServerSocket(Main.auctionCentralPort);
 
         isListening = true;
-        System.out.println("Auction Central online.");
-        System.out.println(Main.returnNetworkInfo());
-        System.out.println("Port: " + Main.auctionCentralPort);
+        Platform.runLater(() ->lblConnectionInfo.setText(Main.returnNetworkInfo() + " Port: " + Main.auctionCentralPort));
+        System.out.println("Auction Central online.\n");
 
         while (true)
         {
@@ -206,17 +210,20 @@ public class Server
                 // Registering a new agent with AC
                 else if(incomingMessage.getType() == MessageType.REGISTER_AGENT)
                 {
+                    System.out.println("MESSAGE: REGISTER_AGENT - FROM: " + incomingMessage.getName());
                     String biddingKey = auctionCentral.registerAgent(incomingMessage.getName(), incomingMessage.getBankKey());
                     incomingMessage.setBiddingKey(biddingKey);
                 }
                 // Registering a new AH with AC
                 else if(incomingMessage.getType() == MessageType.REGISTER_AH)
                 {
+                    System.out.println("MESSAGE: REGISTER_AH - FROM: " + incomingMessage.getAuctionHouse().getName());
                     auctionCentral.registerAuctionHouse(incomingMessage.getAuctionHouse());
                 }
                 else if(incomingMessage.getType() == MessageType.PLACE_BID)
                 {
-                    Socket bankSocket = new Socket("127.0.0.1", Main.bankPort);
+                    System.out.println("MESSAGE: PLACE_BID - FROM: bidKey-" + incomingMessage.getBiddingKey());
+                    Socket bankSocket = new Socket("127.0.0.1", Main.bankPort); // TODO: CHANGE THE LOCAL HOST?
                     ObjectOutputStream outToBank = new ObjectOutputStream(bankSocket.getOutputStream());
                     ObjectInputStream inFromBank = new ObjectInputStream(bankSocket.getInputStream());
 

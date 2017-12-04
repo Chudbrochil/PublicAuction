@@ -36,12 +36,10 @@ public class AuctionCentral
      */
     public String registerAgent(String agentName, String bankKey)
     {
-        System.out.println("\nRegistering a new user...");
-        System.out.println("Name: " + agentName);
+        System.out.println("Agent " + agentName + " registered.");
         String biddingKey = Bank.getKey(agentName + bankKey);
         biddingKeyToBankKey.put(biddingKey, bankKey);
         bankKeyToBiddingKey.put(bankKey, biddingKey);
-        System.out.println("Bidding Key: " + biddingKey + "\n");
         return biddingKey;
     }
 
@@ -60,14 +58,7 @@ public class AuctionCentral
         auctionHouse.setIDs(auctionHouseID, auctionHouseKey);
 
         listOfAHs.add(auctionHouse);
-        System.out.println("Auction house is registered...");
-        System.out.println("ID: " + auctionHouseID + " AH Key: " + auctionHouseKey);
-
-        System.out.println("Current list of Auction Houses:");
-        for(int i = 0; i < listOfAHs.size(); ++i)
-        {
-            System.out.println("AH Name: " + listOfAHs.get(i).getName() + " - ID:" + listOfAHs.get(i).getPublicID());
-        }
+        System.out.println("Auction House " + auctionHouse.getName() + " registered.");
     }
 
     /**
@@ -78,6 +69,16 @@ public class AuctionCentral
      * @return List of auction houses.
      */
     public ArrayList<AuctionHouse> getListOfAHs() { return listOfAHs; }
+
+    public String getListOfAHsAsString()
+    {
+        String output = "";
+        for(int i = 0; i < listOfAHs.size(); ++i)
+        {
+            output += listOfAHs.toString() + "\n";
+        }
+        return output;
+    }
 
     public HashMap<String, String> getBiddingKeyToBankKey() {
         return biddingKeyToBankKey;

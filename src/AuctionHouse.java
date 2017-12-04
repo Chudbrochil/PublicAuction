@@ -37,6 +37,7 @@ public class AuctionHouse implements Serializable
 
     private int itemCounter = 0;
 
+
     /**
      * AuctionHouse()
      * Creates an AuctionHouse that has three random items for sale.
@@ -179,6 +180,12 @@ public class AuctionHouse implements Serializable
             System.err.println(toString()+" got a hold response of BidResponse "+ response+". Should be ACCEPT or REJECT.");
             return null;
         }
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Name: " +  NAME + " Public ID: " + publicID;
     }
     
     /**

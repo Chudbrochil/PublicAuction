@@ -112,7 +112,6 @@ public class Client
         out.writeObject(new Message(MessageType.REGISTER_AGENT, agent.getName(), agent.getBankKey(), ""));
         Message response = (Message)in.readObject();
         agent.setBiddingKey(response.getBiddingKey());
-        if(taAgentOutput != null) { taAgentOutput.appendText("Bidding Key: " + agent.getBiddingKey() + "\n"); }
     }
 
     /**

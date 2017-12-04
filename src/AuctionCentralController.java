@@ -1,4 +1,5 @@
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import java.io.PrintStream;
 
@@ -6,7 +7,10 @@ import java.io.PrintStream;
 public class AuctionCentralController
 {
     @FXML
-    TextArea taOutput;
+    private TextArea taOutput;
+
+    @FXML
+    private Label lblAuctionHousesList, lblConnectionInfo;
 
     @FXML
     public void initialize()
@@ -19,7 +23,7 @@ public class AuctionCentralController
             @Override
             public void run()
             {
-                Server s = new Server(false);
+                Server s = new Server(false, lblAuctionHousesList, lblConnectionInfo);
             }
         });
 
