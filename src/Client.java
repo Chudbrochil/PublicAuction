@@ -154,7 +154,7 @@ public class Client
              response.getItem().setCurrentHighestBidderID(response.getName());
          }
 
-         out.writeObject(response);
+
 
      }catch(Exception e){
          e.getMessage();
