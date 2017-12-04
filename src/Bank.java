@@ -22,8 +22,17 @@ public class Bank
 
     public String getAgentsAsString()
     {
-        ArrayList<Account> accounts = new ArrayList<Account>(bankKeyToAccount.values());
-        return "";
+        String output = "";
+        if(!bankKeyToAccount.isEmpty())
+        {
+            ArrayList<Account> accounts = new ArrayList<Account>(bankKeyToAccount.values());
+            for(int i = 0; i < accounts.size(); ++i)
+            {
+                output += accounts.get(i).toString() + "\n";
+            }
+        }
+
+        return output;
     }
 
 
@@ -39,21 +48,12 @@ public class Bank
     {
         int accountNum = rand.nextInt(10000 + 1);
         double startingBalance = 10000.00;
-        System.out.println("Name: " + blankAccount.getName());
         String bankKey = Bank.getKey(blankAccount.getName());
-
         blankAccount.setAccountNum(accountNum);
         blankAccount.setAccountBalance(startingBalance);
         blankAccount.setBankKey(bankKey);
-
-        System.out.println("\nRegistering a new user.....");
-        System.out.println("Account Name: " + blankAccount.getName());
-
-        System.out.println("Starting Balance: " + blankAccount.getAccountBalance());
-        System.out.println("Account Number: " + blankAccount.getAccountNum());
-        System.out.println("Agent Bank Key: " + blankAccount.getBankKey());
-
         bankKeyToAccount.put(bankKey, blankAccount);
+        System.out.println("Agent " + blankAccount.getName() + " registered.");
     }
 
 

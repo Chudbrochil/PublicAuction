@@ -291,11 +291,11 @@ public class Client
             if(isAgent && bankConnected)
             {
                 registerAgentWithAC();
-                System.out.println("Connecting and registering with AC at: " + acHostname + ":" + Main.auctionCentralPort + "\n");
+                taAgentOutput.appendText("Connecting and registering with AC at: " + acHostname + ":" + Main.auctionCentralPort + "\n");
             }
             else if(isAgent && !bankConnected)
             {
-                System.out.println("Cannot connect to AC. Register with bank first to get your bank key.\n");
+                taAgentOutput.appendText("Cannot connect to AC. Register with bank first to get your bank key.\n");
             }
             else
             {

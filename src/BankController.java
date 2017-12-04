@@ -1,14 +1,20 @@
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import java.io.PrintStream;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 // TODO: BankController and ACController are almost exactly the same. Please fix this...
 public class BankController
 {
     @FXML
-    TextArea taOutput;
+    private TextArea taOutput;
 
-    Server bank;
+    @FXML
+    private Label lblAgentsList, lblConnectionInfo;
 
     @FXML
     public void initialize()
@@ -21,13 +27,12 @@ public class BankController
             @Override
             public void run()
             {
-                Server bank = new Server(true);
+                Server server = new Server(true, lblAgentsList, lblConnectionInfo);
             }
         });
 
         newThread.start();
     }
-
 
 
 }

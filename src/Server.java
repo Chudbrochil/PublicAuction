@@ -1,12 +1,22 @@
+import javafx.application.Platform;
+import javafx.scene.control.Label;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Server
 {
     private boolean isListening;
+    private Bank bank;
+    private AuctionCentral auctionCentral;
+    private Label lblClientsList, lblConnectionInfo;
+    private boolean isBank;
 
     /**
      * Server()
@@ -17,6 +27,19 @@ public class Server
      */
     public Server(boolean isBank)
     {
+        this(isBank, null, null);
+    }
+
+    // TODO: This design of passing in a label might not be the best way to do this.... (Getting registered agents/ah's)
+    public Server(boolean isBank, Label lblClientsList, Label lblConnectionInfo)
+    {
+        this.isBank = isBank;
+        this.lblClientsList = lblClientsList;
+        this.lblConnectionInfo = lblConnectionInfo;
+
+        // If we didn't originate from the command line then spin up a thread to update the clients label
+        if(lblClientsList != null) updateClientsLabel();
+
         // TODO: isListening is a stand-in for having a Bank/AC being spun down and up. This may be an extra feature...
         isListening = false;
         try
@@ -30,12 +53,29 @@ public class Server
                 auctionCentralLaunch();
             }
         }
-        catch (Exception e)
+        catch(IOException e) { System.out.println(e.getMessage()); }
+        catch(ClassNotFoundException e) { System.out.println(e.getMessage()); }
+
+
+    }
+
+    private void updateClientsLabel()
+    {
+        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+        exec.scheduleAtFixedRate(new Runnable()
         {
-            e.getLocalizedMessage();
-            e.getMessage();
-            e.printStackTrace();
-        }
+            @Override
+            public void run()
+            {
+                Platform.runLater(() -> {
+                    if(isBank && bank.getAgentsAsString() != null)
+                    {
+                        lblClientsList.setText(bank.getAgentsAsString());
+                    }
+
+                });
+            }
+        }, 0, 250, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -48,13 +88,13 @@ public class Server
      */
     private void bankLaunch() throws IOException, ClassNotFoundException
     {
-        Bank bank = new Bank();
+        bank = new Bank();
         ServerSocket bankSocket = new ServerSocket(Main.bankPort);
         isListening = true;
 
-        System.out.println("Bank online.");
-        System.out.println(Main.returnNetworkInfo());
-        System.out.println("Port: " + Main.bankPort);
+        Platform.runLater(() ->lblConnectionInfo.setText(Main.returnNetworkInfo() + " Port: " + Main.bankPort));
+
+        System.out.println("Bank online.\n");
 
         while (true)
         {
@@ -70,6 +110,7 @@ public class Server
                 if(incomingMessage.getType() == MessageType.WITHDRAW)
                 {
                     Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
+                    System.out.println("MSG RECV: WITHDRAW - FROM: " + account.getName());
                     // If we were able to deduct the bidding amount, then take it out, send a success back.
                     if(account.deductAccountBalance(incomingMessage.getBidAmount()))
                     {
@@ -82,7 +123,7 @@ public class Server
                         incomingMessage.setBidResponse(BidResponse.REJECT);
                         System.out.println("Bank refused withdrawl of " + incomingMessage.getBidAmount() + " from:\n");
                     }
-                    System.out.println("Acct#: " + account.getAccountNum() + " BankKey: " + account.getBankKey() + " New Balance: " + account.getAccountBalance());
+                    System.out.println(account.toString());
                     bankOut.writeObject(incomingMessage);
                 }
                 //When we place a bid
@@ -103,13 +144,13 @@ public class Server
                         incomingMessage.setType(MessageType.PLACE_HOLD);
                         bankOut.writeObject(incomingMessage);
                     }
-                    System.out.println("Acct#: " + account.getAccountNum() + " BankKey: " + account.getBankKey() + " New Balance: " + account.getAccountBalance());
+                    System.out.println(account.toString());
                     bankOut.writeObject(incomingMessage);
                 }
                 // Initializing an agent with an account (name, account#, balance, bankkey)
                 else if(incomingMessage.getType() == MessageType.REGISTER_AGENT)
                 {
-                    System.out.println("Got a message register_agent from " + incomingMessage.getAccount().getName());
+                    System.out.println("MESSAGE: REGISTER_AGENT - FROM: " + incomingMessage.getAccount().getName());
                     bank.registerAgent(incomingMessage.getAccount());
                     bankOut.writeObject(incomingMessage);
                 }
@@ -117,7 +158,7 @@ public class Server
             }
             else
             {
-                System.out.println("Bank received unrecognized message.");
+                System.out.println("Bank received unrecognized message. Doing nothing");
             }
 
         }
@@ -133,7 +174,7 @@ public class Server
      */
     private void auctionCentralLaunch() throws IOException, ClassNotFoundException
     {
-        AuctionCentral ac = new AuctionCentral();
+        auctionCentral = new AuctionCentral();
         ServerSocket auctionCentralSocket = new ServerSocket(Main.auctionCentralPort);
 
         isListening = true;
@@ -157,18 +198,18 @@ public class Server
                 // Updating the list of AHs to the agent
                 if(incomingMessage.getType() == MessageType.UPDATE_AHS)
                 {
-                    incomingMessage.setListOfAHs(ac.getListOfAHs());
+                    incomingMessage.setListOfAHs(auctionCentral.getListOfAHs());
                 }
                 // Registering a new agent with AC
                 else if(incomingMessage.getType() == MessageType.REGISTER_AGENT)
                 {
-                    String biddingKey = ac.registerAgent(incomingMessage.getName(), incomingMessage.getBankKey());
+                    String biddingKey = auctionCentral.registerAgent(incomingMessage.getName(), incomingMessage.getBankKey());
                     incomingMessage.setBiddingKey(biddingKey);
                 }
                 // Registering a new AH with AC
                 else if(incomingMessage.getType() == MessageType.REGISTER_AH)
                 {
-                    ac.registerAuctionHouse(incomingMessage.getAuctionHouse());
+                    auctionCentral.registerAuctionHouse(incomingMessage.getAuctionHouse());
                 }
                 else if(incomingMessage.getType() == MessageType.PLACE_BID)
                 {
@@ -176,12 +217,12 @@ public class Server
                     ObjectOutputStream outToBank = new ObjectOutputStream(bankSocket.getOutputStream());
                     ObjectInputStream inFromBank = new ObjectInputStream(bankSocket.getInputStream());
 
-                    incomingMessage.setBankKey(ac.getBiddingKeyToBankKey().get(incomingMessage.getBiddingKey()));
+                    incomingMessage.setBankKey(auctionCentral.getBiddingKeyToBankKey().get(incomingMessage.getBiddingKey()));
                     outToBank.writeObject(incomingMessage);
 
 
                     Message bankResponse = (Message) inFromBank.readObject();
-                    bankResponse.setBiddingKey(ac.getBankKeyToBiddingKey().get(incomingMessage.getBankKey()));
+                    bankResponse.setBiddingKey(auctionCentral.getBankKeyToBiddingKey().get(incomingMessage.getBankKey()));
 
                     centralOut.writeObject(bankResponse);
 
@@ -202,6 +243,11 @@ public class Server
             }
 
         }
+    }
+
+    public String getAgentsAsString()
+    {
+        return bank.getAgentsAsString();
     }
 
     /**

@@ -6,8 +6,9 @@
 
 <VBox prefHeight="500.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="BankController">
    <children>
-      <Label prefHeight="17.0" prefWidth="165.0" text="Registered Agents" />
-      <Label fx:id="lblAgentsList" text="No agents registered." />
-      <TextArea fx:id="taOutput" editable="false" layoutX="1.0" prefHeight="600.0" prefWidth="300.0" />
+      <Label fx:id="lblConnectionInfo" prefHeight="35.0" prefWidth="300.0" text="Connection Info" />
+      <Label prefHeight="15.0" prefWidth="300.0" text="Registered Agents" />
+      <Label fx:id="lblAgentsList" alignment="TOP_LEFT" prefHeight="200.0" prefWidth="300.0" text="No agents registered." />
+      <TextArea fx:id="taOutput" editable="false" layoutX="1.0" prefHeight="350.0" prefWidth="300.0" />
    </children>
 </VBox>

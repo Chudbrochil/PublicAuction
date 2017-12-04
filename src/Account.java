@@ -75,6 +75,12 @@ public class Account implements Serializable
         this.name = name;
     }
 
+    @Override
+    public String toString()
+    {
+        return "Name: " + name + " acct#: " + accountNum + " Balance: " + accountBalance;
+    }
+
 
     // TODO: Implement "hold" mechanism
 
