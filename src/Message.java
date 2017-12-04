@@ -38,8 +38,8 @@ public class Message implements Serializable
     {
      type = t;
      this.holdSuccess = holdSuccess;
-     BIDDING_AMOUNT = amount;
-     ITEM_ID = 0;
+     bidAmount = amount;
+     itemID= 0;
     }
     //Everything for PLACE_BID and
     //private BidResponse response;

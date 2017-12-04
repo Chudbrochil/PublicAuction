@@ -71,16 +71,16 @@ public class Server
                 {
                     Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
                     // If we were able to deduct the bidding amount, then take it out, send a success back.
-                    if(account.deductAccountBalance(incomingMessage.BIDDING_AMOUNT))
+                    if(account.deductAccountBalance(incomingMessage.getBidAmount()))
                     {
                         incomingMessage.setBidResponse(BidResponse.ACCEPT);
-                        System.out.println("Bank accepted withdrawl of " + incomingMessage.BIDDING_AMOUNT + " from:\n");
+                        System.out.println("Bank accepted withdrawl of " + incomingMessage.getBidAmount() + " from:\n");
                     }
                     // If there wasn't enough money, send a rejection back.
                     else
                     {
                         incomingMessage.setBidResponse(BidResponse.REJECT);
-                        System.out.println("Bank refused withdrawl of " + incomingMessage.BIDDING_AMOUNT + " from:\n");
+                        System.out.println("Bank refused withdrawl of " + incomingMessage.getBidAmount() + " from:\n");
                     }
                     System.out.println("Acct#: " + account.getAccountNum() + " BankKey: " + account.getBankKey() + " New Balance: " + account.getAccountBalance());
                     bankOut.writeObject(incomingMessage);
