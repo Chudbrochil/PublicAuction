@@ -11,20 +11,24 @@ import java.io.Serializable;
 public class Item implements Serializable
 {
     private int ahID;      //IDs.ID of the AuctionHouse that holds this item
-    public final Double MINIMUM_BID;         //Minimum bid to start at
+    private Double minimumBid;
     private Double currentBid;               //CurrentBid on this item--the highest of all the bids. Will be 0 until first bid.
-    public final String ITEM_NAME;          //Name of the item
+    private String itemName;
     private String currentHighestBidderID;    //BIDDING_ID of Agent who holds the currentBid, which is winning. Will be null until first bid.
     private String imgPath;
     private int itemID;            //Unique item ID
+
+    public Item()
+    {
+    }
 
     // Copy constructor
     public Item(Item anotherItem)
     {
         this.ahID = anotherItem.ahID;
-        this.MINIMUM_BID = anotherItem.MINIMUM_BID;
+        this.setMinimumBid(anotherItem.getMinimumBid());
         this.currentBid = anotherItem.currentBid;
-        this.ITEM_NAME = anotherItem.ITEM_NAME;
+        this.setItemName(anotherItem.getItemName());
         this.currentHighestBidderID = anotherItem.currentHighestBidderID;
         this.imgPath = anotherItem.imgPath;
         this.itemID = anotherItem.itemID;
@@ -32,9 +36,9 @@ public class Item implements Serializable
 
     public Item(String itemName, String imgPath, double minimumBid)
     {
-        ITEM_NAME = itemName;
+        this.setItemName(itemName);
         this.imgPath = imgPath;
-        MINIMUM_BID = minimumBid;
+        this.setMinimumBid(minimumBid);
         currentBid = 0.0;
         currentHighestBidderID = null;
     }
@@ -85,6 +89,26 @@ public class Item implements Serializable
     @Override
     public String toString()
     {
-        return ITEM_NAME + " itemID: " + itemID + " ahID: " + ahID;
+        return getItemName() + " itemID: " + itemID + " ahID: " + ahID;
+    }
+
+    public Double getMinimumBid()
+    {
+        return minimumBid;
+    }
+
+    public void setMinimumBid(Double minimumBid)
+    {
+        this.minimumBid = minimumBid;
+    }
+
+    public String getItemName()
+    {
+        return itemName;
+    }
+
+    public void setItemName(String itemName)
+    {
+        this.itemName = itemName;
     }
 }

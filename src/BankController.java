@@ -8,6 +8,8 @@ public class BankController
     @FXML
     TextArea taOutput;
 
+    Server bank;
+
     @FXML
     public void initialize()
     {
@@ -19,12 +21,11 @@ public class BankController
             @Override
             public void run()
             {
-                Server s = new Server(true);
+                Server bank = new Server(true);
             }
         });
 
         newThread.start();
-
     }
 
 
