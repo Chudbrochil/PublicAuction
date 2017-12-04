@@ -195,12 +195,12 @@ public class Client
 
                 if(response.getBidResponse() == BidResponse.ACCEPT)
                 {
-                    agent.deductAccountBalance(response.BIDDING_AMOUNT);
+                    agent.deductAccountBalance(response.getBidAmount());
                     if(taAgentOutput != null) { taAgentOutput.appendText("Withdraw accepted. New balance: " + agent.getAccountBalance() + "\n"); }
                 }
                 else
                 {
-                    if(taAgentOutput != null) { taAgentOutput.appendText("You don't have enough funds to withdraw " + response.BIDDING_AMOUNT + "\n"); }
+                    if(taAgentOutput != null) { taAgentOutput.appendText("You don't have enough funds to withdraw " + response.getBidAmount() + "\n"); }
                 }
             }
 
@@ -291,11 +291,11 @@ public class Client
             if(isAgent && bankConnected)
             {
                 registerAgentWithAC();
-                taAgentOutput.appendText("Connecting and registering with AC at: " + acHostname + ":" + Main.auctionCentralPort + "\n");
+                System.out.println("Connecting and registering with AC at: " + acHostname + ":" + Main.auctionCentralPort + "\n");
             }
             else if(isAgent && !bankConnected)
             {
-                taAgentOutput.appendText("Cannot connect to AC. Register with bank first to get your bank key.\n");
+                System.out.println("Cannot connect to AC. Register with bank first to get your bank key.\n");
             }
             else { registerAHWithAC(); }
         }
