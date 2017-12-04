@@ -66,7 +66,7 @@ public class AuctionHouse implements Serializable
             Item item = ItemDB.getRandomItem();
             item.setItemID(itemCounter);
             items.put(itemCounter, item);
-            System.out.println(item.ITEM_NAME + " - Min price: " + item.MINIMUM_BID + " itemID: " + item.getItemID());
+            System.out.println(item.getItemName() + " - Min price: " + item.getMinimumBid() + " itemID: " + item.getItemID());
             itemCounter++;
         }
     }
@@ -138,7 +138,7 @@ public class AuctionHouse implements Serializable
         }
 
         //If it's a valid bid AMOUNT
-        if (amount >= item.MINIMUM_BID && amount > item.getCurrentBid())
+        if (amount >= item.getMinimumBid() && amount > item.getCurrentBid())
         {
             //Agent didn't bid enough USER OUTPUT
             pendingHolds.add(new PendingBidRequest(biddingID, amount, itemID));

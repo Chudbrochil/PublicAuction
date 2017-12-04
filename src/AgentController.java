@@ -48,7 +48,10 @@ public class AgentController
     @FXML
     private TextField tfBidAmount;
 
-    Item currentlySelectedItem;
+    String currentlySelectedItemString;
+
+    ArrayList<Item> itemsAsList;
+
 
     Agent agent; // Inside class that keeps account information and item information
     Client client; // Wrapper class for agent that opens sockets and communicates for agent
@@ -56,12 +59,14 @@ public class AgentController
     @FXML
     private void initialize()
     {
+        itemsAsList = new ArrayList<>();
         client = new Client(true, Main.askName(), taAgentOutput);
         agent = client.getAgent();
         lvItems.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 System.out.println(newValue);
+                currentlySelectedItemString = newValue;
             }
         });
         update();
@@ -108,15 +113,16 @@ public class AgentController
             for(int i = 0; i < listOfAHs.size(); ++i)
             {
                 HashMap<Integer, Item> ahItems = listOfAHs.get(i).getItems();
-                ArrayList<Item> listOfItems = new ArrayList<Item>(ahItems.values());
+                //ArrayList<Item> listOfItems = new ArrayList<Item>(ahItems.values());
+                itemsAsList = new ArrayList<Item>(ahItems.values());
 
-                for(int j = 0; j < listOfItems.size(); ++j)
+                for(int j = 0; j < itemsAsList.size(); ++j)
                 {
                     // Checking to make sure the global items list doesn't already have the item before adding it
-                    if(!items.contains(listOfItems.get(j)))
+                    if(!items.contains(itemsAsList.get(j)))
                     {
-                        items.add(listOfItems.get(j));
-                        itemNames.add(listOfItems.get(j).toString());
+                        items.add(itemsAsList.get(j));
+                        itemNames.add(itemsAsList.get(j).toString());
                     }
                 }
             }
@@ -126,6 +132,8 @@ public class AgentController
         lvItems.setItems(itemNames);
 
     }
+
+
 
 
 
@@ -143,10 +151,23 @@ public class AgentController
     @FXML
     private void btnPlaceBid() // TODO: handle bad input?
     {
-        if(currentlySelectedItem != null)
+        Item item = new Item();
+        for(int i = 0; i < itemsAsList.size(); ++i)
         {
-            client.placeAHBid(Double.valueOf(tfBidAmount.getText()), agent.getBiddingKey(), currentlySelectedItem);
+            if(currentlySelectedItemString.equals(itemsAsList.get(i).toString()));
+            {
+                System.out.println(item.toString());
+                item = itemsAsList.get(i);
+                break;
+            }
         }
+
+        Double bidAmount = Double.valueOf(tfBidAmount.getText());
+
+        System.out.println("Placing bid for " + bidAmount + " on item:\n" + item.toString() + "\n");
+
+        taAgentOutput.appendText("Placing bid for " + bidAmount + " on item:\n" + item.toString() + "\n");
+        client.placeAHBid(bidAmount, agent.getBiddingKey(), item);
     }
 
     @FXML
