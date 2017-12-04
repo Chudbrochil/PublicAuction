@@ -89,7 +89,7 @@ public class Item implements Serializable
     @Override
     public String toString()
     {
-        return getItemName() + " itemID: " + itemID + " ahID: " + ahID;
+        return "Name: " + itemName + " itemID: " + itemID + " ahID: " + ahID;
     }
 
     public Double getMinimumBid()
@@ -112,7 +112,8 @@ public class Item implements Serializable
         this.itemName = itemName;
     }
 
-    public void setCurrentHighestBidderID(String currentHighestBidderID) {
+    public void setCurrentHighestBidderID(String currentHighestBidderID)
+    {
         this.currentHighestBidderID = currentHighestBidderID;
     }
 }

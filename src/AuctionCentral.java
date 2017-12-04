@@ -53,12 +53,12 @@ public class AuctionCentral
      */
     public void registerAuctionHouse(AuctionHouse auctionHouse)
     {
-        auctionHouseID++;
         String auctionHouseKey = Bank.getKey(auctionHouse.getName());
         auctionHouse.setIDs(auctionHouseID, auctionHouseKey);
 
         listOfAHs.add(auctionHouse);
         System.out.println("Auction House " + auctionHouse.getName() + " registered.");
+        auctionHouseID++;
     }
 
     /**

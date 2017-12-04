@@ -109,7 +109,7 @@ public class AgentController
         ArrayList<Item> items = new ArrayList<>();
         ObservableList<String> itemNames = FXCollections.observableArrayList();
 
-        if(!listOfAHs.isEmpty())
+        if(!listOfAHs.isEmpty()) // TODO: This still occasionally throws a nullptr
         {
             for(int i = 0; i < listOfAHs.size(); ++i)
             {

@@ -1,8 +1,13 @@
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 import java.io.PrintStream;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class AuctionHouseController
 {
@@ -12,6 +17,9 @@ public class AuctionHouseController
 
     @FXML
     TextField tfAuctionCentralIP;
+
+    @FXML
+    Label lblAuctionHouseList;
 
     Client client;
 
@@ -28,7 +36,7 @@ public class AuctionHouseController
             @Override
             public void run()
             {
-                client = new Client(false, name);
+                client = new Client(false, name, lblAuctionHouseList);
             }
 
         });
@@ -41,4 +49,22 @@ public class AuctionHouseController
     {
         client.setAcHostname(tfAuctionCentralIP.getText()); // TODO: handle bad input?
     }
+
+//    private void updateItemsLabel()
+//    {
+//        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+//        exec.scheduleAtFixedRate(new Runnable()
+//        {
+//            @Override
+//            public void run()
+//            {
+//                Platform.runLater(() -> {
+//                    client.
+//
+//                });
+//            }
+//        }, 0, 250, TimeUnit.MILLISECONDS);
+//    }
+
+
 }

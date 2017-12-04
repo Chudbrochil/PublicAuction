@@ -61,15 +61,24 @@ public class AuctionHouse implements Serializable
      */
     public void populateItems()
     {
-        System.out.println("Populating " + NAME + " with 3 random items.");
         for (int i = 0; i < 3; ++i)
         {
             Item item = ItemDB.getRandomItem();
             item.setItemID(itemCounter);
             items.put(itemCounter, item);
-            System.out.println(item.getItemName() + " - Min price: " + item.getMinimumBid() + " itemID: " + item.getItemID());
             itemCounter++;
         }
+    }
+
+    public String getItemsAsString()
+    {
+        String output = "";
+        ArrayList<Item> itemsAsList = new ArrayList<Item>(items.values());
+        for(int i = 0; i < itemsAsList.size(); ++i)
+        {
+            output += itemsAsList.get(i).toString() + "\n";
+        }
+        return output;
     }
 
     public HashMap<Integer, Item> getItems()
@@ -89,10 +98,10 @@ public class AuctionHouse implements Serializable
     {
         this.publicID = publicID;
         this.ahKey = ahKey;
-        ArrayList<Item> listOfItems = new ArrayList<Item>(items.values());
-        for(int i = 0; i < listOfItems.size(); ++i)
+        ArrayList<Item> itemsAsList = new ArrayList<Item>(items.values());
+        for(int i = 0; i < itemsAsList.size(); ++i)
         {
-            listOfItems.get(i).setAhID(this.publicID);
+            itemsAsList.get(i).setAhID(this.publicID);
         }
     }
 

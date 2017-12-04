@@ -142,7 +142,7 @@ public class Server
                         incomingMessage.setBidResponse(BidResponse.ACCEPT);
                         incomingMessage.setType(MessageType.PLACE_HOLD);
                         bankOut.writeObject(incomingMessage);
-                        System.out.println("Bank has placed a hold on account:\n");
+                        System.out.println("Bank has placed a hold on account:");
                     }
                     // If there wasn't enough money, send a rejection back.
                     else
@@ -150,7 +150,7 @@ public class Server
                         incomingMessage.setBidResponse(BidResponse.REJECT);
                         incomingMessage.setType(MessageType.PLACE_HOLD);
                         bankOut.writeObject(incomingMessage);
-                        System.out.println("Bank has refused a hold on account:\n");
+                        System.out.println("Bank has refused a hold on account:");
                     }
                     System.out.println(account.toString());
                     bankOut.writeObject(incomingMessage);

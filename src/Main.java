@@ -7,6 +7,7 @@ import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetAddress;
@@ -107,8 +108,6 @@ public class Main extends Application
 
     /**
      * returnNetworkInfo()
-     *
-     * Gets hostname and IP for a process.
      *
      * @return A string corresponding to this process' Hostname and IP Address.
      */
