@@ -26,8 +26,8 @@ public class Client
     /**
      * Client()
      * Constructor useful for running on command line
-     * @param isAgent
-     * @param name
+     * @param isAgent Boolean value representing whether or not we're making an Agent or AH. true makes Agent, false AH
+     * @param name Name of the object (agent or AH) we are creating.
      */
     public Client(boolean isAgent, String name)
     {
@@ -36,10 +36,10 @@ public class Client
 
     /**
      * Client()
-     * Regular constructor for Client that gets called the Controller
-     * @param isAgent
-     * @param name
-     * @param taAgentOutput
+     * Regular constructor for Client that gets called and updates the GUI via a text area
+     * @param isAgent Boolean value representing whether or not we're making an Agent or AH. true makes Agent, false AH
+     * @param name Name of the object (agent or AH) we are creating.
+     * @param taAgentOutput Text Area that updates the agent GUI on what is going on.
      */
     public Client(boolean isAgent, String name, TextArea taAgentOutput)
     {
@@ -76,6 +76,15 @@ public class Client
 
     }
 
+    /**
+     * registerAgentWithBank()
+     *
+     * Sends a message from this client(agent) to bank to register itself as an agent.
+     * This initializes the agent's account(including bankkey, accountnum and startingbalance)
+     *
+     * @throws IOException Can be thrown from bad input/output in the streams
+     * @throws ClassNotFoundException Can be thrown from bad cast from readObject()
+     */
     private void registerAgentWithBank() throws IOException, ClassNotFoundException
     {
         // Registering with bank
@@ -91,6 +100,15 @@ public class Client
 
     }
 
+    /**
+     * registerAgentWithAC()
+     *
+     * Sends a message from this client(agent) to auction central to register itself as an agent.
+     * This is how an agent gets its bidding key.
+     *
+     * @throws IOException Can be thrown from bad input/output in the streams
+     * @throws ClassNotFoundException Can be thrown from bad cast from readObject()
+     */
     private void registerAgentWithAC() throws IOException, ClassNotFoundException
     {
         // Registering with AC
@@ -102,6 +120,15 @@ public class Client
         if(taAgentOutput != null) { taAgentOutput.appendText("Bidding Key: " + agent.getBiddingKey() + "\n"); }
     }
 
+    /**
+     * registerAHWithAC()
+     *
+     * Sends a message from this client(auction house) to auction central to register itself as an AH.
+     * This initializes everything about the auction house.
+     *
+     * @throws IOException Can be thrown from bad input/output in the streams
+     * @throws ClassNotFoundException Can be thrown from bad cast from readObject()
+     */
     private void registerAHWithAC() throws IOException, ClassNotFoundException
     {
         out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
@@ -111,13 +138,29 @@ public class Client
         auctionHouse = incomingMessage.getAuctionHouse();
     }
 
+    /**
+     * TODO: Can I somehow get rid of this method?
+     * getAgent()
+     * @return The agent that is held within this client
+     */
     public Agent getAgent() { return agent; }
 
 
     /**
      * AuctionHouse and Agent messaging methods live here
      */
-    public void withdraw(double bidAmt, Agent agent)
+
+
+    /**
+     * withdraw()
+     *
+     * Sends a message to the bank to withdraw a fixed amount from their account. This wasn't a requirement
+     * of the project, but serves as a great proof of concept and theoretical feature.
+     *
+     * @param withdrawl The amount the agent is trying to withdraw
+     * @param agent The agent that wants to withdraw money.
+     */
+    public void withdraw(double withdrawl, Agent agent)
     {
         try
         {
@@ -128,7 +171,7 @@ public class Client
                 in = new ObjectInputStream(bankSocket.getInputStream());
 
                 // Sending a message of type Withdraw
-                out.writeObject(new Message(MessageType.WITHDRAW, agent.getBankKey(), bidAmt));
+                out.writeObject(new Message(MessageType.WITHDRAW, agent.getBankKey(), withdrawl));
                 Message response = (Message)in.readObject();
 
                 if(response.getBidResponse() == BidResponse.ACCEPT)
@@ -148,6 +191,11 @@ public class Client
     }
 
 
+    /**
+     * updateListOfAHs()
+     *
+     * Opens a socket to the AC and updates the agent's list of auction house's
+     */
     public void updateListOfAHs()
     {
         try
@@ -177,6 +225,14 @@ public class Client
         catch(ClassNotFoundException e) { System.out.println(e.getMessage()); }
     }
 
+    /**
+     * setBankHostname()
+     *
+     * Sets the hostname for the banksocket and then connects to the bank. If this Client is an agent, the agent
+     * will register itself with the bank.
+     *
+     * @param bankHostname The hostname given to us to connect to
+     */
     public void setBankHostname(String bankHostname)
     {
         this.bankHostname = bankHostname;
@@ -197,6 +253,14 @@ public class Client
         catch(ClassNotFoundException e) { System.out.println(e.getMessage()); }
     }
 
+    /**
+     * setAcHostname()
+     *
+     * Sets the hostname for the auctionCentralSocket and then connect to the Auction Central.
+     * Then the AH or Agent registers with the Auction Central.
+     *
+     * @param acHostname
+     */
     public void setAcHostname(String acHostname)
     {
         this.acHostname = acHostname;
@@ -220,15 +284,34 @@ public class Client
         catch(ClassNotFoundException e) { System.out.println(e.getMessage()); }
     }
 
+    // TODO: Do we care if the bank is connected?
     public boolean getBankConnected() { return bankConnected; }
+
+    /**
+     * getAcConnected()
+     * @return Boolean representing whether this client has connected with the AC already.
+     */
     public boolean getAcConnected() { return acConnected; }
 
+    /**
+     * connectLocalhost()
+     *
+     * Sets both of the bank and ac hostname's to localhost. This is very useful for working on the command line and
+     * in most situations where all the nodes are on the same machine.
+     */
     public void connectLocalhost()
     {
         setBankHostname("127.0.0.1");
         setAcHostname("127.0.0.1");
     }
 
+    /**
+     * main()
+     *
+     * Strictly for spinning up Clients on the command line. Mostly used for debugging.
+     *
+     * @param args First arg decides if you want an AH or Agent, second is the name
+     */
     public static void main(String[] args)
     {
         if (args[0].equals("AH"))
