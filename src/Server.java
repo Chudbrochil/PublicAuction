@@ -126,7 +126,7 @@ public class Server
             ObjectInputStream centralIn = new ObjectInputStream(otherPipeConnection.getInputStream());
 
 
-            Socket bankSocket = new Socket("127.0.0.1", Main.bankPort);
+            //Socket bankSocket = new Socket("127.0.0.1", Main.bankPort);
 
 
 
@@ -151,16 +151,16 @@ public class Server
                 {
                     ac.registerAuctionHouse(incomingMessage.getAuctionHouse());
                 }
-                else if(incomingMessage.getType() == MessageType.PLACE_BID)
-                {
-                    centralOut = new ObjectOutputStream(bankSocket.getOutputStream());
-                    centralIn = new ObjectInputStream(bankSocket.getInputStream());
-
-                    centralOut.writeObject(incomingMessage);
-
-                    Message bankResponse = (Message) centralIn.readObject();
-
-                }
+//                else if(incomingMessage.getType() == MessageType.PLACE_BID)
+//                {
+//                    centralOut = new ObjectOutputStream(bankSocket.getOutputStream());
+//                    centralIn = new ObjectInputStream(bankSocket.getInputStream());
+//
+//                    centralOut.writeObject(incomingMessage);
+//
+//                    Message bankResponse = (Message) centralIn.readObject();
+//
+//                }
                 //                else if(incomingMessage.getType() == MessageType.ITEM_SOLD)
 //                {
 //                    Socket bankSocket = new Socket("127.0.0.1", 4444);

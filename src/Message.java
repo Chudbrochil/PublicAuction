@@ -49,10 +49,9 @@ public class Message implements Serializable
     {
         type = t;
         this.biddingKey = biddingKey;
-        this.setBidAmount(bidAmount);
-        this.setItemID(itemID);
-        this.setAuctionHousePublicID(auctionHousePublicID);
-
+        this.bidAmount = bidAmount;
+        this.itemID = itemID;
+        this.auctionHousePublicID = auctionHousePublicID;
     }
     
     //Constructor for a WITHDRAW message

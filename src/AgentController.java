@@ -48,6 +48,8 @@ public class AgentController
     @FXML
     private TextField tfBidAmount;
 
+    Item currentlySelectedItem;
+
     Agent agent; // Inside class that keeps account information and item information
     Client client; // Wrapper class for agent that opens sockets and communicates for agent
 
@@ -141,6 +143,10 @@ public class AgentController
     @FXML
     private void btnPlaceBid() // TODO: handle bad input?
     {
+        if(currentlySelectedItem != null)
+        {
+            client.placeAHBid(Double.valueOf(tfBidAmount.getText()), agent.getBiddingKey(), currentlySelectedItem);
+        }
     }
 
     @FXML

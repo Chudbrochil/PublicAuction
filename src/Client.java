@@ -140,13 +140,13 @@ public class Client
     public Agent getAgent() { return agent; }
 
 
-    public void placeAHbid(double bidAmount, Agent agent, Item item){
+    public void placeAHBid(double bidAmount, String biddingKey, Item item){
      try{
          auctionCentralSocket = new Socket(acHostname, Main.auctionCentralPort);
          out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
          in = new ObjectInputStream(auctionCentralSocket.getInputStream());
 
-        out.writeObject(new Message(MessageType.PLACE_BID, agent.getBiddingKey(), bidAmount, item.getItemID(), item.getAhID()));
+        out.writeObject(new Message(MessageType.PLACE_BID, biddingKey, bidAmount, item.getItemID(), item.getAhID()));
         Message response = (Message) in.readObject();
 
          if(response.getBidResponse() == BidResponse.ACCEPT) {
@@ -297,7 +297,11 @@ public class Client
             {
                 System.out.println("Cannot connect to AC. Register with bank first to get your bank key.\n");
             }
-            else { registerAHWithAC(); }
+            else
+            {
+                registerAHWithAC();
+                System.out.println("Connecting and registering with AC at: " + acHostname + ":" + Main.auctionCentralPort + "\n");
+            }
         }
         catch(IOException e) { System.out.println(e.getMessage()); }
         catch(ClassNotFoundException e) { System.out.println(e.getMessage()); }
