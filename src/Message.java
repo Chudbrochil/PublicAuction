@@ -31,16 +31,6 @@ public class Message implements Serializable
 
     
     //for type PLACE_HOLD
-    private boolean holdSuccess;
-
-
-    public Message(MessageType t, boolean holdSuccess, String bankKey, double amount)
-    {
-     type = t;
-     this.holdSuccess = holdSuccess;
-     bidAmount = amount;
-     itemID= 0;
-    }
     //Everything for PLACE_BID and
     //private BidResponse response;
     
@@ -54,7 +44,7 @@ public class Message implements Serializable
         this.auctionHousePublicID = auctionHousePublicID;
     }
     
-    //Constructor for a WITHDRAW message
+    //Constructor for a WITHDRAW message and PLACE_HOLD
     public Message(MessageType t, String bankKey, double bidAmount)
     {
         type = t;

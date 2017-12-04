@@ -150,10 +150,10 @@ public class Client
         Message response = (Message) in.readObject();
 
          if(response.getBidResponse() == BidResponse.ACCEPT) {
-            //fill in
+            System.out.println("We made it back");
          }
          else{
-            //fill in
+            System.out.println("We made it back");
          }
 
      }catch(Exception e){

@@ -3,7 +3,10 @@ import java.util.HashMap;
 
 public class AuctionCentral
 {
+
     private HashMap<String, String> biddingKeyToBankKey;
+    private HashMap<String, String> bankKeyToBiddingKey;
+
     private ArrayList<AuctionHouse> listOfAHs;
     private static int auctionHouseID = 0;
 
@@ -74,4 +77,12 @@ public class AuctionCentral
      */
     public ArrayList<AuctionHouse> getListOfAHs() { return listOfAHs; }
 
+    public HashMap<String, String> getBiddingKeyToBankKey() {
+        return biddingKeyToBankKey;
+    }
+
+    public HashMap<String, String> getBankKeyToBiddingKey() {
+        return bankKeyToBiddingKey;
+    }
 }
+
