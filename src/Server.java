@@ -9,10 +9,6 @@ public class Server
 {
     private boolean isListening;
 
-    public static int bankPort = 4444;
-    public static int auctionCentralPort = 5555;
-
-
     public Server(boolean isBank)
     {
         // TODO: isListening is a stand-in for having a Bank/AC being spun down and up. This may be an extra feature...
@@ -39,12 +35,12 @@ public class Server
     private void bankLaunch() throws Exception
     {
         Bank bank = new Bank();
-        ServerSocket bankSocket = new ServerSocket(bankPort);
+        ServerSocket bankSocket = new ServerSocket(Main.bankPort);
         isListening = true;
 
         System.out.println("Bank online.");
         System.out.println(Main.returnNetworkInfo());
-        System.out.println("Port: " + bankPort);
+        System.out.println("Port: " + Main.bankPort);
 
         while (true)
         {
@@ -77,6 +73,7 @@ public class Server
                 // Initializing an agent with an account (account#, balance, bankkey)
                 else if(incomingMessage.getType() == MessageType.REGISTER_AGENT)
                 {
+                    System.out.println("Got a message register_agent from " + incomingMessage.getName());
                     bank.registerAgent(incomingMessage.getName(), incomingMessage.getAccount());
                     bankOut.writeObject(incomingMessage);
                 }
@@ -93,12 +90,12 @@ public class Server
     private void auctionCentralLaunch() throws Exception
     {
         AuctionCentral ac = new AuctionCentral();
-        ServerSocket auctionCentralSocket = new ServerSocket(auctionCentralPort);
+        ServerSocket auctionCentralSocket = new ServerSocket(Main.auctionCentralPort);
 
         isListening = true;
         System.out.println("Auction Central online.");
         System.out.println(Main.returnNetworkInfo());
-        System.out.println("Port: " + auctionCentralPort);
+        System.out.println("Port: " + Main.auctionCentralPort);
 
         while (true)
         {

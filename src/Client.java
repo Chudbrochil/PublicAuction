@@ -78,15 +78,11 @@ public class Client
 
     private void registerAgentWithBank() throws IOException, ClassNotFoundException
     {
-        System.out.println("RegisterAgentWithBank");
         // Registering with bank
         out = new ObjectOutputStream(bankSocket.getOutputStream());
         in = new ObjectInputStream(bankSocket.getInputStream());
 
-        System.out.println("Does it open objectstreams?");
-
         out.writeObject(new Message(MessageType.REGISTER_AGENT, agent.getName(), new Account()));
-        System.out.println("Does it write out?");
         Message response = (Message) in.readObject();
         agent.setAccountInfo(response.getAccount());
 
@@ -97,7 +93,6 @@ public class Client
 
     private void registerAgentWithAC() throws IOException, ClassNotFoundException
     {
-        System.out.println("RegisterAgentWithAC");
         // Registering with AC
         out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
         in = new ObjectInputStream(auctionCentralSocket.getInputStream());
@@ -128,7 +123,7 @@ public class Client
         {
             if(bankConnected)
             {
-                bankSocket = new Socket(bankHostname, Server.bankPort);
+                bankSocket = new Socket(bankHostname, Main.bankPort);
                 out = new ObjectOutputStream(bankSocket.getOutputStream());
                 in = new ObjectInputStream(bankSocket.getInputStream());
 
@@ -158,7 +153,7 @@ public class Client
         {
             if(acConnected)
             {
-                auctionCentralSocket = new Socket(acHostname, Server.auctionCentralPort);
+                auctionCentralSocket = new Socket(acHostname, Main.auctionCentralPort);
                 out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
                 in = new ObjectInputStream(auctionCentralSocket.getInputStream());
                 out.writeObject(new Message(MessageType.UPDATE_AHS, new ArrayList<AuctionHouse>()));
@@ -187,12 +182,13 @@ public class Client
 
         try
         {
-            System.out.println("setBankHostname?");
-            bankSocket = new Socket(bankHostname, Server.bankPort);
-            bankConnected = true;
-            if(isAgent) {
+            if(isAgent)
+            {
+                // Only the agent needs a connection to the bank.
+                bankSocket = new Socket(bankHostname, Main.bankPort);
+                bankConnected = true;
                 registerAgentWithBank();
-                taAgentOutput.appendText("Connecting and registering with bank at: " + bankHostname + ":" + Server.bankPort);
+                taAgentOutput.appendText("Connecting and registering with bank at: " + bankHostname + ":" + Main.bankPort + "\n");
             }
 
         }
@@ -206,17 +202,16 @@ public class Client
 
         try
         {
-            System.out.println("setAcHostname");
-            auctionCentralSocket = new Socket(acHostname, Server.auctionCentralPort);
+            auctionCentralSocket = new Socket(acHostname, Main.auctionCentralPort);
             acConnected = true;
             if(isAgent && bankConnected)
             {
                 registerAgentWithAC();
-                taAgentOutput.appendText("Connecting and registering with AC at: " + acHostname + ":" + Server.auctionCentralPort);
+                taAgentOutput.appendText("Connecting and registering with AC at: " + acHostname + ":" + Main.auctionCentralPort + "\n");
             }
             else if(isAgent && !bankConnected)
             {
-                taAgentOutput.appendText("Cannot connect to AC. Register with bank first to get your bank key.");
+                taAgentOutput.appendText("Cannot connect to AC. Register with bank first to get your bank key.\n");
             }
             else { registerAHWithAC(); }
         }
@@ -229,7 +224,6 @@ public class Client
 
     public void connectLocalhost()
     {
-        System.out.println("connectLocalHost");
         setBankHostname("127.0.0.1");
         setAcHostname("127.0.0.1");
     }

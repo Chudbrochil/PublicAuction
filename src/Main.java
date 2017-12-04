@@ -16,6 +16,8 @@ import java.util.Optional;
 
 public class Main extends Application
 {
+    public static int bankPort = 4444;
+    public static int auctionCentralPort = 5555;
 
     @Override
     public void start(Stage primaryStage) throws Exception
