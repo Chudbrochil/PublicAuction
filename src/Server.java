@@ -219,6 +219,7 @@ public class Server
                     System.out.println("\nMESSAGE: REGISTER_AH - FROM: " + incomingMessage.getAuctionHouse().getName());
                     auctionCentral.registerAuctionHouse(incomingMessage.getAuctionHouse());
                 }
+                //if place bid is null then its from agent, anything else is from auctionhouse
                 else if(incomingMessage.getType() == MessageType.PLACE_BID)
                 {
                     System.out.println("\nMESSAGE: PLACE_BID - FROM: bidKey-" + incomingMessage.getBiddingKey());

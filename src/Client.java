@@ -6,6 +6,7 @@ import javafx.scene.control.TextArea;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
@@ -27,6 +28,8 @@ public class Client
     private boolean isAgent;
     private boolean acConnected;
     private boolean bankConnected;
+    private ServerSocket client;
+    private Socket pipeConnection;
 
     /**
      * Client()
@@ -444,6 +447,63 @@ public class Client
 //            e.getMessage();
 //        }
 //    }
+
+    public void clientListening(){
+        if (isAgent)
+        {
+
+
+        }
+        //client is auction hosue
+        else
+        {
+            try{
+                client = new ServerSocket( auctionHouse.getPublicID());
+                while(true){
+                    pipeConnection = client.accept();
+                    out = new ObjectOutputStream(pipeConnection.getOutputStream());
+                    in = new ObjectInputStream(pipeConnection.getInputStream());
+
+                    Message object = (Message)in.readObject();
+
+                    if(object.getType() == MessageType.PLACE_BID)
+                    {
+                        if(auctionHouse.placeBid(object.getBiddingKey(), object.getBidAmount(), object.getItemID(), object.getAuctionHousePublicID()))
+                        {
+                            object.setBidResponse(BidResponse.ACCEPT);
+                            out.writeObject(object);
+                        }
+                        else
+                        {
+                            object.setBidResponse(BidResponse.REJECT);
+                            out.writeObject(object);
+                        }
+
+
+
+                    }
+                    else if(object.getType() == MessageType.PLACE_HOLD)
+                    {
+                        if(object.getBidResponse() == BidResponse.ACCEPT)
+                        {
+//                            auctionHouse.processHoldResponse(object.getBiddingKey(), object.getBidAmount(), object.getItemID(), object.getBidResponse());
+
+                        } else if(object.getBidResponse() == BidResponse.REJECT){
+
+                        }
+                    }
+
+
+
+                }
+            }catch(Exception e){
+                e.getMessage();
+                e.getLocalizedMessage();
+                e.printStackTrace();
+            }
+
+        }
+    }
 
     /**
      * main()
