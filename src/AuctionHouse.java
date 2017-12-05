@@ -1,3 +1,5 @@
+import javafx.animation.Timeline;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +32,8 @@ public class AuctionHouse implements Serializable
     private int publicID;
     private String ahKey; // Requested and received from Auction Central
     private HashMap<Integer, Item> items; //Item ID as key for the item.
-    private HashSet<PendingBidRequest> pendingHolds; //placeBid calls this AuctionHouse is waiting on holds for to respond to
+    private HashMap<Integer, Timeline> itemTimers; //key is Item ID, timer for the winning bid.
+    //private HashSet<PendingBidRequest> pendingHolds; //placeBid calls this AuctionHouse is waiting on holds for to respond to
                                              //the message.
     //private HashMap<String, Time> itemTimers;
     //private HashMap<>
@@ -48,7 +51,7 @@ public class AuctionHouse implements Serializable
     {
         this.name = name;
         items = new HashMap<>();
-        pendingHolds = new HashSet();
+        //pendingHolds = new HashSet();
         populateItems();
     }
 
@@ -126,10 +129,9 @@ public class AuctionHouse implements Serializable
      * @param itemID         ID of the item the bidder wishes to bid on
      * @param auctionHouseID the ID of this auction house (needed by Client)
      * @return true if Client should move ahead and request a hold to be placed.
-     *         false if something went wrong (not this AuctionHouse's ID, the item doesn't exist here,
-     *         the Agent bid too little,) in which case the Client can send a bidResponse REJECT Message
+     *         false if something went wrong (the Agent bid too little,) in which case the Client can send
+     *         a bidResponse REJECT Message, not this AuctionHouse's ID, the item doesn't exist here)
      *         right back to the Agent.
-     *         //todo: above
      */
     public boolean placeBid(String biddingID, double amount, int itemID, int auctionHouseID)
     {
@@ -154,7 +156,7 @@ public class AuctionHouse implements Serializable
         if (amount >= item.getMinimumBid() && amount > item.getCurrentBid())
         {
             //Agent didn't bid enough USER OUTPUT
-            pendingHolds.add(new PendingBidRequest(biddingID, amount, itemID));
+            //pendingHolds.add(new PendingBidRequest(biddingID, amount, itemID));
             return true;
         }
         //todo: else, USER OUTPUT whoops, bid more.
@@ -167,14 +169,27 @@ public class AuctionHouse implements Serializable
      * @param biddingID      BIDDING_ID of the Agent who wishes to place a bid
      * @param amount         Amount the bidder wishes to bid.
      * @param itemID         ID of the item the bidder wishes to bid on
-     * @param response       BidResponse of
-     * @return  null if response was REJECT.
+     * @param response       BidResponse of Bank as to whether the hold is successfully placed.
+     * @param timer          Timeline which has the desired event on finish for the bid item. This timer will be started and
+     *                       any timer currently running for the above itemID.
+     *                       THIS TIMER MUST CALL itemSold(itemID) ON THIS CLASS
+     * @return  null if no bidder needs to be notified with a "pass".
      *          biddingID of the person whose bid was surpassed otherwise. Client should send a REQUEST_BID
      *          BidResponse PASS to the returned biddingID and a REQUEST_BID BidResponseMessage ACCEPT to
      *          *this* biddingID
-     *          //todo: above
+     *
+     *          String oldBidder = processHoldResponse(....);
+     *          In Client:  if(oldBidder!=null)
+     *                      {
+     *                          sendMessage(oldBidder, BidResponse.PASS......)
+     *                          sendMessage(message.getBidder(), BidResponse.ACCEPT)
+     *                      }
+     *                      else
+     *                      {
+     *                          forward message to Agent (the ACCEPT/REJECT is already set. Agent will react accordingly.
+     *                      }
      */
-    public String processHoldResponse(String biddingID, double amount, String itemID, BidResponse response)
+    public String processHoldResponse(String biddingID, double amount, int itemID, BidResponse response, Timeline timer)
     {
         //todo: Anna: Check if pendingHolds holds it.
         if(response==BidResponse.REJECT) return null;
@@ -184,7 +199,7 @@ public class AuctionHouse implements Serializable
             Item item = items.get(itemID);
             String prevBidWinner = item.getCurrentHighestBidderID();
             item.setCurrentBidAndBidder(amount, biddingID);
-            restartBidTime(itemID);
+            setBidTimer(itemID, timer);
             return prevBidWinner;
         }
         else
@@ -192,6 +207,14 @@ public class AuctionHouse implements Serializable
             System.err.println(toString()+" got a hold response of BidResponse "+ response+". Should be ACCEPT or REJECT.");
             return null;
         }
+    }
+    
+    /**
+     * @param itemID    ID of the item stored in the timer that is called when
+     */
+    public void itemSold(int itemID)
+    {
+        items.remove(itemID);
     }
 
     @Override
@@ -202,12 +225,14 @@ public class AuctionHouse implements Serializable
     
     /**
      * @param itemID Item whose timer is being reset
+     * @param timer New timer for the current bidder.
      */
-    private void restartBidTime(String itemID)
+    private void setBidTimer(int itemID, Timeline timer)
     {
-        //Timer timer = itemTimers.get(itemID);
-        //items.
-        //todo
+        Timeline currentTimer = itemTimers.get(itemID);
+        currentTimer.stop();
+        itemTimers.put(itemID, timer);
+        timer.play();
     }
 
 
