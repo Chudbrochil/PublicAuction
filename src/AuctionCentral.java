@@ -8,7 +8,7 @@ public class AuctionCentral
     private HashMap<String, String> bankKeyToBiddingKey;
 
     private ArrayList<AuctionHouse> listOfAHs;
-    private static int auctionHouseID = 0;
+    private static int auctionHouseID = 6000; //This will become the IP Address for the AH.
 
     /**
      * auctionCentral()

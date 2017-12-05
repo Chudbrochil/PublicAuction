@@ -183,6 +183,7 @@ public class Client
     {
         try
         {
+            //todo: Is there a reason this runs every time? Can we put an if in here to make this once? --Anna
             auctionCentralSocket = new Socket(acHostname, Main.auctionCentralPort);
             out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
             in = new ObjectInputStream(auctionCentralSocket.getInputStream());
@@ -191,12 +192,12 @@ public class Client
             Message response = (Message) in.readObject();
 
             //todo: AuctionHouse has placeBid() and receiveHoldResponse() methods. These would be good to use as the contain
-            //this logic.
+            //this logic. --Anna
             if (response.getBidResponse() == BidResponse.ACCEPT && response.getItem().getCurrentBid() < response.getBidAmount()
                 && response.getItem().getMinimumBid() < response.getBidAmount())
             //if (response.getBidResponse() == BidResponse.ACCEPT && auctionHouse.placeBid(biddingKey, bidAmount, item.getItemID(), auctionHouse.getPublicID()))
             {
-                //todo: save prev bidder so AH can issue a "pass" response
+                //todo: save prev bidder so AH can issue a "pass" response --Anna
                 response.getItem().setCurrentBidAndBidder(response.getBidAmount(), response.getName());
             }
 
