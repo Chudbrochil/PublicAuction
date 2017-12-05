@@ -79,6 +79,7 @@ public class Main extends Application
         primaryStage.setOnCloseRequest(e -> System.exit(0));
     }
 
+
     /**
      * getStandardOutCapture()
      *

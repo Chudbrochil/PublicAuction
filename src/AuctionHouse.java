@@ -26,7 +26,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class AuctionHouse implements Serializable
 {
-    private final String NAME;
+    private String name;
     private int publicID;
     private String ahKey; // Requested and received from Auction Central
     private HashMap<Integer, Item> items; //Item ID as key for the item.
@@ -46,7 +46,7 @@ public class AuctionHouse implements Serializable
      */
     public AuctionHouse(String name)
     {
-        NAME = name;
+        this.name = name;
         items = new HashMap<>();
         pendingHolds = new HashSet();
         populateItems();
@@ -116,7 +116,7 @@ public class AuctionHouse implements Serializable
 
     public String getName()
     {
-        return NAME;
+        return name;
     }
 
     /**
@@ -147,7 +147,7 @@ public class AuctionHouse implements Serializable
         {
             //That item isn't for sale here USER OUTPUT
             System.err.println("Bidding ID " + biddingID + " tried to bid on " + itemID + ", which is not an item in " +
-                NAME + ". Returning");
+                    name + ". Returning");
             return false;
         }
 
@@ -198,7 +198,7 @@ public class AuctionHouse implements Serializable
     @Override
     public String toString()
     {
-        return "Name: " +  NAME + " Public ID: " + publicID;
+        return "Name: " +  name + " Public ID: " + publicID;
     }
     
     /**
@@ -265,7 +265,7 @@ public class AuctionHouse implements Serializable
                     // This allows for commenting in the ItemList
                     if (!line.startsWith("//") && !line.trim().isEmpty())
                     {
-                        // TODO: ItemList.txt is fragile, don't give it bad input
+                        // The ItemList is fragile, be careful editing it.
                         String[] elements = line.split(",");
                         String itemName = elements[0];
                         String imgPath = elements[1];

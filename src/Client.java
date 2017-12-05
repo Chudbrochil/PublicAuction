@@ -86,6 +86,12 @@ public class Client
 
     }
 
+    /**
+     * updateAuctionHouseListLabel()
+     *
+     * Spins up a thread to update the label on the AuctionHouse GUI. This Label corresponds to the list of items
+     * that is currently in the Auction House.
+     */
     private void updateAuctionHouseListLabel()
     {
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
