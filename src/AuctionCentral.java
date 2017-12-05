@@ -73,11 +73,20 @@ public class AuctionCentral
     public String getListOfAHsAsString()
     {
         String output = "";
-        for(int i = 0; i < listOfAHs.size(); ++i)
+        if(!listOfAHs.isEmpty())
         {
-            output += listOfAHs.toString() + "\n";
+            for(int i = 0; i < listOfAHs.size(); ++i)
+            {
+                output += listOfAHs.get(i).toString() + "\n";
+            }
+
+        }
+        else
+        {
+            output = "No Auction House's registered.";
         }
         return output;
+
     }
 
     public HashMap<String, String> getBiddingKeyToBankKey() {

@@ -99,7 +99,7 @@ public class Server
 
         Platform.runLater(() ->lblConnectionInfo.setText(Main.returnNetworkInfo() + " Port: " + Main.bankPort));
 
-        System.out.println("Bank online.\n");
+        System.out.println("Bank online.");
 
         while (true)
         {
@@ -120,13 +120,13 @@ public class Server
                     if(account.deductAccountBalance(incomingMessage.getBidAmount()))
                     {
                         incomingMessage.setBidResponse(BidResponse.ACCEPT);
-                        System.out.println("Bank accepted withdrawl of " + incomingMessage.getBidAmount() + " on account:\n");
+                        System.out.println("Bank accepted withdrawl of " + incomingMessage.getBidAmount() + " on account:");
                     }
                     // If there wasn't enough money, send a rejection back.
                     else
                     {
                         incomingMessage.setBidResponse(BidResponse.REJECT);
-                        System.out.println("Bank refused withdrawl of " + incomingMessage.getBidAmount() + " on account:\n");
+                        System.out.println("Bank refused withdrawl of " + incomingMessage.getBidAmount() + " on account:");
                     }
                     System.out.println(account.toString());
                     bankOut.writeObject(incomingMessage);
@@ -135,7 +135,7 @@ public class Server
                  else if(incomingMessage.getType() == MessageType.PLACE_BID)
                 {
                     Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
-                    System.out.println("MESSAGE: PLACE_BID - FROM: " + account.getName());
+                    System.out.println("\nMESSAGE: PLACE_BID - FROM: " + account.getName());
                     // If we were able to deduct the bidding amount, then take it out, send a success back.
                     if(account.deductAccountBalance(incomingMessage.getBidAmount()))
                     {
@@ -158,7 +158,7 @@ public class Server
                 // Initializing an agent with an account (name, account#, balance, bankkey)
                 else if(incomingMessage.getType() == MessageType.REGISTER_AGENT)
                 {
-                    System.out.println("MESSAGE: REGISTER_AGENT - FROM: " + incomingMessage.getAccount().getName());
+                    System.out.println("\nMESSAGE: REGISTER_AGENT - FROM: " + incomingMessage.getAccount().getName());
                     bank.registerAgent(incomingMessage.getAccount());
                     bankOut.writeObject(incomingMessage);
                 }
@@ -166,7 +166,7 @@ public class Server
             }
             else
             {
-                System.out.println("Bank received unrecognized message. Doing nothing");
+                System.out.println("Bank received unrecognized message. Doing nothing"); // TODO: Will this hold the socket open?
             }
 
         }
@@ -187,7 +187,7 @@ public class Server
 
         isListening = true;
         Platform.runLater(() ->lblConnectionInfo.setText(Main.returnNetworkInfo() + " Port: " + Main.auctionCentralPort));
-        System.out.println("Auction Central online.\n");
+        System.out.println("Auction Central online.");
 
         while (true)
         {
@@ -209,19 +209,19 @@ public class Server
                 // Registering a new agent with AC
                 else if(incomingMessage.getType() == MessageType.REGISTER_AGENT)
                 {
-                    System.out.println("MESSAGE: REGISTER_AGENT - FROM: " + incomingMessage.getName());
+                    System.out.println("\nMESSAGE: REGISTER_AGENT - FROM: " + incomingMessage.getName());
                     String biddingKey = auctionCentral.registerAgent(incomingMessage.getName(), incomingMessage.getBankKey());
                     incomingMessage.setBiddingKey(biddingKey);
                 }
                 // Registering a new AH with AC
                 else if(incomingMessage.getType() == MessageType.REGISTER_AH)
                 {
-                    System.out.println("MESSAGE: REGISTER_AH - FROM: " + incomingMessage.getAuctionHouse().getName());
+                    System.out.println("\nMESSAGE: REGISTER_AH - FROM: " + incomingMessage.getAuctionHouse().getName());
                     auctionCentral.registerAuctionHouse(incomingMessage.getAuctionHouse());
                 }
                 else if(incomingMessage.getType() == MessageType.PLACE_BID)
                 {
-                    System.out.println("MESSAGE: PLACE_BID - FROM: bidKey-" + incomingMessage.getBiddingKey());
+                    System.out.println("\nMESSAGE: PLACE_BID - FROM: bidKey-" + incomingMessage.getBiddingKey());
                     Socket bankSocket = new Socket("127.0.0.1", Main.bankPort); // TODO: CHANGE THE LOCAL HOST?
                     ObjectOutputStream outToBank = new ObjectOutputStream(bankSocket.getOutputStream());
                     ObjectInputStream inFromBank = new ObjectInputStream(bankSocket.getInputStream());

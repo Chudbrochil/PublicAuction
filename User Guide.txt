@@ -1,0 +1,71 @@
+User's guide
+
+Using a GUI - Updated 12/5/2017
+
+1.) Run Main(), select Bank
+    This will automatically launch your bank and start listening.
+2.) Run Main(), select Auction Central
+    This will automatically launch your Auction Central and start listening.
+
+    
+    
+3.) Run Main(), select Auction House, enter name of your AH
+
+    If the Auction Central is already launched and listening, then enter the IP
+    of the Auction Central and click "Connect to AC". This will register your
+    Auction House with Auction Central and give you a publicID for your AH.
+    
+4.) Run Main(), select Agent, enter name of your Agent
+
+    If the Bank is already launched and listening, then enter the IP of the Bank
+    and click "Connect to Bank". This will give you a new account with an
+    account number, bankkey and starting balance.
+    
+    The intention is that you connect to the Bank first as you need your Bank Key
+    to get a BiddingKey from Auction Central. If you don't do it in this order,
+    your connection to Auction Central will be refused.
+    
+    If the Auction Central is already launched and listening, then enter the IP
+    of the Auction Central and click "Connect to AC". This will give you a list
+    of any items that have already been posted by Auction House's.
+    
+    Additionally, if both your Bank and AC are on localhost and launched, there
+    is a convenient button called "Connect to localhost" that you can use instead
+    and it will connect you to the AC and Bank at the same time.
+    
+    From here, you will now have some functionality available to you on the Agent
+    GUI. You can enter an amount and select "Withdraw" to show the ability of
+    withdraw'ing money from the Bank. You can select an item on the item list,
+    enter an amount and then click "Place Bid". Currently "Place Bid" will not
+    win you an item but will send a message to the Bank to place a hold on your
+    account.
+
+Feel free to do #3 and #4 in whatever order you'd like and as often as you'd like.
+The program is designed to have as many Agent's and AHs as you want.
+
+
+Using the Command Line - Updated 12/1/2017 (This was the last time it was seen working, behavior unknown)
+
+1. First, you want to spin up a Bank and AuctionCentral.
+    I prefer to put these both on the same command line using &
+
+    Go into /out/production/PublicAuction (Or where ever your .class' are)
+    
+    Run:
+    java Server Bank &
+    java Server AC &
+
+2. Now, if you want an AuctionHouse I recommend opening another shell
+    
+    Run:
+    java Client AH AH1  (Note: AH1 designates a name, give it anything)
+
+3. Now, if you want an Agent, I personally recommend using the GUI but
+    you can use an agent on the shell also.
+    
+    Run:
+    java Client Agent Agent1 (Note: Agent1 designates a name, give it anything)
+
+    Keep in mind the Agent is very limited on the command line and was originally
+    made strictly for debug'ing. This is still left in for "proof of concept".
+    A proper Agent would be spun up from the Main GUI

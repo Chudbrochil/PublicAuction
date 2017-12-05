@@ -26,7 +26,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class AuctionHouse implements Serializable
 {
-    private final String NAME;
+    private String name;
     private int publicID;
     private String ahKey; // Requested and received from Auction Central
     private HashMap<Integer, Item> items; //Item ID as key for the item.
@@ -46,7 +46,7 @@ public class AuctionHouse implements Serializable
      */
     public AuctionHouse(String name)
     {
-        NAME = name;
+        this.name = name;
         items = new HashMap<>();
         pendingHolds = new HashSet();
         populateItems();
@@ -55,9 +55,8 @@ public class AuctionHouse implements Serializable
     /**
      * populateItems()
      *
-     * This method fills the auctionHouse with 3 random items. This needs to be done after the auction house is
-     * registered so that the item can have it's auction house id set. This gives the item is "uniqueness"
-     *
+     * This method fills the auctionHouse with 3 random items. A given item will be initialized with a -1 for it's
+     * ahID and will be initialized to an actual valid ahID after the auction house registers with auction central.
      */
     public void populateItems()
     {
@@ -116,7 +115,7 @@ public class AuctionHouse implements Serializable
 
     public String getName()
     {
-        return NAME;
+        return name;
     }
 
     /**
@@ -147,7 +146,7 @@ public class AuctionHouse implements Serializable
         {
             //That item isn't for sale here USER OUTPUT
             System.err.println("Bidding ID " + biddingID + " tried to bid on " + itemID + ", which is not an item in " +
-                NAME + ". Returning");
+                    name + ". Returning");
             return false;
         }
 
@@ -198,7 +197,7 @@ public class AuctionHouse implements Serializable
     @Override
     public String toString()
     {
-        return "Name: " +  NAME + " Public ID: " + publicID;
+        return "Name: " +  name + " Public ID: " + publicID;
     }
     
     /**
@@ -265,7 +264,7 @@ public class AuctionHouse implements Serializable
                     // This allows for commenting in the ItemList
                     if (!line.startsWith("//") && !line.trim().isEmpty())
                     {
-                        // TODO: ItemList.txt is fragile, don't give it bad input
+                        // The ItemList is fragile, be careful editing it.
                         String[] elements = line.split(",");
                         String itemName = elements[0];
                         String imgPath = elements[1];

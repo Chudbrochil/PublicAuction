@@ -1,0 +1,29 @@
+Questions for joel:
+How to use listviews how I want (Click on a value in listview, get out an Item)
+How to consolidate controllers/fxml's
+is the ui acceptable?
+is there a rubric?
+How in our design would we close connections on displayclose?
+
+
+General things to add:
+Timers on items 
+Implementing ITEM_SOLD msg
+Gracefully shutting down Clients, SHUT_DOWN message
+Messaging for when an agent was passed by in a bid
+
+
+Things to add(Anthony):
+UI should display what user currently has on hold.
+UI should display what a user has already bought.
+display the status of items (regardless of whether they bid on them or not)
+status of items they have bid on
+clean up the bankconnected/acconnected booleans (perhaps we can connect to another ip later on)
+
+DESIGN:
+ac/ah/bank controller/fxml are way, way similar, fix this
+Catch bad output in the textfields
+
+
+BUGS:
+Check for interleaving messages. I don't think I'm checking anywhere for this.

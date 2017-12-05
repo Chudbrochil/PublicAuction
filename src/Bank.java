@@ -31,6 +31,10 @@ public class Bank
                 output += accounts.get(i).toString() + "\n";
             }
         }
+        else
+        {
+            output = "No agents registered.";
+        }
 
         return output;
     }

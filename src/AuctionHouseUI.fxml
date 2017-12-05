@@ -23,7 +23,7 @@
                 <Button fx:id="btnConnectAC" mnemonicParsing="false" onAction="#btnConnectAC" prefHeight="25.0" prefWidth="113.0" text="Connect to AC" />
             </children>
         </HBox>
-        <TextArea fx:id="taOutput" editable="false" layoutX="1.0" prefHeight="400.0" prefWidth="300.0" />
+        <TextArea fx:id="taOutput" editable="false" layoutX="1.0" prefHeight="450.0" prefWidth="300.0" />
 
     </children>
 </VBox>

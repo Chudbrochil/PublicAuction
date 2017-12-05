@@ -86,6 +86,12 @@ public class Client
 
     }
 
+    /**
+     * updateAuctionHouseListLabel()
+     *
+     * Spins up a thread to update the label on the AuctionHouse GUI. This Label corresponds to the list of items
+     * that is currently in the Auction House.
+     */
     private void updateAuctionHouseListLabel()
     {
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
@@ -145,6 +151,7 @@ public class Client
         out.writeObject(new Message(MessageType.REGISTER_AGENT, agent.getName(), agent.getBankKey(), ""));
         Message response = (Message) in.readObject();
         agent.setBiddingKey(response.getBiddingKey());
+        taAgentOutput.appendText("Bidding Key: " + response.getBiddingKey() + "\n");
         acConnected = true;
     }
 

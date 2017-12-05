@@ -12,19 +12,9 @@ public class Agent
     private double accountBalance;
 
 
-    // TODO:
-
     public Agent(String name)
     {
         this.name = name;
-    }
-
-    // Returns true if bid is successful
-    public boolean placeBid(double bidAmt)
-    {
-        // TODO: For now just doing a withdrawal from bank
-        accountBalance -= bidAmt;
-        return true;
     }
 
     public void setAccountInfo(Account account)
@@ -32,22 +22,6 @@ public class Agent
         accountNum = account.getAccountNum();
         accountBalance = account.getAccountBalance();
         bankKey = account.getBankKey();
-    }
-
-
-    // This gets called on auction central to get the latest list of auctionhouses;
-    private void getUpdatedAHList()
-    {
-
-    }
-
-    // Loops over the auctionHouses
-    private void getAHItems()
-    {
-//        for(int i = 0; i < auctionHouses.size(); ++i)
-//        {
-//            System.out.println("Item: " + auctionHouses.get(i).)
-//        }
     }
 
     public void setBankKey(String bankKey)
