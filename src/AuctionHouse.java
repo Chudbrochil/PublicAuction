@@ -184,11 +184,11 @@ public class AuctionHouse implements Serializable
      *          In Client:  if(oldBidder!=null)
      *                      {
      *                          sendMessage(oldBidder, BidResponse.PASS......)
-     *                          sendMessage(message.getBidder(), BidResponse.ACCEPT)
+     *                          //sendMessage(message.getBidder(), BidResponse.ACCEPT)
      *                      }
      *                      else
      *                      {
-     *                          forward message to Agent (the ACCEPT/REJECT is already set. Agent will react accordingly.
+     *                          //forward message to Agent (the ACCEPT/REJECT is already set. Agent will react accordingly.
      *                      }
      */
     public String processHoldResponse(String biddingID, double amount, int itemID, BidResponse response, Timeline timer)
