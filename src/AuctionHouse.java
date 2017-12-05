@@ -178,6 +178,8 @@ public class AuctionHouse implements Serializable
      *          BidResponse PASS to the returned biddingID and a REQUEST_BID BidResponseMessage ACCEPT to
      *          *this* biddingID
      *
+     *          **Timer stores itemID and calls itemSold()
+     *
      *          String oldBidder = processHoldResponse(....);
      *          In Client:  if(oldBidder!=null)
      *                      {
@@ -210,7 +212,8 @@ public class AuctionHouse implements Serializable
     }
     
     /**
-     * @param itemID    ID of the item stored in the timer that is called when
+     * @param itemID    ID of the item stored in the timer that is called when the item is sold.
+     * Called when a 'winning' item timer goes off.
      */
     public void itemSold(int itemID)
     {
