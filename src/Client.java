@@ -151,6 +151,7 @@ public class Client
         out.writeObject(new Message(MessageType.REGISTER_AGENT, agent.getName(), agent.getBankKey(), ""));
         Message response = (Message) in.readObject();
         agent.setBiddingKey(response.getBiddingKey());
+        taAgentOutput.appendText("Bidding Key: " + response.getBiddingKey() + "\n");
         acConnected = true;
     }
 

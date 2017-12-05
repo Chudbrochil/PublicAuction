@@ -55,9 +55,8 @@ public class AuctionHouse implements Serializable
     /**
      * populateItems()
      *
-     * This method fills the auctionHouse with 3 random items. This needs to be done after the auction house is
-     * registered so that the item can have it's auction house id set. This gives the item is "uniqueness"
-     *
+     * This method fills the auctionHouse with 3 random items. A given item will be initialized with a -1 for it's
+     * ahID and will be initialized to an actual valid ahID after the auction house registers with auction central.
      */
     public void populateItems()
     {
