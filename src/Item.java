@@ -39,6 +39,7 @@ public class Item implements Serializable
         this.setItemName(itemName);
         this.imgPath = imgPath;
         this.setMinimumBid(minimumBid);
+        ahID = -1; // Sentinel value so that we know ahID hasn't been initialized yet.
         currentBid = 0.0;
         currentHighestBidderID = null;
     }

@@ -75,7 +75,7 @@ public class AuctionCentral
         String output = "";
         for(int i = 0; i < listOfAHs.size(); ++i)
         {
-            output += listOfAHs.toString() + "\n";
+            output += listOfAHs.get(i).toString() + "\n";
         }
         return output;
     }
