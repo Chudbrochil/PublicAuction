@@ -186,13 +186,18 @@ public class Client
             auctionCentralSocket = new Socket(acHostname, Main.auctionCentralPort);
             out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
             in = new ObjectInputStream(auctionCentralSocket.getInputStream());
-
+            
             out.writeObject(new Message(MessageType.PLACE_BID, biddingKey, bidAmount, item));
             Message response = (Message) in.readObject();
 
-            if (response.getBidResponse() == BidResponse.ACCEPT && response.getItem().getCurrentBid() < response.getBidAmount())
+            //todo: AuctionHouse has placeBid() and receiveHoldResponse() methods. These would be good to use as the contain
+            //this logic.
+            if (response.getBidResponse() == BidResponse.ACCEPT && response.getItem().getCurrentBid() < response.getBidAmount()
+                && response.getItem().getMinimumBid() < response.getBidAmount())
+            //if (response.getBidResponse() == BidResponse.ACCEPT && auctionHouse.placeBid(biddingKey, bidAmount, item.getItemID(), auctionHouse.getPublicID()))
             {
-                response.getItem().setCurrentHighestBidderID(response.getName());
+                //todo: save prev bidder so AH can issue a "pass" response
+                response.getItem().setCurrentBidAndBidder(response.getBidAmount(), response.getName());
             }
 
         }

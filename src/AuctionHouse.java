@@ -69,7 +69,11 @@ public class AuctionHouse implements Serializable
             itemCounter++;
         }
     }
-
+    
+    /**
+     * getItemsAsString()
+     * @return A String of item toString()'s separated by '\n' characters.
+     */
     public String getItemsAsString()
     {
         String output = "";
@@ -128,10 +132,10 @@ public class AuctionHouse implements Serializable
      *         right back to the Agent.
      *         //todo: above
      */
-    public boolean placeBid(String biddingID, double amount, String itemID, String auctionHouseID)
+    public boolean placeBid(String biddingID, double amount, int itemID, int auctionHouseID)
     {
         //Safechecking
-        if(!auctionHouseID.equals(publicID))
+        if(!(auctionHouseID==publicID))
         {
             //Not the right AuctionHouse USER OUTPUT
             System.err.println(toString()+" received a placeBid request for auctionHouseID "+auctionHouseID+" which does" +
@@ -212,9 +216,9 @@ public class AuctionHouse implements Serializable
     {
         public final String BIDDING_ID;
         public final double AMOUNT;
-        public final String ITEM_ID;
+        public final int ITEM_ID;
         
-        public PendingBidRequest(String bID, double amt, String iID)
+        public PendingBidRequest(String bID, double amt, int iID)
         {
             BIDDING_ID = bID;
             AMOUNT = amt;

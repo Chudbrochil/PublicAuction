@@ -43,7 +43,7 @@ public class Item implements Serializable
         currentHighestBidderID = null;
     }
 
-    public Item(String itemName, String imgPath, Double minimumBid, int itemID)
+    public Item(String itemName, String imgPath, double minimumBid, int itemID)
     {
         this(itemName, imgPath, minimumBid);
         this.itemID = itemID;
