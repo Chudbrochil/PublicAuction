@@ -195,8 +195,7 @@ public class Server
             ObjectOutputStream centralOut = new ObjectOutputStream(otherPipeConnection.getOutputStream());
             ObjectInputStream centralIn = new ObjectInputStream(otherPipeConnection.getInputStream());
 
-
-
+            
             Object object = centralIn.readObject();
 
             if(object instanceof Message)
