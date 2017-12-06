@@ -276,6 +276,11 @@ public class Server
 
                     needsReturnMessage = false;
                 }
+                else if(incomingMessage.getType() == MessageType.GET_PORT_NUMBER)
+                {
+                    incomingMessage.setPortNumber(auctionCentral.getPortNumber());
+                    centralOut.writeObject(incomingMessage);
+                }
                 //                else if(incomingMessage.getType() == MessageType.ITEM_SOLD)
 //                {
 //                    Socket bankSocket = new Socket("127.0.0.1", 4444);

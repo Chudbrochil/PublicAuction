@@ -455,8 +455,39 @@ public class Client
     {
         if (isAgent)
         {
+            try{
+                auctionCentralSocket = new Socket(staticACHostname, Main.auctionCentralPort);
+                out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
+                in = new ObjectInputStream(auctionCentralSocket.getInputStream());
+
+                out.writeObject(new Message(MessageType.GET_PORT_NUMBER, 0));
+
+                Message response = (Message) in.readObject();
+
+                agent.setPortNumber(response.getPortNumber());
+                out.close();
+                in.close();
+
+                client = new ServerSocket(agent.getPortNumber());
+                while(true){
+                    pipeConnection = client.accept();
+                    out = new ObjectOutputStream(pipeConnection.getOutputStream());
+                    in = new ObjectInputStream(pipeConnection.getInputStream());
+
+                    Message incomingMessage = (Message) in.readObject();
+
+                    if(incomingMessage.getType() == MessageType.OUT_BID){
+
+                    }else if(incomingMessage.getType() == MessageType.ITEM_SOLD){
+
+                    }
+                }
 
 
+
+            }catch(Exception e){
+                e.printStackTrace();
+            }
         }
         //client is auction hosue
         else

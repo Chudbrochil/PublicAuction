@@ -9,7 +9,7 @@ public class AuctionCentral
 
     private ArrayList<AuctionHouse> listOfAHs;
     private static int auctionHouseID = 6000; //This will become the port# for the AH.
-
+    private int agentPort = 20000;
     /**
      * auctionCentral()
      *
@@ -107,12 +107,25 @@ public class AuctionCentral
 
     }
 
+    public int getPortNumber(){
+        agentPort++;
+        return agentPort;
+    }
+
     public HashMap<String, String> getBiddingKeyToBankKey() {
         return biddingKeyToBankKey;
     }
 
     public HashMap<String, String> getBankKeyToBiddingKey() {
         return bankKeyToBiddingKey;
+    }
+
+    public int getAgentPort() {
+        return agentPort;
+    }
+
+    public void setAgentPort(int agentPort) {
+        this.agentPort = agentPort;
     }
 }
 

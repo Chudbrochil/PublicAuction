@@ -34,11 +34,17 @@ public class Message implements Serializable
     private boolean isAgent;
     private String clientKey; // Represents either agent bankKey or ah secretKey
 
+    private int portNumber;
     
     //for type PLACE_HOLD
     //Everything for PLACE_BID and
     //private BidResponse response;
 
+    public Message(MessageType t, int portNumber)
+    {
+        type = t;
+
+    }
     //Constructor for a UNREGISTER message
     public Message(MessageType t, boolean isAgent, String clientKey, String name)
     {
@@ -215,4 +221,13 @@ public class Message implements Serializable
     {
         this.clientKey = clientKey;
     }
+    public int getPortNumber()
+    {
+        return portNumber;
+    }
+
+    public void setPortNumber(int num){
+        portNumber = num;
+    }
+
 }
