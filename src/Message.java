@@ -40,10 +40,10 @@ public class Message implements Serializable
     //Everything for PLACE_BID and
     //private BidResponse response;
 
-    public Message(MessageType t, int portNumber)
+    public Message(MessageType t, int portNumber, String name)
     {
         type = t;
-
+        this.name = name;
     }
     //Constructor for a UNREGISTER message
     public Message(MessageType t, boolean isAgent, String clientKey, String name)

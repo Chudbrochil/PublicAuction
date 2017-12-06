@@ -460,14 +460,14 @@ public class Client
                 out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
                 in = new ObjectInputStream(auctionCentralSocket.getInputStream());
 
-                out.writeObject(new Message(MessageType.GET_PORT_NUMBER, 0));
+                out.writeObject(new Message(MessageType.GET_PORT_NUMBER, 0, agent.getName()));
 
                 Message response = (Message) in.readObject();
 
                 agent.setPortNumber(response.getPortNumber());
                 out.close();
                 in.close();
-
+                
                 client = new ServerSocket(agent.getPortNumber());
                 while(true){
                     pipeConnection = client.accept();

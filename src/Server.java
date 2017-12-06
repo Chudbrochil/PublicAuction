@@ -278,6 +278,8 @@ public class Server
                 }
                 else if(incomingMessage.getType() == MessageType.GET_PORT_NUMBER)
                 {
+
+                    auctionCentral.setAgentNameToPort(incomingMessage.getName(), incomingMessage.getPortNumber());
                     incomingMessage.setPortNumber(auctionCentral.getPortNumber());
                     centralOut.writeObject(incomingMessage);
                 }
