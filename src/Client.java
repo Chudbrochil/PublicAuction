@@ -511,12 +511,13 @@ System.out.println("AH conected on port " + auctionHouse.getPublicID());
                 client = new ServerSocket(auctionHouse.getPublicID());
                 pipeConnection = client.accept();
 
-                out = new ObjectOutputStream(pipeConnection.getOutputStream());
-                out.flush();
-                in = new ObjectInputStream(pipeConnection.getInputStream());
+
 
                 while (true) {
 
+                    out = new ObjectOutputStream(pipeConnection.getOutputStream());
+                    out.flush();
+                    in = new ObjectInputStream(pipeConnection.getInputStream());
                      Message incomingMessage = (Message) in.readObject();
                         System.out.println(incomingMessage.getType());
 
