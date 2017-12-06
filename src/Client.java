@@ -204,21 +204,24 @@ public class Client
     {
         try
         {
-            //todo: Is there a reason this runs every time? Can we put an if in here to make this once? --Anna
             auctionCentralSocket = new Socket(staticACHostname, Main.auctionCentralPort);
+
             out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
             in = new ObjectInputStream(auctionCentralSocket.getInputStream());
 
-            out.writeObject(new Message(MessageType.PLACE_BID, biddingKey, bidAmount, item));
-            Message response = (Message) in.readObject();
 
-            //todo: AuctionHouse has placeBid() and receiveHoldResponse() methods. These would be good to use as the contain
-            //this logic. --Anna
+            System.out.println("writing to ac...");
+            out.writeObject(new Message(MessageType.PLACE_BID, biddingKey, bidAmount, item));
+
+            Message response = (Message) in.readObject();
+            System.out.println("received message back from ac");
+
+
+
             if (response.getBidResponse() == BidResponse.ACCEPT && response.getItem().getCurrentBid() < response.getBidAmount()
                     && response.getItem().getMinimumBid() < response.getBidAmount())
             //if (response.getBidResponse() == BidResponse.ACCEPT && auctionHouse.placeBid(biddingKey, bidAmount, item.getItemID(), auctionHouse.getPublicID()))
             {
-                //todo: save prev bidder so AH can issue a "pass" response --Anna
                 response.getItem().setCurrentBidAndBidder(response.getBidAmount(), response.getName());
             }
 
@@ -226,6 +229,10 @@ public class Client
         catch (IOException e)
         {
             System.out.println(e.getMessage());
+            System.out.println(e.getLocalizedMessage());
+       e.printStackTrace();
+
+
         }
         catch (ClassNotFoundException e)
         {
@@ -461,36 +468,30 @@ public class Client
         if (isAgent)
         {
             try{
-                auctionCentralSocket = new Socket(staticACHostname, Main.auctionCentralPort);
-                out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
-                in = new ObjectInputStream(auctionCentralSocket.getInputStream());
 
-                out.writeObject(new Message(MessageType.GET_PORT_NUMBER, 0, agent.getName()));
+                agent.setPortNumber(20000);
 
-                Message response = (Message) in.readObject();
-
-                agent.setPortNumber(response.getPortNumber());
-                out.close();
-                in.close();
-                
-                client = new ServerSocket(agent.getPortNumber());
+                client = new ServerSocket(20000);
                 while(true){
                     pipeConnection = client.accept();
                     out = new ObjectOutputStream(pipeConnection.getOutputStream());
                     in = new ObjectInputStream(pipeConnection.getInputStream());
 
                     Message incomingMessage = (Message) in.readObject();
-
+                    System.out.println("you got a message");
+                    System.out.println(incomingMessage.getType());
                     if(incomingMessage.getType() == MessageType.PLACE_HOLD){
                         if(incomingMessage.getBidResponse() == BidResponse.REJECT)
                         {
-                            System.out.println("You're poor ass didn't have enough money");
+                            System.out.println("You didn't have enough money");
                         }else if(incomingMessage.getBidResponse() == BidResponse.ACCEPT)
                         {
-                            System.out.println("Good job you blew your fucking money");
+                            System.out.println("Good job you blew your money");
                         }
                     }else if(incomingMessage.getType() == MessageType.ITEM_SOLD){
                             System.out.println("You won");
+                    }else if(incomingMessage.getType() == MessageType.PLACE_BID && incomingMessage.getBidResponse() == BidResponse.REJECT){
+                        System.out.println("Your bid was rejected");
                     }
                 }
 
@@ -505,83 +506,80 @@ public class Client
         {
             try
             {
+System.out.println("AH conected on port " + auctionHouse.getPublicID());
                 client = new ServerSocket(auctionHouse.getPublicID());
-                while (true)
-                {
-                    pipeConnection = client.accept();
+                pipeConnection = client.accept();
+
+
+
+                while (true) {
+
                     out = new ObjectOutputStream(pipeConnection.getOutputStream());
+                    out.flush();
                     in = new ObjectInputStream(pipeConnection.getInputStream());
+                     Message incomingMessage = (Message) in.readObject();
+                        System.out.println(incomingMessage.getType());
 
-                    Message incomingMessage = (Message) in.readObject();
+                        System.out.println("ah just read in the message...");
 
-                    if (incomingMessage.getType() == MessageType.PLACE_BID)
-                    {
-                        if (auctionHouse.placeBid(incomingMessage.getBiddingKey(), incomingMessage.getBidAmount(), incomingMessage.getItemID(), incomingMessage.getAuctionHousePublicID()))
-                        {
-                            incomingMessage.setBidResponse(BidResponse.ACCEPT);
-                        }
-                        else
-                        {
-                            incomingMessage.setBidResponse(BidResponse.REJECT);
-                        }
-                        out.writeObject(incomingMessage);
-                    }
-                    else if (incomingMessage.getType() == MessageType.PLACE_HOLD)
-                    {
-                        if (incomingMessage.getBidResponse() == BidResponse.ACCEPT)
-                        {
-                            //out.writeObject(new Message(MessageType.PLACE_BID, biddingKey, bidAmount, item));
+                        if (incomingMessage.getType() == MessageType.PLACE_BID) {
+                            if (auctionHouse.placeBid(incomingMessage.getBiddingKey(), incomingMessage.getBidAmount(), incomingMessage.getItemID(), incomingMessage.getAuctionHousePublicID())) {
+                                incomingMessage.setBidResponse(BidResponse.ACCEPT);
+                            } else {
+                                incomingMessage.setBidResponse(BidResponse.REJECT);
+                            }
+                            out.writeObject(incomingMessage);
+                        } else if (incomingMessage.getType() == MessageType.PLACE_HOLD) {
+                            if (incomingMessage.getBidResponse() == BidResponse.ACCEPT) {
+                                //out.writeObject(new Message(MessageType.PLACE_BID, biddingKey, bidAmount, item));
 
 
-                            // TODO: This code is a bit wild, I'm not sure if this works....
-                            Timeline timeline = new Timeline();
-                            timeline.setCycleCount(30);
+                                // TODO: This code is a bit wild, I'm not sure if this works....
+                                Timeline timeline = new Timeline();
+                                timeline.setCycleCount(30);
 
-                            // The keyvalue only consumes things that are "writable", so we use a readonlyint?
+                                // The keyvalue only consumes things that are "writable", so we use a readonlyint?
 //                            ReadOnlyIntegerWrapper theWrappedInt = new ReadOnlyIntegerWrapper(incomingMessage.getItem().getItemID());
 //
 //                            final KeyFrame keyFrame = new KeyFrame(Duration.hours(100), new KeyValue(theWrappedInt, incomingMessage.getItem().getItemID()));
 //
 //                            timeline.getKeyFrames().add(keyFrame);
 
-                            timeline.setOnFinished(new EventHandler<ActionEvent>(){
-                                @Override
-                                public void handle(ActionEvent arg0) {
-                                    soldItemID = auctionHouse.getSoldItemID();
-                                }
-                            });
+                                timeline.setOnFinished(new EventHandler<ActionEvent>() {
+                                    @Override
+                                    public void handle(ActionEvent arg0) {
+                                        soldItemID = auctionHouse.getSoldItemID();
+                                    }
+                                });
 
-                            // TODO: Jacob, I'm not sure if this is properly implemented to send a message to AC, I don't think it is.
-                            // Use the newly made soldItemID to send the itemSold msg...
+                                // TODO: Jacob, I'm not sure if this is properly implemented to send a message to AC, I don't think it is.
+                                // Use the newly made soldItemID to send the itemSold msg...
 
 
+                                auctionHouse.processHoldResponse(incomingMessage.getBiddingKey(), incomingMessage.getBidAmount(),
+                                        incomingMessage.getItemID(), timeline);
+                                out.writeObject(incomingMessage);
 
-                            auctionHouse.processHoldResponse(incomingMessage.getBiddingKey(), incomingMessage.getBidAmount(),
-                                    incomingMessage.getItemID(), timeline);
-                            out.writeObject(incomingMessage);
+                            } else if (incomingMessage.getBidResponse() == BidResponse.REJECT) {
+                                System.out.println("Your bid was rejected due to not enough funds."); //TODO: Make this a better println
 
+                            }
                         }
-                        else if (incomingMessage.getBidResponse() == BidResponse.REJECT)
-                        {
-                            System.out.println("Your bid was rejected due to not enough funds."); //TODO: Make this a better println
-                            out.close();
-                        }
-                    }
-
 
 
 
                 }
-            }
-            catch (Exception e)
-            {
-                e.getMessage();
-                e.getLocalizedMessage();
-                e.printStackTrace();
-            }
+                    }catch(Exception e){
+                        e.printStackTrace();
+                        e.getLocalizedMessage();
+                        e.getMessage();
+                    }
+
+
 
         }
     }
+
 
     private int soldItemID;
 

@@ -28,7 +28,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class AuctionHouse implements Serializable
 {
     private String name;
-    private int publicID;
+    private int publicID = 6000;
     private String ahKey; // Requested and received from Auction Central
     private HashMap<Integer, Item> items; //Item ID as key for the item.
     private HashMap<Integer, Timeline> itemTimers; //key is Item ID, timer for the winning bid.

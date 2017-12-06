@@ -17,7 +17,8 @@ public class Server
     private AuctionCentral auctionCentral;
     private Label lblClientsList, lblConnectionInfo;
     private boolean isBank;
-
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
     /**
      * Server()
      *
@@ -53,7 +54,8 @@ public class Server
                 auctionCentralLaunch();
             }
         }
-        catch(IOException e) { System.out.println(e.getMessage()); }
+        catch(IOException e) { System.out.println(e.getMessage());
+        e.printStackTrace();}
         catch(ClassNotFoundException e) { System.out.println(e.getMessage()); }
 
 
@@ -208,7 +210,6 @@ public class Server
             ObjectInputStream centralIn = new ObjectInputStream(otherPipeConnection.getInputStream());
 
             Object object = centralIn.readObject();
-
             if(object instanceof Message)
             {
                 Message incomingMessage = (Message)object;
@@ -225,6 +226,7 @@ public class Server
                 {
                     System.out.println("\nMESSAGE: REGISTER_AGENT - FROM: " + incomingMessage.getName());
                     String biddingKey = auctionCentral.registerAgent(incomingMessage.getName(), incomingMessage.getBankKey());
+
                     incomingMessage.setBiddingKey(biddingKey);
                 }
                 // Registering a new AH with AC
@@ -232,31 +234,71 @@ public class Server
                 {
                     System.out.println("\nMESSAGE: REGISTER_AH - FROM: " + incomingMessage.getAuctionHouse().getName());
                     auctionCentral.registerAuctionHouse(incomingMessage.getAuctionHouse());
+                    System.out.println(incomingMessage.getAuctionHouse().getPublicID() + "is the id");
+
                 }
                 //if place bid is null then its from agent, anything else is from auctionhouse
                 else if(incomingMessage.getType() == MessageType.PLACE_BID)
                 {
-                    System.out.println("\nMESSAGE: PLACE_BID - FROM: bidKey-" + incomingMessage.getBiddingKey());
-                    Socket bankSocket = new Socket("127.0.0.1", Main.bankPort); // TODO: CHANGE THE LOCAL HOST?
-                    ObjectOutputStream outToBank = new ObjectOutputStream(bankSocket.getOutputStream());
-                    ObjectInputStream inFromBank = new ObjectInputStream(bankSocket.getInputStream());
+                    if(incomingMessage.getBidResponse() == null) {
+                        System.out.println("\nMESSAGE: PLACE_BID - FROM: bidKey-" + incomingMessage.getBiddingKey());
+                        System.out.println(incomingMessage.getItem().getAhID());
+                        Socket auctionHouseSocket = new Socket("127.0.0.1", 6000); // TODO: CHANGE THE LOCAL HOST?
 
-                    incomingMessage.setBankKey(auctionCentral.getBiddingKeyToBankKey().get(incomingMessage.getBiddingKey()));
-                    outToBank.writeObject(incomingMessage);
+                        out = new ObjectOutputStream(auctionHouseSocket.getOutputStream());
+                        out.flush();
+                        in = new ObjectInputStream(auctionHouseSocket.getInputStream());
+
+                        System.out.println("writing out to auction house");
+                        out.writeObject(incomingMessage);
 
 
-                    Message bankResponse = (Message) inFromBank.readObject();
-                    bankResponse.setBiddingKey(auctionCentral.getBankKeyToBiddingKey().get(incomingMessage.getBankKey()));
+                            incomingMessage = (Message) in.readObject();
+                        System.out.println("message came back from AH");
 
-                    if(bankResponse.getBidResponse() == BidResponse.ACCEPT)
-                    {
-                        //update item field
+                        if(incomingMessage.getBidResponse() == BidResponse.REJECT){
+                            centralOut.writeObject(incomingMessage);
+                            System.out.println("AC says you didn't have enough");
+
+                            Socket clientSocket = new Socket("127.0.0.1", 20000);
+                            out = new ObjectOutputStream(clientSocket.getOutputStream());
+                            in = new ObjectInputStream(clientSocket.getInputStream());
+
+                            out.writeObject(incomingMessage);
+
+                        }
+                        else if(incomingMessage.getBidResponse() == BidResponse.ACCEPT)
+                        {
+                            System.out.println("we are in bid response accept");
+                            System.out.println("\nMESSAGE: PLACE_BID - FROM: bidKey-" + incomingMessage.getBiddingKey());
+                            Socket bankSocket = new Socket("127.0.0.1", Main.bankPort); // TODO: CHANGE THE LOCAL HOST?
+                            ObjectOutputStream outToBank = new ObjectOutputStream(bankSocket.getOutputStream());
+                            ObjectInputStream inFromBank = new ObjectInputStream(bankSocket.getInputStream());
+
+                            incomingMessage.setBankKey(auctionCentral.getBiddingKeyToBankKey().get(incomingMessage.getBiddingKey()));
+                            outToBank.writeObject(incomingMessage);
+
+
+                            Message bankResponse = (Message) inFromBank.readObject();
+                            bankResponse.setBiddingKey(auctionCentral.getBankKeyToBiddingKey().get(incomingMessage.getBankKey()));
+
+                            if(bankResponse.getBidResponse() == BidResponse.ACCEPT)
+                            {
+                                //go to auction house
+                                System.out.println("succesful bid that needs to go to auction house");
+                            } else if (bankResponse.getBidResponse() == BidResponse.REJECT)
+                            {
+                                //do nothing
+                                System.out.println("you didn't have enough money");
+                            }
+                            centralOut.writeObject(bankResponse);
+
+                        }
 
                     }
 
-                    centralOut.writeObject(bankResponse);
 
-                    needsReturnMessage = false;
+//                    needsReturnMessage = false;
 
 
                 }
@@ -276,13 +318,7 @@ public class Server
 
                     needsReturnMessage = false;
                 }
-                else if(incomingMessage.getType() == MessageType.GET_PORT_NUMBER)
-                {
 
-                    auctionCentral.setAgentNameToPort(incomingMessage.getName(), incomingMessage.getPortNumber());
-                    incomingMessage.setPortNumber(auctionCentral.getPortNumber());
-                    centralOut.writeObject(incomingMessage);
-                }
                 //                else if(incomingMessage.getType() == MessageType.ITEM_SOLD)
 //                {
 //                    Socket bankSocket = new Socket("127.0.0.1", 4444);
