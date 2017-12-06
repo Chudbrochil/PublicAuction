@@ -502,11 +502,11 @@ public class Client
                             timeline.setCycleCount(30);
 
                             // The keyvalue only consumes things that are "writable", so we use a readonlyint?
-                            ReadOnlyIntegerWrapper theWrappedInt = new ReadOnlyIntegerWrapper(incomingMessage.getItem().getItemID());
-
-                            final KeyFrame keyFrame = new KeyFrame(Duration.hours(100), new KeyValue(theWrappedInt, incomingMessage.getItem().getItemID()));
-
-                            timeline.getKeyFrames().add(keyFrame);
+//                            ReadOnlyIntegerWrapper theWrappedInt = new ReadOnlyIntegerWrapper(incomingMessage.getItem().getItemID());
+//
+//                            final KeyFrame keyFrame = new KeyFrame(Duration.hours(100), new KeyValue(theWrappedInt, incomingMessage.getItem().getItemID()));
+//
+//                            timeline.getKeyFrames().add(keyFrame);
 
                             timeline.setOnFinished(new EventHandler<ActionEvent>(){
                                 @Override
