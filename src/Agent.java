@@ -10,6 +10,7 @@ public class Agent
     private String bankKey, name;
     private String biddingKey;
     private double accountBalance;
+    private int portNumber;
 
 
     public Agent(String name)
@@ -72,5 +73,13 @@ public class Agent
 
     public void setAuctionHouses(ArrayList<AuctionHouse> auctionHouses) {
         this.auctionHouses = auctionHouses;
+    }
+
+    public int getPortNumber() {
+        return portNumber;
+    }
+
+    public void setPortNumber(int portNumber) {
+        this.portNumber = portNumber;
     }
 }

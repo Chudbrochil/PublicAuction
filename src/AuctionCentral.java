@@ -6,10 +6,11 @@ public class AuctionCentral
 
     private HashMap<String, String> biddingKeyToBankKey;
     private HashMap<String, String> bankKeyToBiddingKey;
+    private HashMap<String, Integer> agentNameToPort;
 
     private ArrayList<AuctionHouse> listOfAHs;
     private static int auctionHouseID = 6000; //This will become the port# for the AH.
-
+    private int agentPort = 20000;
     /**
      * auctionCentral()
      *
@@ -19,6 +20,7 @@ public class AuctionCentral
     {
         biddingKeyToBankKey = new HashMap<>();
         bankKeyToBiddingKey = new HashMap<>();
+        agentNameToPort = new HashMap<>();
         listOfAHs = new ArrayList<>();
     }
 
@@ -107,12 +109,33 @@ public class AuctionCentral
 
     }
 
+    public int getPortNumber(){
+        agentPort++;
+        return agentPort;
+    }
+
+    public HashMap<String, Integer> getAgentNameToPort() {
+        return agentNameToPort;
+    }
+
+    public void setAgentNameToPort(String agentName, int portNumber) {
+        agentNameToPort.put(agentName, portNumber);
+    }
+
     public HashMap<String, String> getBiddingKeyToBankKey() {
         return biddingKeyToBankKey;
     }
 
     public HashMap<String, String> getBankKeyToBiddingKey() {
         return bankKeyToBiddingKey;
+    }
+
+    public int getAgentPort() {
+        return agentPort;
+    }
+
+    public void setAgentPort(int agentPort) {
+        this.agentPort = agentPort;
     }
 }
 
