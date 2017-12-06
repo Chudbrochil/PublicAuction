@@ -467,7 +467,7 @@ public class Client
                 agent.setPortNumber(response.getPortNumber());
                 out.close();
                 in.close();
-                
+
                 client = new ServerSocket(agent.getPortNumber());
                 while(true){
                     pipeConnection = client.accept();
