@@ -95,7 +95,7 @@ public class Main extends Application
     }
 
     /**
-     * shutdownClient()
+     * unsubscribeClient()
      *
      * Allows us to have a Client send a final shutdown msg to it's given servers.
      * An agent will send messages to Bank and AC to take the agent off the list.
@@ -107,10 +107,8 @@ public class Main extends Application
         try
         {
             Client.unsubscribe();
-            Thread.sleep(50); // TODO: Do I need this, it needs to wait to send messages....
             System.exit(0);
         }
-        catch(InterruptedException e) { System.out.println(e.getMessage()); }
         catch(IOException e) { System.out.println(e.getMessage()); }
     }
 
