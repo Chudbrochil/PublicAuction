@@ -1,8 +1,14 @@
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyIntegerWrapper;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -489,10 +495,33 @@ public class Client
                         if (incomingMessage.getBidResponse() == BidResponse.ACCEPT)
                         {
                             //out.writeObject(new Message(MessageType.PLACE_BID, biddingKey, bidAmount, item));
+
+
+                            // TODO: This code is a bit wild, I'm not sure if this works....
                             Timeline timeline = new Timeline();
+                            timeline.setCycleCount(30);
+
+                            // The keyvalue only consumes things that are "writable", so we use a readonlyint?
+                            ReadOnlyIntegerWrapper theWrappedInt = new ReadOnlyIntegerWrapper(incomingMessage.getItem().getItemID());
+
+                            final KeyFrame keyFrame = new KeyFrame(Duration.hours(100), new KeyValue(theWrappedInt, incomingMessage.getItem().getItemID()));
+
+                            timeline.getKeyFrames().add(keyFrame);
+
+                            timeline.setOnFinished(new EventHandler<ActionEvent>(){
+                                @Override
+                                public void handle(ActionEvent arg0) {
+                                    soldItemID = auctionHouse.getSoldItemID();
+                                }
+                            });
+
+                            // TODO: Jacob, I'm not sure if this is properly implemented to send a message to AC, I don't think it is.
+                            // Use the newly made soldItemID to send the itemSold msg...
+
+
 
                             auctionHouse.processHoldResponse(incomingMessage.getBiddingKey(), incomingMessage.getBidAmount(),
-                                    incomingMessage.getItemID(), incomingMessage.getBidResponse(), timeline);
+                                    incomingMessage.getItemID(), timeline);
                             out.writeObject(incomingMessage);
 
                         }
@@ -517,6 +546,8 @@ public class Client
 
         }
     }
+
+    private int soldItemID;
 
 
     /**
@@ -578,4 +609,13 @@ public class Client
     }
 
 
+    public int getSoldItemID()
+    {
+        return soldItemID;
+    }
+
+    public void setSoldItemID(int soldItemID)
+    {
+        this.soldItemID = soldItemID;
+    }
 }
