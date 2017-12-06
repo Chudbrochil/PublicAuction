@@ -35,7 +35,6 @@ public class Bank
         {
             output = "No agents registered.";
         }
-        //System.out.println(output);
 
         return output;
     }
@@ -61,10 +60,16 @@ public class Bank
         System.out.println("Agent " + blankAccount.getName() + " registered.");
     }
 
+    /**
+     * unregisterAgent()
+     *
+     * This removes an agent from the data structure holding agents in bank. This is done when an agent unregisters.
+     *
+     * @param bankKey The unique bankkey an agent gave to unregister with.
+     */
     public void unregisterAgent(String bankKey)
     {
         bankKeyToAccount.remove(bankKey);
-
     }
 
 

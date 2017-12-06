@@ -53,7 +53,7 @@ public class AgentController
     @FXML
     private ImageView ivTest;
 
-    String currentlySelectedItemString;
+    Item currentSelectedItem;
 
     ArrayList<Item> itemsAsList;
 
@@ -61,6 +61,10 @@ public class AgentController
     Agent agent; // Inside class that keeps account information and item information
     Client client; // Wrapper class for agent that opens sockets and communicates for agent
 
+    /**
+     * initialize()
+     * Initializes the Agent Controller.
+     */
     @FXML
     private void initialize()
     {
@@ -70,9 +74,7 @@ public class AgentController
         lvItems.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                //System.out.println(newValue);
-                currentlySelectedItemString = newValue;
-//
+                setCurrentSelectedItem(newValue);
             }
         });
         update();
@@ -119,7 +121,6 @@ public class AgentController
             for(int i = 0; i < listOfAHs.size(); ++i)
             {
                 HashMap<Integer, Item> ahItems = listOfAHs.get(i).getItems();
-                //ArrayList<Item> listOfItems = new ArrayList<Item>(ahItems.values());
                 itemsAsList = new ArrayList<Item>(ahItems.values());
 
                 for(int j = 0; j < itemsAsList.size(); ++j)
@@ -134,18 +135,44 @@ public class AgentController
             }
         }
 
-        //lvItems.getItems().setAll(items); // This puts the actual items on the listview, but causes constant updates and makes the listview basically unclickable
         lvItems.setItems(itemNames);
-
     }
 
 
-
+    /**
+     * btnWithdraw()
+     *
+     * On action method for the withdraw button on the GUI.
+     */
     @FXML
     private void btnWithdraw() // TODO: handle bad input?
     {
         taAgentOutput.appendText("Submitted withdraw request to bank for: " + tfBidAmount.getText() + "\n");
         client.withdraw(Double.valueOf(tfBidAmount.getText()), agent);
+    }
+
+    /**
+     * setCurrentSelectedItem()
+     *
+     * This is called by the change listener on the listview. When a new item is selected, the item inside the
+     * controller is updated. This can be used for various item updates.
+     *
+     * @param itemString The string of the item appearing on the listview.
+     */
+    private void setCurrentSelectedItem(String itemString)
+    {
+        if(itemString != null)
+        {
+            for(int i = 0; i < itemsAsList.size(); ++i)
+            {
+                if(itemString.equals(itemsAsList.get(i).toString()))
+                {
+                    currentSelectedItem = itemsAsList.get(i);
+                    break;
+                }
+            }
+        }
+
     }
 
     /**
@@ -155,29 +182,9 @@ public class AgentController
     @FXML
     private void btnPlaceBid() // TODO: handle bad input?
     {
-
-//        Item item1 = new Item("Testing item", null, 100.00, 1);
-//        client.placeAHBid(150, agent.getBiddingKey(), item1);
-//            client.placeAHBid(Double.valueOf(tfBidAmount.getText()), agent.getBiddingKey(), currentlySelectedItem);
-
-
-        Item item = new Item();
-        for(int i = 0; i < itemsAsList.size(); ++i)
-        {
-            if (currentlySelectedItemString.equals(itemsAsList.get(i).toString())) ;
-            {
-                System.out.println(item.toString());
-                item = itemsAsList.get(i);
-                break;
-            }
-        }
-
         Double bidAmount = Double.valueOf(tfBidAmount.getText());
-
-        System.out.println("Placing bid for " + bidAmount + " on item:\n" + item.toString() + "\n");
-
-        taAgentOutput.appendText("Placing bid for " + bidAmount + " on item:\n" + item.toString() + "\n");
-        client.placeAHBid(bidAmount, agent.getBiddingKey(), item);
+        taAgentOutput.appendText("Placing bid for " + bidAmount + " on item:\n" + currentSelectedItem.toString() + "\n");
+        client.placeAHBid(bidAmount, agent.getBiddingKey(), currentSelectedItem);
     }
 
     @FXML

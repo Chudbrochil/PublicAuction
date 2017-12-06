@@ -4,7 +4,8 @@ implementing clients listening
 Timers on items 
 Implementing ITEM_SOLD msg
 implementing pass msg
-Messaging for when an agent was passed by in a bid
+adding connect to ac on bank, connect to bank on ac
+
 
 Things to add(Anthony):
 UI should display what user currently has on hold.

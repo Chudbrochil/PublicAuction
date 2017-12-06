@@ -52,15 +52,15 @@ public class Client
      * Client()
      * Regular constructor for Client that gets called and updates the GUI via a text area
      *
-     * @param agentBool          Boolean value representing whether or not we're making an Agent or AH. true makes Agent, false AH
+     * @param isAgent          Boolean value representing whether or not we're making an Agent or AH. true makes Agent, false AH
      * @param name             Name of the object (agent or AH) we are creating.
      * @param agentOrAHControl This Control represents either an auction house label that will get updated with
      *                         a list of items or an agent text area that gets status updates
      */
-    public Client(boolean agentBool, String name, Control agentOrAHControl)
+    public Client(boolean isAgent, String name, Control agentOrAHControl)
     {
         //this.isAgent = isAgent;
-        isAgent = agentBool;
+        Client.isAgent = isAgent;
 
         bankConnected = false;
         acConnected = false;
@@ -522,8 +522,8 @@ public class Client
                             //out.writeObject(new Message(MessageType.PLACE_BID, biddingKey, bidAmount, item));
                             Timeline timeline = new Timeline();
 
-                            //auctionHouse.processHoldResponse(incomingMessage.getBiddingKey(), incomingMessage.getBidAmount(),
-                            //        incomingMessage.getItemID(), incomingMessage.getBidResponse());
+                            auctionHouse.processHoldResponse(incomingMessage.getBiddingKey(), incomingMessage.getBidAmount(),
+                                    incomingMessage.getItemID(), incomingMessage.getBidResponse(), timeline);
                             out.writeObject(incomingMessage);
 
                         }
