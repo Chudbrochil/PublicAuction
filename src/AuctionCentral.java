@@ -7,6 +7,7 @@ public class AuctionCentral
     private HashMap<String, String> biddingKeyToBankKey;
     private HashMap<String, String> bankKeyToBiddingKey;
 
+
     private ArrayList<AuctionHouse> listOfAHs;
     private static int auctionHouseID = 6000; //This will become the port# for the AH.
     private int agentPort = 20000;

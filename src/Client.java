@@ -476,10 +476,16 @@ public class Client
 
                     Message incomingMessage = (Message) in.readObject();
 
-                    if(incomingMessage.getType() == MessageType.OUT_BID){
-
+                    if(incomingMessage.getType() == MessageType.PLACE_HOLD){
+                        if(incomingMessage.getBidResponse() == BidResponse.REJECT)
+                        {
+                            System.out.println("You're poor ass didn't have enough money");
+                        }else if(incomingMessage.getBidResponse() == BidResponse.ACCEPT)
+                        {
+                            System.out.println("Good job you blew your fucking money");
+                        }
                     }else if(incomingMessage.getType() == MessageType.ITEM_SOLD){
-
+                            System.out.println("You won");
                     }
                 }
 
