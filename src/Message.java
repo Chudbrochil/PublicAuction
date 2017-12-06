@@ -30,10 +30,23 @@ public class Message implements Serializable
     //for type REGISTER_AH
     private AuctionHouse auctionHouse;
 
+    //for type UNREGISTER
+    private boolean isAgent;
+    private String clientKey; // Represents either agent bankKey or ah secretKey
+
     
     //for type PLACE_HOLD
     //Everything for PLACE_BID and
     //private BidResponse response;
+
+    //Constructor for a UNREGISTER message
+    public Message(MessageType t, boolean isAgent, String clientKey, String name)
+    {
+        type = t;
+        this.isAgent = isAgent;
+        this.setClientKey(clientKey);
+        this.name = name;
+    }
     
     //Constructor for a PLACE_BID message
     public Message(MessageType t, String biddingKey, double bidAmount, Item item)
@@ -41,8 +54,6 @@ public class Message implements Serializable
         type = t;
         this.biddingKey = biddingKey;
         this.bidAmount = bidAmount;
-        this.itemID = itemID;
-        this.auctionHousePublicID = auctionHousePublicID;
         this.item = item;
     }
     
@@ -82,9 +93,10 @@ public class Message implements Serializable
     public Message(MessageType t, ArrayList<AuctionHouse> listOfAHs)
     {
         type = t;
-        listOfAHs = new ArrayList<>();
+        listOfAHs = new ArrayList<>(); // TODO: Do we need this?
     }
 
+    // TODO: This constructor is out of date
     //ITEM SOLD Constructor
 //    public Message(MessageType t, int item, AuctionHouse ah, String bI, Double b)
 //    {
@@ -182,5 +194,25 @@ public class Message implements Serializable
 
     public Item getItem() {
         return item;
+    }
+
+    public boolean isAgent()
+    {
+        return isAgent;
+    }
+
+    public void setAgent(boolean agent)
+    {
+        isAgent = agent;
+    }
+
+    public String getClientKey()
+    {
+        return clientKey;
+    }
+
+    public void setClientKey(String clientKey)
+    {
+        this.clientKey = clientKey;
     }
 }

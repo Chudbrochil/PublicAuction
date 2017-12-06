@@ -48,18 +48,22 @@ public class Main extends Application
         dialog.setHeaderText("What auction display do you want?");
         Optional<String> result = dialog.showAndWait();
 
+        boolean isClient = false;
+
         // TODO: Doing string comparison here is probably bad...
         if(!result.isPresent() || result.get().equals("Agent"))
         {
             Parent root = FXMLLoader.load(getClass().getResource("AgentUI.fxml"));
             primaryStage.setTitle("Agent");
             primaryStage.setScene(new Scene(root, 700, 600));
+            isClient = true;
         }
         else if(result.get().equals("Auction House"))
         {
             Parent root = FXMLLoader.load(getClass().getResource("AuctionHouseUI.fxml"));
             primaryStage.setTitle("Auction House");
             primaryStage.setScene(new Scene(root, 300, 600));
+            isClient = true;
         }
         else if(result.get().equals("Bank"))
         {
@@ -76,9 +80,39 @@ public class Main extends Application
 
         primaryStage.setResizable(false);
         primaryStage.show();
-        primaryStage.setOnCloseRequest(e -> System.exit(0));
+
+        // This allows us to graciously shut down clients if they are closed. This sends messages to
+        // the auction central and bank to de-register.
+        if(isClient)
+        {
+            primaryStage.setOnCloseRequest(e -> unsubscribeClient());
+        }
+        else
+        {
+            primaryStage.setOnCloseRequest(e -> System.exit(0));
+        }
+
     }
 
+    /**
+     * shutdownClient()
+     *
+     * Allows us to have a Client send a final shutdown msg to it's given servers.
+     * An agent will send messages to Bank and AC to take the agent off the list.
+     * An auction house will send a message to AC to take the ah off the list.
+     * This "graciously closes" the clients.
+     */
+    private void unsubscribeClient()
+    {
+        try
+        {
+            Client.unsubscribe();
+            Thread.sleep(50); // TODO: Do I need this, it needs to wait to send messages....
+            System.exit(0);
+        }
+        catch(InterruptedException e) { System.out.println(e.getMessage()); }
+        catch(IOException e) { System.out.println(e.getMessage()); }
+    }
 
     /**
      * getStandardOutCapture()

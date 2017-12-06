@@ -35,6 +35,7 @@ public class Bank
         {
             output = "No agents registered.";
         }
+        //System.out.println(output);
 
         return output;
     }
@@ -58,6 +59,12 @@ public class Bank
         blankAccount.setBankKey(bankKey);
         bankKeyToAccount.put(bankKey, blankAccount);
         System.out.println("Agent " + blankAccount.getName() + " registered.");
+    }
+
+    public void unregisterAgent(String bankKey)
+    {
+        bankKeyToAccount.remove(bankKey);
+
     }
 
 

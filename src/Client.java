@@ -1,3 +1,4 @@
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
@@ -5,6 +6,7 @@ import javafx.scene.control.TextArea;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -15,21 +17,24 @@ import java.util.concurrent.TimeUnit;
 
 public class Client
 {
-    private Agent agent;
-    private AuctionHouse auctionHouse;
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private Socket bankSocket;
     private Socket auctionCentralSocket;
     private TextArea taAgentOutput;
     private Label lblAuctionHouseList;
-    private String bankHostname;
-    private String acHostname;
-    private boolean isAgent;
-    private boolean acConnected;
-    private boolean bankConnected;
     private ServerSocket client;
     private Socket pipeConnection;
+
+    // These need to be static so that we can eventually terminate our connection to the AC and Bank
+    private static Agent agent;
+    private static AuctionHouse auctionHouse;
+    private static boolean isAgent;
+    private static boolean acConnected;
+    private static boolean bankConnected;
+    private static String staticBankHostname = "127.0.0.1";
+    private static String staticACHostname = "127.0.0.1";
+
 
     /**
      * Client()
@@ -47,14 +52,15 @@ public class Client
      * Client()
      * Regular constructor for Client that gets called and updates the GUI via a text area
      *
-     * @param isAgent          Boolean value representing whether or not we're making an Agent or AH. true makes Agent, false AH
+     * @param agentBool          Boolean value representing whether or not we're making an Agent or AH. true makes Agent, false AH
      * @param name             Name of the object (agent or AH) we are creating.
      * @param agentOrAHControl This Control represents either an auction house label that will get updated with
      *                         a list of items or an agent text area that gets status updates
      */
-    public Client(boolean isAgent, String name, Control agentOrAHControl)
+    public Client(boolean agentBool, String name, Control agentOrAHControl)
     {
-        this.isAgent = isAgent;
+        //this.isAgent = isAgent;
+        isAgent = agentBool;
 
         bankConnected = false;
         acConnected = false;
@@ -91,7 +97,7 @@ public class Client
 
     /**
      * updateAuctionHouseListLabel()
-     *
+     * <p>
      * Spins up a thread to update the label on the AuctionHouse GUI. This Label corresponds to the list of items
      * that is currently in the Auction House.
      */
@@ -194,17 +200,17 @@ public class Client
         try
         {
             //todo: Is there a reason this runs every time? Can we put an if in here to make this once? --Anna
-            auctionCentralSocket = new Socket(acHostname, Main.auctionCentralPort);
+            auctionCentralSocket = new Socket(staticACHostname, Main.auctionCentralPort);
             out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
             in = new ObjectInputStream(auctionCentralSocket.getInputStream());
-            
+
             out.writeObject(new Message(MessageType.PLACE_BID, biddingKey, bidAmount, item));
             Message response = (Message) in.readObject();
 
             //todo: AuctionHouse has placeBid() and receiveHoldResponse() methods. These would be good to use as the contain
             //this logic. --Anna
             if (response.getBidResponse() == BidResponse.ACCEPT && response.getItem().getCurrentBid() < response.getBidAmount()
-                && response.getItem().getMinimumBid() < response.getBidAmount())
+                    && response.getItem().getMinimumBid() < response.getBidAmount())
             //if (response.getBidResponse() == BidResponse.ACCEPT && auctionHouse.placeBid(biddingKey, bidAmount, item.getItemID(), auctionHouse.getPublicID()))
             {
                 //todo: save prev bidder so AH can issue a "pass" response --Anna
@@ -244,7 +250,7 @@ public class Client
         {
             if (bankConnected)
             {
-                bankSocket = new Socket(bankHostname, Main.bankPort);
+                bankSocket = new Socket(staticBankHostname, Main.bankPort);
                 out = new ObjectOutputStream(bankSocket.getOutputStream());
                 in = new ObjectInputStream(bankSocket.getInputStream());
 
@@ -292,7 +298,7 @@ public class Client
         {
             if (acConnected)
             {
-                auctionCentralSocket = new Socket(acHostname, Main.auctionCentralPort);
+                auctionCentralSocket = new Socket(staticACHostname, Main.auctionCentralPort);
                 out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
                 in = new ObjectInputStream(auctionCentralSocket.getInputStream());
                 out.writeObject(new Message(MessageType.UPDATE_AHS, new ArrayList<AuctionHouse>()));
@@ -331,19 +337,16 @@ public class Client
      */
     public void setBankHostname(String bankHostname)
     {
-        this.bankHostname = bankHostname;
+        staticBankHostname = bankHostname;
 
         try
         {
-            if (isAgent)
+            // Only the agent needs a connection to the bank.
+            if (isAgent && !bankConnected)
             {
-                // Only the agent needs a connection to the bank.
-                if(!bankConnected)
-                {
-                    bankSocket = new Socket(bankHostname, Main.bankPort);
-                    registerAgentWithBank();
-                    taAgentOutput.appendText("Connecting and registering with bank at: " + bankHostname + ":" + Main.bankPort + "\n");
-                }
+                bankSocket = new Socket(bankHostname, Main.bankPort);
+                registerAgentWithBank();
+                taAgentOutput.appendText("Connecting and registering with bank at: " + bankHostname + ":" + Main.bankPort + "\n");
             }
 
         }
@@ -367,11 +370,11 @@ public class Client
      */
     public void setAcHostname(String acHostname)
     {
-        this.acHostname = acHostname;
+        staticACHostname = acHostname;
 
         try
         {
-            if(!acConnected)
+            if (!acConnected)
             {
 
                 if (isAgent && bankConnected)
@@ -448,7 +451,8 @@ public class Client
 //        }
 //    }
 
-    public void clientListening(){
+    public void clientListening()
+    {
         if (isAgent)
         {
 
@@ -457,51 +461,100 @@ public class Client
         //client is auction hosue
         else
         {
-            try{
-                client = new ServerSocket( auctionHouse.getPublicID());
-                while(true){
+            try
+            {
+                client = new ServerSocket(auctionHouse.getPublicID());
+                while (true)
+                {
                     pipeConnection = client.accept();
                     out = new ObjectOutputStream(pipeConnection.getOutputStream());
                     in = new ObjectInputStream(pipeConnection.getInputStream());
 
-                    Message object = (Message)in.readObject();
+                    Message incomingMessage = (Message) in.readObject();
 
-                    if(object.getType() == MessageType.PLACE_BID)
+                    if (incomingMessage.getType() == MessageType.PLACE_BID)
                     {
-                        if(auctionHouse.placeBid(object.getBiddingKey(), object.getBidAmount(), object.getItemID(), object.getAuctionHousePublicID()))
+                        if (auctionHouse.placeBid(incomingMessage.getBiddingKey(), incomingMessage.getBidAmount(), incomingMessage.getItemID(), incomingMessage.getAuctionHousePublicID()))
                         {
-                            object.setBidResponse(BidResponse.ACCEPT);
-                            out.writeObject(object);
+                            incomingMessage.setBidResponse(BidResponse.ACCEPT);
                         }
                         else
                         {
-                            object.setBidResponse(BidResponse.REJECT);
-                            out.writeObject(object);
+                            incomingMessage.setBidResponse(BidResponse.REJECT);
                         }
-
-
-
+                        out.writeObject(incomingMessage);
                     }
-                    else if(object.getType() == MessageType.PLACE_HOLD)
+                    else if (incomingMessage.getType() == MessageType.PLACE_HOLD)
                     {
-                        if(object.getBidResponse() == BidResponse.ACCEPT)
+                        if (incomingMessage.getBidResponse() == BidResponse.ACCEPT)
                         {
-//                            auctionHouse.processHoldResponse(object.getBiddingKey(), object.getBidAmount(), object.getItemID(), object.getBidResponse());
+                            //out.writeObject(new Message(MessageType.PLACE_BID, biddingKey, bidAmount, item));
+                            Timeline timeline = new Timeline();
 
-                        } else if(object.getBidResponse() == BidResponse.REJECT){
+                            //auctionHouse.processHoldResponse(incomingMessage.getBiddingKey(), incomingMessage.getBidAmount(),
+                            //        incomingMessage.getItemID(), incomingMessage.getBidResponse());
+                            out.writeObject(incomingMessage);
 
                         }
+                        else if (incomingMessage.getBidResponse() == BidResponse.REJECT)
+                        {
+                            System.out.println("Your bid was rejected due to not enough funds."); //TODO: Make this a better println
+                            out.close();
+                        }
                     }
+
 
 
 
                 }
-            }catch(Exception e){
+            }
+            catch (Exception e)
+            {
                 e.getMessage();
                 e.getLocalizedMessage();
                 e.printStackTrace();
             }
 
+        }
+    }
+
+
+    /**
+     * unsubscribe()
+     *
+     * When the GUI is closed for an Agent or an Auction House, this method is called in it's onClose()
+     * From here we then send unsubscribe messages to AC and Bank, depending on what kind of Client this is.
+     * This allows us to "graciously close" our connections.
+     *
+     * @throws IOException If we open a bad socket, IOException is thrown.
+     */
+    public static void unsubscribe() throws IOException
+    {
+        String name;
+        String clientKey;
+        ObjectOutputStream out;
+
+        // Unsubscribing the agent from the bank.
+        if(isAgent && bankConnected)
+        {
+            name = agent.getName();
+            clientKey = agent.getBankKey();
+            Socket staticBankSocket = new Socket(staticBankHostname, Main.bankPort);
+            out = new ObjectOutputStream(staticBankSocket.getOutputStream());
+            out.writeObject(new Message(MessageType.UNREGISTER, isAgent, clientKey, name));
+        }
+        else
+        {
+            name = auctionHouse.getName();
+            clientKey = auctionHouse.getAhKey();
+        }
+
+        // Sending the message for either agent or ah, it's generalized for each
+        if(acConnected)
+        {
+            Socket staticAcSocket = new Socket(staticACHostname, Main.auctionCentralPort);
+            out = new ObjectOutputStream(staticAcSocket.getOutputStream());
+            out.writeObject(new Message(MessageType.UNREGISTER, isAgent, clientKey, name));
         }
     }
 

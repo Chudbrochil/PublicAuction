@@ -8,6 +8,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
@@ -47,6 +49,9 @@ public class AgentController
 
     @FXML
     private TextField tfBidAmount;
+
+    @FXML
+    private ImageView ivTest;
 
     String currentlySelectedItemString;
 
@@ -109,7 +114,7 @@ public class AgentController
         ArrayList<Item> items = new ArrayList<>();
         ObservableList<String> itemNames = FXCollections.observableArrayList();
 
-        if(!listOfAHs.isEmpty()) // TODO: This still occasionally throws a nullptr
+        if(listOfAHs != null)
         {
             for(int i = 0; i < listOfAHs.size(); ++i)
             {

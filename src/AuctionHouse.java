@@ -3,7 +3,6 @@ import javafx.animation.Timeline;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -103,7 +102,7 @@ public class AuctionHouse implements Serializable
     public void setIDs(int publicID, String ahKey)
     {
         this.publicID = publicID;
-        this.ahKey = ahKey;
+        this.setAhKey(ahKey);
         ArrayList<Item> itemsAsList = new ArrayList<Item>(items.values());
         for(int i = 0; i < itemsAsList.size(); ++i)
         {
@@ -236,6 +235,16 @@ public class AuctionHouse implements Serializable
         currentTimer.stop();
         itemTimers.put(itemID, timer);
         timer.play();
+    }
+
+    public String getAhKey()
+    {
+        return ahKey;
+    }
+
+    public void setAhKey(String ahKey)
+    {
+        this.ahKey = ahKey;
     }
 
 

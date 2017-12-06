@@ -108,6 +108,8 @@ public class Server
             ObjectInputStream bankIn = new ObjectInputStream(pipeConnection.getInputStream());
             Object object = bankIn.readObject();
 
+            boolean needsReturnMessage = true;
+
             if(object instanceof Message)
             {
                 Message incomingMessage = (Message)object;
@@ -129,7 +131,6 @@ public class Server
                         System.out.println("Bank refused withdrawl of " + incomingMessage.getBidAmount() + " on account:");
                     }
                     System.out.println(account.toString());
-                    bankOut.writeObject(incomingMessage);
                 }
                 //When we place a bid
                  else if(incomingMessage.getType() == MessageType.PLACE_BID)
@@ -141,7 +142,7 @@ public class Server
                     {
                         incomingMessage.setBidResponse(BidResponse.ACCEPT);
                         incomingMessage.setType(MessageType.PLACE_HOLD);
-                        bankOut.writeObject(incomingMessage);
+                        //bankOut.writeObject(incomingMessage);
                         System.out.println("Bank has placed a hold on account:");
                     }
                     // If there wasn't enough money, send a rejection back.
@@ -149,25 +150,36 @@ public class Server
                     {
                         incomingMessage.setBidResponse(BidResponse.REJECT);
                         incomingMessage.setType(MessageType.PLACE_HOLD);
-                        bankOut.writeObject(incomingMessage);
+                        //bankOut.writeObject(incomingMessage);
                         System.out.println("Bank has refused a hold on account:");
                     }
                     System.out.println(account.toString());
-                    bankOut.writeObject(incomingMessage);
                 }
                 // Initializing an agent with an account (name, account#, balance, bankkey)
                 else if(incomingMessage.getType() == MessageType.REGISTER_AGENT)
                 {
                     System.out.println("\nMESSAGE: REGISTER_AGENT - FROM: " + incomingMessage.getAccount().getName());
                     bank.registerAgent(incomingMessage.getAccount());
-                    bankOut.writeObject(incomingMessage);
                 }
+                // If an agent goes offline it will unsubscribe itself from the bank.
+                else if(incomingMessage.getType() == MessageType.UNREGISTER)
+                { ;
+                    System.out.println("\nMESSAGE: UNREGISTER - FROM: " + incomingMessage.getName());
+                    bank.unregisterAgent(incomingMessage.getClientKey());
+                    System.out.println("Agent " + incomingMessage.getName() + " un-registered.");
+                    needsReturnMessage = false;
+                }
+
+                if(needsReturnMessage) { bankOut.writeObject(incomingMessage); }
 
             }
             else
             {
                 System.out.println("Bank received unrecognized message. Doing nothing"); // TODO: Will this hold the socket open?
             }
+
+
+
 
         }
     }
@@ -195,12 +207,14 @@ public class Server
             ObjectOutputStream centralOut = new ObjectOutputStream(otherPipeConnection.getOutputStream());
             ObjectInputStream centralIn = new ObjectInputStream(otherPipeConnection.getInputStream());
 
-            
             Object object = centralIn.readObject();
 
             if(object instanceof Message)
             {
                 Message incomingMessage = (Message)object;
+
+                boolean needsReturnMessage = true;
+
                 // Updating the list of AHs to the agent
                 if(incomingMessage.getType() == MessageType.UPDATE_AHS)
                 {
@@ -242,7 +256,25 @@ public class Server
 
                     centralOut.writeObject(bankResponse);
 
+                    needsReturnMessage = false;
 
+
+                }
+                // If an agent or AH goes down it will unsubscribe from the auction central
+                else if(incomingMessage.getType() == MessageType.UNREGISTER)
+                {
+                    System.out.println("\nMESSAGE: UNREGISTER - FROM: " + incomingMessage.getName());
+                    if(!incomingMessage.isAgent())
+                    {
+                        auctionCentral.unregisterAuctionHouse(incomingMessage.getClientKey());
+                        System.out.println("Auction House " + incomingMessage.getName() + " un-registered.");
+                    }
+                    else
+                    {
+                        System.out.println("Agent " + incomingMessage.getName() + " un-registered.");
+                    }
+
+                    needsReturnMessage = false;
                 }
                 //                else if(incomingMessage.getType() == MessageType.ITEM_SOLD)
 //                {
@@ -255,7 +287,12 @@ public class Server
 //                    out.writeObject(new Message(MessageType.WITHDRAW, incomingMessage, bidAmt));
 //                }
 
-                centralOut.writeObject(incomingMessage);
+                if(needsReturnMessage)
+                {
+                    centralOut.writeObject(incomingMessage);
+                }
+
+
             }
 
         }

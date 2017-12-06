@@ -8,7 +8,7 @@ public class AuctionCentral
     private HashMap<String, String> bankKeyToBiddingKey;
 
     private ArrayList<AuctionHouse> listOfAHs;
-    private static int auctionHouseID = 6000; //This will become the IP Address for the AH.
+    private static int auctionHouseID = 6000; //This will become the port# for the AH.
 
     /**
      * auctionCentral()
@@ -20,7 +20,6 @@ public class AuctionCentral
         biddingKeyToBankKey = new HashMap<>();
         bankKeyToBiddingKey = new HashMap<>();
         listOfAHs = new ArrayList<>();
-
     }
 
     /**
@@ -55,10 +54,29 @@ public class AuctionCentral
     {
         String auctionHouseKey = Bank.getKey(auctionHouse.getName());
         auctionHouse.setIDs(auctionHouseID, auctionHouseKey);
-
         listOfAHs.add(auctionHouse);
         System.out.println("Auction House " + auctionHouse.getName() + " registered.");
         auctionHouseID++;
+    }
+
+    /**
+     * unregisterAuctionHouse()
+     *
+     * When an auction house wants to terminate, it will unsubscribe from the list of auction houses.
+     * This change will be reverberated to any agents that are subscribed to AC.
+     *
+     * @param ahKey The unique auction house key that the AH got when it registered with AC the first time.
+     */
+    public void unregisterAuctionHouse(String ahKey)
+    {
+        for(int i = 0; i < listOfAHs.size(); ++i)
+        {
+            if(ahKey.equals(listOfAHs.get(i).getAhKey()))
+            {
+                listOfAHs.remove(i);
+                break;
+            }
+        }
     }
 
     /**
