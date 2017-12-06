@@ -65,7 +65,6 @@ public class Client
      */
     public Client(boolean isAgent, String name, Control agentOrAHControl)
     {
-        //this.isAgent = isAgent;
         Client.isAgent = isAgent;
 
         bankConnected = false;
