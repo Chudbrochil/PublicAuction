@@ -72,14 +72,14 @@ public class AgentController
         client = new Client(true, Main.askName(), taAgentOutput);
 
         // TODO: Jacob, unleash this thread on the wild when clientListening is ready...
-//        Thread newThread = new Thread(new Runnable() {
-//            @Override
-//            public void run()
-//            {
-//                client.clientListening();
-//            }
-//        });
-
+        Thread newThread = new Thread(new Runnable() {
+            @Override
+            public void run()
+            {
+                client.clientListening();
+            }
+        });
+        newThread.start();
         agent = client.getAgent();
         lvItems.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
