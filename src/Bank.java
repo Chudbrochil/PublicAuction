@@ -20,6 +20,10 @@ public class Bank
         return bankKeyToAccount;
     }
 
+    /**
+     * getAgentsAsString()
+     * @return A list of all agents connected to bank. Updates to the GUI.
+     */
     public String getAgentsAsString()
     {
         String output = "";

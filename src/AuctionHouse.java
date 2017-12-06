@@ -39,6 +39,8 @@ public class AuctionHouse implements Serializable
 
     private int itemCounter = 0;
 
+    private int soldItemID;
+
 
     /**
      * AuctionHouse()
@@ -168,7 +170,6 @@ public class AuctionHouse implements Serializable
      * @param biddingID      BIDDING_ID of the Agent who wishes to place a bid
      * @param amount         Amount the bidder wishes to bid.
      * @param itemID         ID of the item the bidder wishes to bid on
-     * @param response       BidResponse of Bank as to whether the hold is successfully placed.
      * @param timer          Timeline which has the desired event on finish for the bid item. This timer will be started and
      *                       any timer currently running for the above itemID.
      *                       THIS TIMER MUST CALL itemSold(itemID) ON THIS CLASS
@@ -190,34 +191,16 @@ public class AuctionHouse implements Serializable
      *                          //forward message to Agent (the ACCEPT/REJECT is already set. Agent will react accordingly.
      *                      }
      */
-    public String processHoldResponse(String biddingID, double amount, int itemID, BidResponse response, Timeline timer)
+    public String processHoldResponse(String biddingID, double amount, int itemID, Timeline timer)
     {
-        //todo: Anna: Check if pendingHolds holds it.
-        if(response==BidResponse.REJECT) return null;
-        
-        else if(response==BidResponse.ACCEPT)
-        {
-            Item item = items.get(itemID);
-            String prevBidWinner = item.getCurrentHighestBidderID();
-            item.setCurrentBidAndBidder(amount, biddingID);
-            setBidTimer(itemID, timer);
-            return prevBidWinner;
-        }
-        else
-        {
-            System.err.println(toString()+" got a hold response of BidResponse "+ response+". Should be ACCEPT or REJECT.");
-            return null;
-        }
+        Item item = items.get(itemID);
+        String prevBidWinner = item.getCurrentHighestBidderID();
+        item.setCurrentBidAndBidder(amount, biddingID);
+        setBidTimer(itemID, timer);
+        return prevBidWinner;
     }
     
-    /**
-     * @param itemID    ID of the item stored in the timer that is called when the item is sold.
-     * Called when a 'winning' item timer goes off.
-     */
-    public void itemSold(int itemID)
-    {
-        items.remove(itemID);
-    }
+
 
     @Override
     public String toString()
@@ -235,6 +218,18 @@ public class AuctionHouse implements Serializable
         currentTimer.stop();
         itemTimers.put(itemID, timer);
         timer.play();
+        timer.setOnFinished(e -> setSoldItemID(itemID));
+    }
+
+    private void setSoldItemID(int soldItemID)
+    {
+        this.soldItemID = soldItemID;
+    }
+
+    public int getSoldItemID()
+    {
+        items.remove(soldItemID);
+        return soldItemID;
     }
 
     public String getAhKey()
