@@ -507,7 +507,8 @@ public class Client
         {
             try
             {
-                client = new ServerSocket(6000);
+System.out.println("AH conected on port " + auctionHouse.getPublicID());
+                client = new ServerSocket(auctionHouse.getPublicID());
                 pipeConnection = client.accept();
 
                 out = new ObjectOutputStream(pipeConnection.getOutputStream());
