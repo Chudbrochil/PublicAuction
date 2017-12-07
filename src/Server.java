@@ -171,6 +171,17 @@ public class Server
                     System.out.println("Agent " + incomingMessage.getName() + " un-registered.");
                     needsReturnMessage = false;
                 }
+                // removes hold from bank.
+                else if(incomingMessage.getType() == MessageType.ITEM_SOLD)
+                {
+                    // ToDo Remove hold from bank account
+
+                }
+                else if(incomingMessage.getType() == MessageType.OUT_BID)
+                {
+                    // ToDo Remove hold from bank and put hold amount back in account
+
+                }
 
                 if(needsReturnMessage) { bankOut.writeObject(incomingMessage); }
 
@@ -318,17 +329,31 @@ public class Server
 
                     needsReturnMessage = false;
                 }
+                // sends a message of ITEM_SOLD to bank and agent.
+                else if(incomingMessage.getType() == MessageType.ITEM_SOLD)
+                {
+                    Socket bankSocket = new Socket("127.0.0.1", 4444);
 
-                //                else if(incomingMessage.getType() == MessageType.ITEM_SOLD)
-//                {
-//                    Socket bankSocket = new Socket("127.0.0.1", 4444);
-//
-//                    out = new ObjectOutputStream(bankSocket.getOutputStream());
-//                    in = new ObjectInputStream(bankSocket.getInputStream());
-//
-//                    // Sending a message of type Withdraw
-//                    out.writeObject(new Message(MessageType.WITHDRAW, incomingMessage, bidAmt));
-//                }
+                    out = new ObjectOutputStream(bankSocket.getOutputStream());
+                    in = new ObjectInputStream(bankSocket.getInputStream());
+
+                    // Sending a message of type Item_Sold.
+                    out.writeObject(new Message(MessageType.ITEM_SOLD, incomingMessage.getItemID(), incomingMessage.getAuctionHousePublicID(),incomingMessage.getBankKey(), incomingMessage.getBidAmount()));
+                    // ToDO make ac talk to agent.
+                    needsReturnMessage = false;
+                }
+                else if(incomingMessage.getType() == MessageType.OUT_BID)
+                {
+                    Socket bankSocket = new Socket("127.0.0.1", 4444);
+
+                    out = new ObjectOutputStream(bankSocket.getOutputStream());
+                    in = new ObjectInputStream(bankSocket.getInputStream());
+
+                    // Sending a message of type Item_Sold.
+                    out.writeObject(new Message(MessageType.OUT_BID, incomingMessage.getAuctionHousePublicID(),incomingMessage.getBankKey(), incomingMessage.getBidAmount()));
+                    // ToDO make ac talk to agent.
+                    needsReturnMessage = false;
+                }
 
                 if(needsReturnMessage)
                 {
