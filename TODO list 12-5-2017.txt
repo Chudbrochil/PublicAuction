@@ -1,7 +1,7 @@
 General things to add:
 placebid/place_hold life cycle
 implementing clients listening
-Timers on items 
+Timers on items
 Implementing ITEM_SOLD msg
 implementing pass msg
 adding connect to ac on bank, connect to bank on ac

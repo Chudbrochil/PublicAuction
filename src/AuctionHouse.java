@@ -39,7 +39,7 @@ public class AuctionHouse implements Serializable
 
     private int itemCounter = 0;
 
-    private int soldItemID;
+    private Item soldItem;
 
 
     /**
@@ -218,18 +218,19 @@ public class AuctionHouse implements Serializable
         currentTimer.stop();
         itemTimers.put(itemID, timer);
         timer.play();
-        timer.setOnFinished(e -> setSoldItemID(itemID));
+        // TODO: Check if this onfinished goes off before the one in client, if so find out how to order these.
+        timer.setOnFinished(e -> setSoldItem(items.get(itemID)));
     }
 
-    private void setSoldItemID(int soldItemID)
+    private void setSoldItem(Item soldItem)
     {
-        this.soldItemID = soldItemID;
+        this.soldItem = soldItem;
     }
 
-    public int getSoldItemID()
+    public Item getSoldItem()
     {
-        items.remove(soldItemID);
-        return soldItemID;
+        // TODO: Set to null somewhere in logic of set/get/onfinished
+        return soldItem;
     }
 
     public String getAhKey()
