@@ -51,6 +51,7 @@ public class AuctionHouse implements Serializable
     {
         this.name = name;
         items = new HashMap<>();
+        itemTimers = new HashMap<>();
         populateItems();
     }
 
@@ -229,8 +230,11 @@ public class AuctionHouse implements Serializable
      */
     private void setBidTimer(int itemID, AuctionTimer timer)
     {
-        AuctionTimer currentTimer = itemTimers.remove(itemID);
-        currentTimer.stop();
+        if(itemTimers.containsKey(itemID))
+        {
+            AuctionTimer currentTimer = itemTimers.remove(itemID);
+            currentTimer.stop();
+        }
         itemTimers.put(itemID, timer);
         timer.playFromStart();
     }

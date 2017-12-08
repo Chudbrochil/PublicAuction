@@ -37,7 +37,8 @@ public class AuctionHouseController
             public void run()
             {
                 client = new Client(false, name, lblAuctionHouseList);
-                 client.clientListening();  //TODO: Jacob uncomment this when you're ready.
+                //client.testTimer();
+                client.clientListening();
             }
 
         });
