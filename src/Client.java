@@ -225,12 +225,12 @@ public class Client
             in = new ObjectInputStream(auctionCentralSocket.getInputStream());
 
 
-            Message placeBidMsg = new Message(MessageType.PLACE_BID, biddingKey, bidAmount, item);
-            //System.out.println("SEND_MSG: " + placeBidMsg.getType() + " - TO: Auction Central");
-            out.writeObject(placeBidMsg);
+            System.out.println("writing to ac...");
+            out.writeObject(new Message(MessageType.PLACE_BID, biddingKey, bidAmount, item));
 
             Message response = (Message) in.readObject();
-            //System.out.println("RCV_MSG: " + response.getType() + " - FROM: Auction Central");
+            System.out.println("received message back from ac");
+
 
             if(response.getBidResponse() == BidResponse.ACCEPT)
             {
@@ -579,7 +579,7 @@ public class Client
             {
                 // This is setting the member variable of client from the auction house to eventually send to auction central
                 String itemSoldReport = auctionHouse.itemSold(incomingMessage.getItemID());
-                System.out.println(itemSoldReport);
+                System.out.println("Item Sold Report: " + itemSoldReport);
                 setSoldItem(auctionHouse.getSoldItem());
                 //System.out.println("Timer for "+incomingMessage.getItem().toString()+" just went off!");
     

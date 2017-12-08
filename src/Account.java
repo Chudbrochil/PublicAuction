@@ -30,7 +30,7 @@ public class Account implements Serializable
         this.setName(name);
     }
 
-    public synchronized boolean deductAccountBalance(Double amountToDeduct)
+    public boolean deductAccountBalance(Double amountToDeduct)
     {
         if (accountBalance - amountToDeduct < 0)
         {
@@ -51,7 +51,7 @@ public class Account implements Serializable
      * @return true of amount was successfully deducted.
      *         false if there were not enough funds.
      */
-    public synchronized boolean deductFromHold(Double amountToDeduct)
+    public boolean deductFromHold(Double amountToDeduct)
     {
         if(temporaryHold >= amountToDeduct)
         {
@@ -61,34 +61,34 @@ public class Account implements Serializable
         else return false;
     }
 
-    public synchronized Double getAccountBalance() {
+    public Double getAccountBalance() {
         return accountBalance;
     }
 
-    public synchronized void setAccountBalance(Double accountBalance) {
+    public void setAccountBalance(Double accountBalance) {
         this.accountBalance = accountBalance;
     }
 
-    public synchronized void setAccountNum(int accountNum)
+    public void setAccountNum(int accountNum)
     {
         this.accountNum = accountNum;
     }
 
-    public synchronized int getAccountNum()
+    public int getAccountNum()
     {
         return accountNum;
     }
 
-    public synchronized void setBankKey(String bankKey) { this.bankKey = bankKey; }
+    public void setBankKey(String bankKey) { this.bankKey = bankKey; }
 
-    public synchronized String getBankKey() { return bankKey; }
+    public String getBankKey() { return bankKey; }
 
-    public synchronized String getName()
+    public String getName()
     {
         return name;
     }
 
-    public synchronized void setName(String name)
+    public void setName(String name)
     {
         this.name = name;
     }
@@ -96,7 +96,7 @@ public class Account implements Serializable
     @Override
     public String toString()
     {
-        return "Name: " + name + " acct#: " + accountNum + " Balance: " + accountBalance + " HoldAmount: "+ temporaryHold;
+        return "Name: " + name + " acct#: " + accountNum + " Balance: " + accountBalance + " Hold: "+ temporaryHold;
     }
     
     /**
@@ -106,10 +106,11 @@ public class Account implements Serializable
      * @return true if there was enough in accountBalance and the amount was moved to temporaryHold
      *         false if there was not enough in accountBalance and no money was moved.
      */
-    public synchronized boolean placeHold(double amntToHold)
+    public boolean placeHold(double amntToHold)
     {
         if(accountBalance >= amntToHold)
         {
+            System.out.println("In account, you had enough money.");
             accountBalance -= amntToHold;
             temporaryHold += amntToHold;
             return true;
@@ -125,7 +126,7 @@ public class Account implements Serializable
      * @return true if there was enough in temporaryHold and the amount was moved to accountBalance
      *         false if there was not enough in temporaryHold and no money was moved.
      */
-    public synchronized boolean releaseHold(double amntToRelease)
+    public boolean releaseHold(double amntToRelease)
     {
         if(temporaryHold >= amntToRelease)
         {

@@ -130,7 +130,7 @@ public class Server
                 if (incomingMessage.getType() == MessageType.WITHDRAW)
                 {
                     Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
-                    System.out.println("MSG RECV: WITHDRAW - FROM: " + account.getName());
+                    System.out.println("RCV_MSG: WITHDRAW - FROM: " + account.getName());
                     // If we were able to deduct the bidding amount, then take it out, send a success back.
                     if (account.deductAccountBalance(incomingMessage.getBidAmount()))
                     {
@@ -149,9 +149,9 @@ public class Server
                 else if (incomingMessage.getType() == MessageType.PLACE_BID)
                 {
                     Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
-                    System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: " + account.getName());
+                    System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
                     // If we were able to deduct the bidding amount, then take it out, send a success back.
-                    if (account.placeHold(incomingMessage.getBidAmount()))
+                    if (account.deductAccountBalance(incomingMessage.getBidAmount()))//account.placeHold(incomingMessage.getBidAmount()))
                     {
                         incomingMessage.setBidResponse(BidResponse.ACCEPT);
                         incomingMessage.setType(MessageType.PLACE_HOLD);
@@ -292,6 +292,8 @@ public class Server
                     incomingMessage = (Message) in.readObject();
                     System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: AH-ID:" + incomingMessage.getItem().getAhID());
 
+                    System.out.println("BID RESPONSE FROM AH: " + incomingMessage.getBidResponse());
+
                     if (incomingMessage.getBidResponse() == BidResponse.REJECT)
                     {
                         centralOut.writeObject(incomingMessage);
@@ -306,7 +308,6 @@ public class Server
                     }
                     else if (incomingMessage.getBidResponse() == BidResponse.ACCEPT)
                     {
-                        System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: bidKey-" + incomingMessage.getBiddingKey());
                         Socket bankSocket = new Socket(staticBankHostname, Main.bankPort);
                         ObjectOutputStream outToBank = new ObjectOutputStream(bankSocket.getOutputStream());
                         ObjectInputStream inFromBank = new ObjectInputStream(bankSocket.getInputStream());

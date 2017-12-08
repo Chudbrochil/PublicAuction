@@ -131,7 +131,7 @@ public class AuctionHouse implements Serializable
         if(!(auctionHouseID==publicID))
         {
             //Not the right AuctionHouse USER OUTPUT
-            System.err.println(toString()+" received a placeBid request for auctionHouseID "+auctionHouseID+" which does" +
+            System.out.println(toString()+" received a placeBid request for auctionHouseID "+auctionHouseID+" which does" +
                 "not match its public ID "+publicID+". Returning.");
             return false;
         }
@@ -140,7 +140,7 @@ public class AuctionHouse implements Serializable
         if (item == null)
         {
             //That item isn't for sale here USER OUTPUT
-            System.err.println("Bidding ID " + biddingID + " tried to bid on " + itemID + ", which is not an item in " +
+            System.out.println("Bidding ID " + biddingID + " tried to bid on " + itemID + ", which is not an item in " +
                     name + ". Returning");
             return false;
         }
@@ -148,6 +148,7 @@ public class AuctionHouse implements Serializable
         //If it's a valid bid AMOUNT
         if (amount >= item.getMinimumBid() && amount > item.getCurrentBid())
         {
+            System.out.println("Valid bid");
             return true;
         }
         //todo: else, USER OUTPUT whoops, bid more.
