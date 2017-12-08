@@ -530,7 +530,9 @@ public class Client
                 if (incomingMessage.getType() == MessageType.PLACE_BID)
                 {
                     System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
-                    if (auctionHouse.placeBid(incomingMessage.getBiddingKey(), incomingMessage.getBidAmount(), incomingMessage.getItem().getItemID(), incomingMessage.getItem().getAhID()))
+                    // Placing a bid for your item at the auction house.
+                    if (auctionHouse.placeBid(incomingMessage.getBiddingKey(), incomingMessage.getBidAmount(),
+                            incomingMessage.getItem().getItemID(), incomingMessage.getItem().getAhID()))
                     {
                         incomingMessage.setBidResponse(BidResponse.ACCEPT);
                     }

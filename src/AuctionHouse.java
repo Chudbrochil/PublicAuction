@@ -145,7 +145,6 @@ public class AuctionHouse implements Serializable
             return false;
         }
 
-        System.out.println("Amount: " + amount + " minBid: " + item.getMinimumBid() + " currBid: " + item.getCurrentBid());
         //If it's a valid bid AMOUNT
         if (amount >= item.getMinimumBid() && amount > item.getCurrentBid())
         {

@@ -151,7 +151,7 @@ public class Server
                     Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
                     System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
                     // If we were able to deduct the bidding amount, then take it out, send a success back.
-                    if (account.deductAccountBalance(incomingMessage.getBidAmount()))//account.placeHold(incomingMessage.getBidAmount()))
+                    if (account.placeHold(incomingMessage.getBidAmount()))
                     {
                         incomingMessage.setBidResponse(BidResponse.ACCEPT);
                         incomingMessage.setType(MessageType.PLACE_HOLD);

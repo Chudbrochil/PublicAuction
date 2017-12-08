@@ -5,8 +5,8 @@ import java.io.Serializable;
 public class Account implements Serializable
 {
     private int accountNum;
-    private Double accountBalance;
-    private Double temporaryHold;
+    private Double accountBalance = 0.0;
+    private Double temporaryHold = 0.0;
     private String bankKey;
     private String name;
 
