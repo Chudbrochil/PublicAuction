@@ -165,6 +165,7 @@ public class Client
         Message response = (Message) in.readObject();
         agent.setPortNumber(response.getPortNumber());
         agent.setRegistered(true);
+        taAgentOutput.appendText("Port Number " + agent.getPortNumber());
         agent.setBiddingKey(response.getBiddingKey());
         taAgentOutput.appendText("Bidding Key: " + response.getBiddingKey() + "\n");
         acConnected = true;
@@ -470,15 +471,16 @@ public class Client
             try
             {
 
-                agent.setPortNumber(20000);
+//                agent.setPortNumber(20000);
 
-                client = new ServerSocket(20000);
+                client = new ServerSocket(agent.getPortNumber());
                 System.out.println("Client connecting on port " + getAgent().getPortNumber());
+                pipeConnection = client.accept();
+                out = new ObjectOutputStream(pipeConnection.getOutputStream());
+                in = new ObjectInputStream(pipeConnection.getInputStream());
                 while (true)
                 {
-                    pipeConnection = client.accept();
-                    out = new ObjectOutputStream(pipeConnection.getOutputStream());
-                    in = new ObjectInputStream(pipeConnection.getInputStream());
+
 
                     Message incomingMessage = (Message) in.readObject();
                     System.out.println("you got a message");

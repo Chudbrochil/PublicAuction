@@ -239,6 +239,7 @@ public class Server
                     System.out.println("\nMESSAGE: REGISTER_AGENT - FROM: " + incomingMessage.getName());
                     String biddingKey = auctionCentral.registerAgent(incomingMessage.getName(), incomingMessage.getBankKey());
                     incomingMessage.setPortNumber(getPortNumber());
+                    System.out.println("port number is now " + incomingMessage.getPortNumber());
                     incomingMessage.setBiddingKey(biddingKey);
                 }
                 // Registering a new AH with AC
@@ -272,7 +273,7 @@ public class Server
                             centralOut.writeObject(incomingMessage);
                             System.out.println("AC says you didn't have enough");
 
-                            Socket clientSocket = new Socket("127.0.0.1", 20000);
+                            Socket clientSocket = new Socket("127.0.0.1", 20001);
                             out = new ObjectOutputStream(clientSocket.getOutputStream());
                             in = new ObjectInputStream(clientSocket.getInputStream());
 
