@@ -192,8 +192,6 @@ public class Client
         Message incomingMessage = (Message) in.readObject();
         auctionHouse = incomingMessage.getAuctionHouse();
         acConnected = true;
-
-        //System.out.println("From register in Client: " + Client.getAcConnected() + " " + Client.isListening());
     }
 
     /**
@@ -494,7 +492,7 @@ public class Client
                     System.out.println(incomingMessage.getType());
                     if (incomingMessage.getType() == MessageType.PLACE_HOLD)
                     {
-                        System.out.println("\nMESSAGE: PLACE_HOLD - FROM: "); //TODO: Do we have a name in this msg?
+                        System.out.println("\nRCV_MSG: PLACE_HOLD - FROM: "); //TODO: Do we have a name in this msg?
                         if (incomingMessage.getBidResponse() == BidResponse.REJECT)
                         {
                             System.out.println("You didn't have enough money");
@@ -506,11 +504,12 @@ public class Client
                     }
                     else if (incomingMessage.getType() == MessageType.ITEM_SOLD)
                     {
-                        System.out.println("\nMESSAGE: ITEM_SOLD - FROM: " + incomingMessage.getItem().getCurrentHighestBidderID());
+                        System.out.println("\nRCV_MSG: ITEM_SOLD - FROM: " + incomingMessage.getItem().getCurrentHighestBidderID());
                         System.out.println("You won");
                     }
                     else if (incomingMessage.getType() == MessageType.PLACE_BID && incomingMessage.getBidResponse() == BidResponse.REJECT)
                     {
+                        System.out.println("\nRCV_MSG: PLACE_BID - FROM: Auction Central");
                         System.out.println("Your bid was rejected");
                     }
                 }
@@ -530,25 +529,25 @@ public class Client
                 System.out.println(auctionHouse.getName() + " listening on port " + auctionHouse.getPublicID());
                 client = new ServerSocket(auctionHouse.getPublicID());
                 pipeConnection = client.accept();
-
-                out = new ObjectOutputStream(pipeConnection.getOutputStream());
-                out.flush();
-                in = new ObjectInputStream(pipeConnection.getInputStream());
-
+                
 
                 while (true)
                 {
+
+                    out = new ObjectOutputStream(pipeConnection.getOutputStream());
+                    out.flush();
+                    in = new ObjectInputStream(pipeConnection.getInputStream());
 
 
                     Message incomingMessage = (Message) in.readObject();
                     System.out.println(incomingMessage.getType());
 
-                    System.out.println("ah just read in the message...");
+                    System.out.println("Auction House just got a message.");
 
                     if (incomingMessage.getType() == MessageType.PLACE_BID)
                     {
-                        System.out.println(incomingMessage.getAuctionHousePublicID());
-                        if (auctionHouse.placeBid(incomingMessage.getBiddingKey(), incomingMessage.getBidAmount(), incomingMessage.getItemID(), incomingMessage.getAuctionHousePublicID()))
+                        System.out.println("RCV_MSG: PLACE_BID - FROM: Auction Central");
+                        if (auctionHouse.placeBid(incomingMessage.getBiddingKey(), incomingMessage.getBidAmount(), incomingMessage.getItemID(), incomingMessage.getItem().getAhID()))
                         {
                             incomingMessage.setBidResponse(BidResponse.ACCEPT);
                         }
@@ -560,6 +559,7 @@ public class Client
                     }
                     else if (incomingMessage.getType() == MessageType.PLACE_HOLD)
                     {
+                        System.out.println("RCV_MSG: PLACE_HOLD - FROM: Auction Central");
                         if (incomingMessage.getBidResponse() == BidResponse.ACCEPT)
                         {
                             acceptBid(incomingMessage);

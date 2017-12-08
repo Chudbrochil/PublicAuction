@@ -103,6 +103,9 @@ public class AgentController
             {
                 while(true)
                 {
+                    // Don't delete this line, this thread gets stopped(garbage collected) without running clientListening()
+                    System.out.print("");
+
                     // If the client isn't already listening, but is connected to the AC, start listening for msg's.
                     if(!Client.isListening() && Client.getAcConnected())
                     {
