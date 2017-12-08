@@ -544,42 +544,40 @@ public class Client
                         {
                             //out.writeObject(new Message(MessageType.PLACE_BID, biddingKey, bidAmount, item));
 
-
                             // TODO: This code is a bit wild, I'm not sure if this works....
-                            Timeline timeline = new Timeline();
-                            timeline.setCycleCount(30);
-
+                            
                             // The keyvalue only consumes things that are "writable", so we use a readonlyint?
 //                            ReadOnlyIntegerWrapper theWrappedInt = new ReadOnlyIntegerWrapper(incomingMessage.getItem().getItemID());
 //
 //                            final KeyFrame keyFrame = new KeyFrame(Duration.hours(100), new KeyValue(theWrappedInt, incomingMessage.getItem().getItemID()));
 //
 //                            timeline.getKeyFrames().add(keyFrame);
-
-
-                            timeline.setOnFinished(new EventHandler<ActionEvent>()
+    
+                            AuctionTimer timer = new AuctionTimer(incomingMessage.getItem());
+                            timer.setOnFinished(new EventHandler<ActionEvent>()
                             {
                                 @Override
                                 public void handle(ActionEvent arg0)
                                 {
                                     // This is setting the member variable of client from the auction house to eventually send to auction central
+                                    //todo: close AH if it has no more items.
+                                    boolean ahStillHasItems = auctionHouse.itemSold(incomingMessage.getItemID());
                                     setSoldItem(auctionHouse.getSoldItem());
+    
+                                    // TODO: Jacob, I'm not sure if this is properly implemented to send a message to AC, I don't think it is.
+                                    // Use the newly made soldItem to send the itemSold msg...
                                 }
                             });
 
-
-                            // TODO: Jacob, I'm not sure if this is properly implemented to send a message to AC, I don't think it is.
-                            // Use the newly made soldItem to send the itemSold msg...
-
-
-                            auctionHouse.processHoldResponse(incomingMessage.getBiddingKey(), incomingMessage.getBidAmount(),
-                                    incomingMessage.getItemID(), timeline);
+                            //todo: send a PASS to prevBidder of this item.
+                            String prevBidder = auctionHouse.processHoldResponse(incomingMessage.getBiddingKey(), incomingMessage.getBidAmount(),
+                                    incomingMessage.getItemID(), timer);
                             out.writeObject(incomingMessage);
 
                         }
                         else if (incomingMessage.getBidResponse() == BidResponse.REJECT)
                         {
-                            System.out.println("Your bid was rejected due to not enough funds."); //TODO: Make this a better println
+                            System.out.println("Your bid was rejected due to lack of funds."); //TODO: Make this a better println
 
                         }
                     }

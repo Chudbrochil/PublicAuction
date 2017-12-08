@@ -31,9 +31,8 @@ public class AuctionHouse implements Serializable
     private int publicID = 6000;
     private String ahKey; // Requested and received from Auction Central
     private HashMap<Integer, Item> items; //Item ID as key for the item.
-    private HashMap<Integer, Timeline> itemTimers; //key is Item ID, timer for the winning bid.
-    //private HashSet<PendingBidRequest> pendingHolds; //placeBid calls this AuctionHouse is waiting on holds for to respond to
-                                             //the message.
+    private HashMap<Integer, AuctionTimer> itemTimers; //key is Item ID, timer for the winning bid.
+
     //private HashMap<String, Time> itemTimers;
     //private HashMap<>
 
@@ -52,7 +51,6 @@ public class AuctionHouse implements Serializable
     {
         this.name = name;
         items = new HashMap<>();
-        //pendingHolds = new HashSet();
         populateItems();
     }
 
@@ -157,7 +155,6 @@ public class AuctionHouse implements Serializable
         if (amount >= item.getMinimumBid() && amount > item.getCurrentBid())
         {
             //Agent didn't bid enough USER OUTPUT
-            //pendingHolds.add(new PendingBidRequest(biddingID, amount, itemID));
             return true;
         }
         //todo: else, USER OUTPUT whoops, bid more.
@@ -170,7 +167,7 @@ public class AuctionHouse implements Serializable
      * @param biddingID      BIDDING_ID of the Agent who wishes to place a bid
      * @param amount         Amount the bidder wishes to bid.
      * @param itemID         ID of the item the bidder wishes to bid on
-     * @param timer          Timeline which has the desired event on finish for the bid item. This timer will be started and
+     * @param timer          AuctionTimer which has the desired event on finish for the bid item. This timer will be started and
      *                       any timer currently running for the above itemID.
      *                       THIS TIMER MUST CALL itemSold(itemID) ON THIS CLASS
      * @return  null if no bidder needs to be notified with a "pass".
@@ -191,7 +188,7 @@ public class AuctionHouse implements Serializable
      *                          //forward message to Agent (the ACCEPT/REJECT is already set. Agent will react accordingly.
      *                      }
      */
-    public String processHoldResponse(String biddingID, double amount, int itemID, Timeline timer)
+    public String processHoldResponse(String biddingID, double amount, int itemID, AuctionTimer timer)
     {
         Item item = items.get(itemID);
         String prevBidWinner = item.getCurrentHighestBidderID();
@@ -208,29 +205,41 @@ public class AuctionHouse implements Serializable
         return "Name: " +  name + " Public ID: " + publicID;
     }
     
+    
+    /**
+     * itemSold()
+     * @param itemID    ID of the item stored in the timer that is called when the item is sold.
+     * Called when a 'winning' item timer goes off.
+     * Sets the soldItem to the item of the itemID. Does this so that Client can retrieve it by calling getSoldItem.
+     * @return true if AuctionHouse still has items
+     *          false if AuctionHouse is out of items and needs to close.
+     */
+    public boolean itemSold(int itemID)
+    {
+        Item itemSold = items.remove(itemID);
+        itemTimers.remove(itemID);
+        this.soldItem = itemSold;
+        return !items.isEmpty();
+        //return "Item "+itemSold.getItemName()+" has been sold for $"+itemSold.getCurrentBid()+"!";
+    }
+    
     /**
      * @param itemID Item whose timer is being reset
-     * @param timer New timer for the current bidder.
+     * @param timer New AuctionTimer for the current bidder.
      */
-    private void setBidTimer(int itemID, Timeline timer)
+    private void setBidTimer(int itemID, AuctionTimer timer)
     {
-        Timeline currentTimer = itemTimers.get(itemID);
+        AuctionTimer currentTimer = itemTimers.remove(itemID);
         currentTimer.stop();
         itemTimers.put(itemID, timer);
-        timer.play();
-        // TODO: Check if this onfinished goes off before the one in client, if so find out how to order these.
-        timer.setOnFinished(e -> setSoldItem(items.get(itemID)));
-    }
-
-    private void setSoldItem(Item soldItem)
-    {
-        this.soldItem = soldItem;
+        timer.playFromStart();
     }
 
     public Item getSoldItem()
     {
-        // TODO: Set to null somewhere in logic of set/get/onfinished
-        return soldItem;
+        Item sold = soldItem;
+        soldItem = null;
+        return sold;
     }
 
     public String getAhKey()
@@ -241,34 +250,6 @@ public class AuctionHouse implements Serializable
     public void setAhKey(String ahKey)
     {
         this.ahKey = ahKey;
-    }
-
-
-    private class PendingBidRequest
-    {
-        public final String BIDDING_ID;
-        public final double AMOUNT;
-        public final int ITEM_ID;
-        
-        public PendingBidRequest(String bID, double amt, int iID)
-        {
-            BIDDING_ID = bID;
-            AMOUNT = amt;
-            ITEM_ID = iID;
-        }
-        
-        @Override
-        public boolean equals(Object obj)
-        {
-            if(obj instanceof PendingBidRequest)
-            {
-                PendingBidRequest br = (PendingBidRequest)obj;
-                return this.BIDDING_ID == br.BIDDING_ID && this.AMOUNT == br.AMOUNT && this.ITEM_ID == br.ITEM_ID;
-            }
-            else return false;
-        }
-        
-        //TODO: override hash to use in Set.
     }
 
     /**

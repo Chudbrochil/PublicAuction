@@ -90,7 +90,7 @@ public class Item implements Serializable
     @Override
     public String toString()
     {
-        return "Name: " + itemName + " itemID: " + itemID + " ahID: " + ahID;
+        return "Name: " + itemName + " itemID: " + itemID + " ahID: " + ahID + " MinBid: "+minimumBid;
     }
 
     public Double getMinimumBid()
