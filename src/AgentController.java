@@ -87,8 +87,6 @@ public class AgentController
         //addImageToGUI("MountainAir.png", "Mountain Air");
 
 
-
-
         agent = client.getAgent();
         lvItems.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -97,7 +95,30 @@ public class AgentController
             }
         });
         update();
+
+
+        Thread clientListeningThread = new Thread(new Runnable() {
+            @Override
+            public void run()
+            {
+                while(true)
+                {
+                    // If the client isn't already listening, but is connected to the AC, start listening for msg's.
+                    if(!Client.isListening() && Client.getAcConnected())
+                    {
+                        System.out.println("Listening.");
+                        client.clientListening(); // This will listen for messages forever
+                    }
+                }
+            }
+        });
+
+        clientListeningThread.start();
+
+
+
     }
+
 
     /**
      * update()
@@ -111,12 +132,6 @@ public class AgentController
             @Override
             public void run()
             {
-                // If the client isn't already listening, but is connected to the AC, start listening for msg's.
-                if(!client.isListening() && client.getAcConnected())
-                {
-                    client.clientListening();
-                }
-
                 // Getting the latest list of auction houses that are up and updates the item list
                 if(client.getAcConnected()) client.updateListOfAHs();
 
@@ -249,6 +264,7 @@ public class AgentController
     {
         Image imageToAdd = new Image(getClass().getResource(imgPath).toExternalForm());
         ImageView imgView = new ImageView(imageToAdd);
+        //imgView.set
         //System.out.println(boughtItems.size());
         int row = boughtItems.size() / 10;
         int column = boughtItems.size() % 10;

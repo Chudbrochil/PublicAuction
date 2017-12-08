@@ -91,7 +91,7 @@ public class Server
 
                 });
             }
-        }, 0, 250, TimeUnit.MILLISECONDS);
+        }, 0, 150, TimeUnit.MILLISECONDS);
     }
 
     /**

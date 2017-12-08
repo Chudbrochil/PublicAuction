@@ -38,39 +38,47 @@ public class AuctionHouseController
             {
                 client = new Client(false, name, lblAuctionHouseList);
                 //client.testTimer();
+                System.out.println(Client.getAcConnected());
+
+
+
 //                if(Client.getAcConnected())
 //                {
+//                    System.out.println(Client.getAcConnected());
 //                    client.clientListening();
 //                }
-                client.clientListening();
+                //client.clientListening();
             }
 
         });
 
         newThread.start();
+
+        Thread clientListeningThread = new Thread(new Runnable() {
+            @Override
+            public void run()
+            {
+                while(true)
+                {
+                    // If the client isn't already listening, but is connected to the AC, start listening for msg's.
+                    if(!Client.isListening() && Client.getAcConnected())
+                    {
+                        client.clientListening(); // This will listen for messages forever
+                    }
+                }
+            }
+        });
+
+        clientListeningThread.start();
+
     }
+
 
     @FXML
     private void btnConnectAC()
     {
         client.setAcHostname(tfAuctionCentralIP.getText()); // TODO: handle bad input?
     }
-
-//    private void updateItemsLabel()
-//    {
-//        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-//        exec.scheduleAtFixedRate(new Runnable()
-//        {
-//            @Override
-//            public void run()
-//            {
-//                Platform.runLater(() -> {
-//                    client.
-//
-//                });
-//            }
-//        }, 0, 250, TimeUnit.MILLISECONDS);
-//    }
 
 
 }

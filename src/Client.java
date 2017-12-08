@@ -27,10 +27,11 @@ public class Client
     private ServerSocket client;
     private Socket pipeConnection;
     private Item soldItem;
-    private boolean isListening;
+
 
 
     // These need to be static so that we can eventually terminate our connection to the AC and Bank
+    private static boolean isListening;
     private static Agent agent;
     private static AuctionHouse auctionHouse;
     private static boolean isAgent;
@@ -119,7 +120,7 @@ public class Client
                     lblAuctionHouseList.setText(auctionHouse.getItemsAsString());
                 });
             }
-        }, 0, 250, TimeUnit.MILLISECONDS);
+        }, 0, 150, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -707,13 +708,9 @@ public class Client
         this.soldItem = soldItem;
     }
 
-    public boolean isListening()
+    public static boolean isListening()
     {
         return isListening;
     }
 
-    public void setListening(boolean listening)
-    {
-        isListening = listening;
-    }
 }
