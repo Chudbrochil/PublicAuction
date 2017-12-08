@@ -597,10 +597,14 @@ public class Client
                 // Use the newly made soldItem to send the itemSold msg...
             }
         });
-    
-        //todo: send a PASS to prevBidder of this item.
+        
+        double prevBidAmount = incomingMessage.getItem().getCurrentBid(); //todo: DEBUGGING not sure about this line.
         String prevBidder = auctionHouse.processHoldResponse(incomingMessage.getBiddingKey(), incomingMessage.getBidAmount(),
             incomingMessage.getItemID(), timer);
+        if(prevBidder != null)
+        {
+            //todo: use prevBidAmount and prevBidder to send OUT_BID message
+        }
         
         //Comment out this line if you want to run testTimer()
         out.writeObject(incomingMessage);
