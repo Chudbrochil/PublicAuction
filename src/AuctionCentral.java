@@ -58,6 +58,7 @@ public class AuctionCentral
         auctionHouse.setIDs(auctionHouseID, auctionHouseKey);
         listOfAHs.add(auctionHouse);
         System.out.println("Auction House " + auctionHouse.getName() + " registered.");
+        auctionHouseID++;
     }
 
     /**

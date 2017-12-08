@@ -9,6 +9,7 @@ import javafx.scene.control.TextArea;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -161,11 +162,13 @@ public class Client
     {
         out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
         in = new ObjectInputStream(auctionCentralSocket.getInputStream());
-        out.writeObject(new Message(MessageType.REGISTER_AGENT, agent.getName(), agent.getBankKey(), "", 0));
+
+        InetAddress ipInfo = InetAddress.getLocalHost();
+        String hostname = ipInfo.getHostName();
+
+        out.writeObject(new Message(MessageType.REGISTER_AGENT, agent.getName(), agent.getBankKey(), "", 0, hostname));
         Message response = (Message) in.readObject();
         agent.setPortNumber(response.getPortNumber());
-        agent.setRegistered(true);
-        //taAgentOutput.appendText("Port Number " + agent.getPortNumber());
         agent.setBiddingKey(response.getBiddingKey());
         taAgentOutput.appendText("Bidding Key: " + response.getBiddingKey() + "\n");
         acConnected = true;
@@ -184,7 +187,9 @@ public class Client
     {
         out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
         in = new ObjectInputStream(auctionCentralSocket.getInputStream());
-        out.writeObject(new Message(MessageType.REGISTER_AH, auctionHouse));
+        InetAddress ipInfo = InetAddress.getLocalHost();
+        String hostname = ipInfo.getHostName();
+        out.writeObject(new Message(MessageType.REGISTER_AH, auctionHouse, hostname));
         Message incomingMessage = (Message) in.readObject();
         auctionHouse = incomingMessage.getAuctionHouse();
         acConnected = true;
@@ -482,13 +487,13 @@ public class Client
         if (isAgent)
         {
             client = new ServerSocket(agent.getPortNumber());
-            taAgentOutput.appendText("Agent listening on port " + getAgent().getPortNumber() + "\n");
+            taAgentOutput.appendText("Agent listening for msg's on port " + getAgent().getPortNumber() + "\n");
         }
         else
         {
             System.out.println("My port is: " + auctionHouse.getPublicID()); // TODO: Remove this.
             client = new ServerSocket(auctionHouse.getPublicID());
-            System.out.println(auctionHouse.getName() + " listening on port " + auctionHouse.getPublicID());
+            System.out.println(auctionHouse.getName() + " listening for msg's on port " + auctionHouse.getPublicID());
         }
 
         pipeConnection = client.accept();
@@ -581,7 +586,7 @@ public class Client
             {
                 // This is setting the member variable of client from the auction house to eventually send to auction central
                 String itemSoldReport = auctionHouse.itemSold(incomingMessage.getItemID());
-                System.out.println("Item Sold Report: " + itemSoldReport);
+                System.out.println(itemSoldReport);
                 setSoldItem(auctionHouse.getSoldItem());
                 //System.out.println("Timer for "+incomingMessage.getItem().toString()+" just went off!");
     

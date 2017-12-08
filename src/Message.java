@@ -26,6 +26,7 @@ public class Message implements Serializable
     private String name;
     private String bankKey;
     private String biddingKey; // Also for place_bid
+    private String hostname;
 
     //for type REGISTER_AH
     private AuctionHouse auctionHouse;
@@ -79,7 +80,7 @@ public class Message implements Serializable
     }
 
     //Constructor for a REGISTER_AGENT message (to AC)
-    public Message(MessageType t, String name, String bankKey, String biddingKey, int portNumber)
+    public Message(MessageType t, String name, String bankKey, String biddingKey, int portNumber, String hostname)
     {
         type = t;
 
@@ -87,13 +88,15 @@ public class Message implements Serializable
         this.bankKey = bankKey;
         this.biddingKey = biddingKey;
         this.portNumber = portNumber;
+        this.hostname = hostname;
     }
 
     //Constructor for a REGISTER_AH message (to AC)
-    public Message(MessageType t, AuctionHouse auctionHouse)
+    public Message(MessageType t, AuctionHouse auctionHouse, String hostname)
     {
         type = t;
-        this.setAuctionHouse(auctionHouse);
+        this.auctionHouse = auctionHouse;
+        this.hostname = hostname;
     }
 
     //Constructor for UPDATE_AHS message
@@ -229,6 +232,7 @@ public class Message implements Serializable
     {
         this.clientKey = clientKey;
     }
+
     public int getPortNumber()
     {
         return portNumber;
@@ -237,5 +241,7 @@ public class Message implements Serializable
     public void setPortNumber(int num){
         portNumber = num;
     }
+
+    public String getHostname() { return hostname; }
 
 }

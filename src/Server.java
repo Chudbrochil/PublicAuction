@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -18,7 +19,12 @@ public class Server
 
     private ObjectInputStream in;
     private ObjectOutputStream out;
-    private int portNumber = 20000;
+    //private int portNumber = 20000;
+
+
+    private static int agentPortNumber = 20000;
+    private HashMap<String, SocketInfo> agentBiddingKeyToSocketInfo;
+    private HashMap<String, SocketInfo> ahKeyToSocketInfo;
 
     private static boolean isBank;
     private static String staticAcHostname = "127.0.0.1";
@@ -39,12 +45,14 @@ public class Server
         this(isBank, null, null);
     }
 
-    // TODO: This design of passing in a label might not be the best way to do this.... (Getting registered agents/ah's)
     public Server(boolean isBank, Label lblClientsList, Label lblConnectionInfo)
     {
         this.isBank = isBank;
         this.lblClientsList = lblClientsList;
         this.lblConnectionInfo = lblConnectionInfo;
+
+        agentBiddingKeyToSocketInfo = new HashMap<>();
+        ahKeyToSocketInfo = new HashMap<>();
 
         // If we didn't originate from the command line then spin up a thread to update the clients label
         if (lblClientsList != null) updateClientsLabel();
@@ -242,8 +250,6 @@ public class Server
         Platform.runLater(() -> lblConnectionInfo.setText(Main.returnNetworkInfo() + " Port: " + Main.auctionCentralPort));
         System.out.println("Auction Central online.");
 
-
-
         while (true)
         {
 
@@ -264,15 +270,22 @@ public class Server
             {
                 System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getName());
                 String biddingKey = auctionCentral.registerAgent(incomingMessage.getName(), incomingMessage.getBankKey());
-                incomingMessage.setPortNumber(portNumber++);
+
                 incomingMessage.setBiddingKey(biddingKey);
+
+                // TODO: ON DEREGISTER, REMOVE AGENT AND AH
+                // Set the agent into the socket info map...
+                incomingMessage.setPortNumber(agentPortNumber);
+                agentBiddingKeyToSocketInfo.put(biddingKey, new SocketInfo(incomingMessage.getHostname(), agentPortNumber));
+                agentPortNumber++;
             }
             // Registering a new AH with AC
             else if (incomingMessage.getType() == MessageType.REGISTER_AH)
             {
-                System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getAuctionHouse().getName());
-                auctionCentral.registerAuctionHouse(incomingMessage.getAuctionHouse());
-                //todo: assign and save ports, I believe.
+                AuctionHouse ahToRegister = incomingMessage.getAuctionHouse();
+                System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: " + ahToRegister.getName());
+                auctionCentral.registerAuctionHouse(ahToRegister);
+                ahKeyToSocketInfo.put(ahToRegister.getAhKey(), new SocketInfo(incomingMessage.getHostname(), ahToRegister.getPublicID()));
             }
             //if place bid is null then its from agent, anything else is response from auctionhouse
             else if (incomingMessage.getType() == MessageType.PLACE_BID)
@@ -280,28 +293,33 @@ public class Server
                 if (incomingMessage.getBidResponse() == null)
                 {
                     System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: bidKey-" + incomingMessage.getBiddingKey());
-                    Socket auctionHouseSocket = new Socket(staticAcHostname, 6000); // TODO: Hard coded port
+
+                    // Open a new connection to the auction house that has the item to bid on.
+                    SocketInfo ahSocketInfo = ahKeyToSocketInfo.get(incomingMessage.getItem().getAhID());
+                    Socket auctionHouseSocket = new Socket(ahSocketInfo.HOSTNAME, ahSocketInfo.PORT);
 
                     out = new ObjectOutputStream(auctionHouseSocket.getOutputStream());
                     out.flush();
                     in = new ObjectInputStream(auctionHouseSocket.getInputStream());
 
-                    System.out.println("SEND_MSG: " + incomingMessage.getType() + " - TO: AH-ID:" + incomingMessage.getItem().getAhID());
+                    System.out.println("SEND_MSG: " + incomingMessage.getType() + " - TO: AH-ID: " + incomingMessage.getItem().getAhID());
                     out.writeObject(incomingMessage);
 
                     incomingMessage = (Message) in.readObject();
-                    System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: AH-ID:" + incomingMessage.getItem().getAhID());
+                    System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: AH-ID: " + incomingMessage.getItem().getAhID());
 
                     System.out.println("BID RESPONSE FROM AH: " + incomingMessage.getBidResponse());
 
                     if (incomingMessage.getBidResponse() == BidResponse.REJECT)
                     {
                         centralOut.writeObject(incomingMessage);
-                        System.out.println("AC says you didn't have enough");
+                        System.out.println("Auction House " + incomingMessage.getItem().getAhID() + " says this isn't a valid bid.");
 
-                        Socket clientSocket = new Socket("127.0.0.1", 20000); // TODO: Hard coded port
-                        out = new ObjectOutputStream(clientSocket.getOutputStream());
-                        in = new ObjectInputStream(clientSocket.getInputStream());
+                        // Open new connection to send the bid rejection to the agent.
+                        SocketInfo agentSocketInfo = agentBiddingKeyToSocketInfo.get(incomingMessage.getBiddingKey());
+                        Socket agentSocket = new Socket(agentSocketInfo.HOSTNAME, agentSocketInfo.PORT);
+                        out = new ObjectOutputStream(agentSocket.getOutputStream());
+                        in = new ObjectInputStream(agentSocket.getInputStream());
 
                         out.writeObject(incomingMessage);
 
@@ -398,11 +416,11 @@ public class Server
 
     }
 
-    private int getPortNumber()
-    {
-        ++portNumber;
-        return portNumber;
-    }
+//    private int getPortNumber()
+//    {
+//        ++portNumber;
+//        return portNumber;
+//    }
 
     /**
      * setPeerConnection()

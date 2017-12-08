@@ -11,13 +11,12 @@ public class Agent
     private String biddingKey;
     private double accountBalance;
     private int portNumber;
-    private boolean isRegistered;
 
 
     public Agent(String name)
     {
+        auctionHouses = new ArrayList<>();
         this.name = name;
-        isRegistered = false;
     }
 
     public void setAccountInfo(Account account)
@@ -85,11 +84,5 @@ public class Agent
     public void setPortNumber(int portNumber) {
         this.portNumber = portNumber;
     }
-    public boolean isRegistered() {
-        return isRegistered;
-    }
 
-    public void setRegistered(boolean registered) {
-        isRegistered = registered;
-    }
 }
