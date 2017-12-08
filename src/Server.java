@@ -307,6 +307,7 @@ public class Server
 
                             incomingMessage.setBankKey(auctionCentral.getBiddingKeyToBankKey().get(incomingMessage.getBiddingKey()));
                             outToBank.writeObject(incomingMessage);
+                            System.out.println("\nSEND_MSG: PLACE_BID - TO: Bank");
 
 
                             Message bankResponse = (Message) inFromBank.readObject();
@@ -315,7 +316,7 @@ public class Server
                             if (bankResponse.getBidResponse() == BidResponse.ACCEPT)
                             {
                                 //go to auction house
-                                System.out.println("succesful bid that needs to go to auction house");
+                                System.out.println("successful bid that needs to go to auction house");
                             }
                             else if (bankResponse.getBidResponse() == BidResponse.REJECT)
                             {
@@ -323,6 +324,8 @@ public class Server
                                 System.out.println("you didn't have enough money");
                             }
                             centralOut.writeObject(bankResponse);
+
+                            // TODO: centralIn, centralOut agent->AC. in, out ah->AC
 
                         }
 
