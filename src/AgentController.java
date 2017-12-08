@@ -86,21 +86,9 @@ public class AgentController
         //boughtItems.add(new Item("Mountain Air", "MountainAir.png", 30.00, 2));
         //addImageToGUI("MountainAir.png", "Mountain Air");
 
-        // TODO: Jacob, unleash this thread on the wild when clientListening is ready...
-//        Thread newThread = new Thread(new Runnable() {
-//            @Override
-//            public void run()
-//            {
-//                System.out.println(Client.getAcConnected());
-//                // If we already got assigned our port from the AC
-//                if(Client.getAcConnected())
-//                {
-//                    System.out.println("Inside loop" + Client.getAcConnected());
-//                    client.clientListening();
-//                }
-//            }
-//        });
-//        newThread.start();
+
+
+
         agent = client.getAgent();
         lvItems.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -139,7 +127,7 @@ public class AgentController
                     lblBalance.setText(String.valueOf(agent.getAccountBalance()));
                 });
             }
-        }, 0, 250, TimeUnit.MILLISECONDS);
+        }, 0, 150, TimeUnit.MILLISECONDS);
     }
 
     /**
