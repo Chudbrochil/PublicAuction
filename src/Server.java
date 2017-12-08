@@ -279,13 +279,12 @@ public class Server
                         out.flush();
                         in = new ObjectInputStream(auctionHouseSocket.getInputStream());
 
-                        System.out.println("SEND_MSG: " + incomingMessage.getType() + " - TO: AH-ID" + incomingMessage.getItem().getAhID());
+                        System.out.println("\nSEND_MSG: " + incomingMessage.getType() + " - TO: AH-ID" + incomingMessage.getItem().getAhID());
                         out.writeObject(incomingMessage);
 
 
                         incomingMessage = (Message) in.readObject();
-                        System.out.println("message came back from AH");
-                        System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: AH-ID:" + incomingMessage.getItem().getAhID());
+                        System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: AH-ID:" + incomingMessage.getItem().getAhID());
 
                         if (incomingMessage.getBidResponse() == BidResponse.REJECT)
                         {
@@ -314,7 +313,7 @@ public class Server
                             Message bankResponse = (Message) inFromBank.readObject();
                             bankResponse.setBiddingKey(auctionCentral.getBankKeyToBiddingKey().get(incomingMessage.getBankKey()));
 
-                            System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
+                            System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: Bank");
 
                             if (bankResponse.getBidResponse() == BidResponse.ACCEPT)
                             {

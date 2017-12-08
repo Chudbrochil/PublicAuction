@@ -12,6 +12,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
@@ -109,8 +110,9 @@ public class AgentController
                     // If the client isn't already listening, but is connected to the AC, start listening for msg's.
                     if(!Client.isListening() && Client.getAcConnected())
                     {
-                        System.out.println("Listening.");
-                        client.clientListening(); // This will listen for messages forever
+                        try { client.clientListening(); }// This will listen for messages forever
+                        catch(IOException e) { System.out.println(e.getMessage()); }
+                        catch(ClassNotFoundException e) { System.out.println(e.getMessage()); }
                     }
                 }
             }

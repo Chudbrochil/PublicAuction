@@ -4,6 +4,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -59,8 +60,9 @@ public class AuctionHouseController
                     // If the client isn't already listening, but is connected to the AC, start listening for msg's.
                     if(!Client.isListening() && Client.getAcConnected())
                     {
-                        System.out.println("Listening");
-                        client.clientListening(); // This will listen for messages forever
+                        try { client.clientListening(); }// This will listen for messages forever
+                        catch(IOException e) { System.out.println(e.getMessage()); }
+                        catch(ClassNotFoundException e) { System.out.println(e.getMessage()); }
                     }
                 }
             }

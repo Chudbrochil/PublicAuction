@@ -468,124 +468,92 @@ public class Client
 //        }
 //    }
 
-    public void clientListening()
+    public void clientListening() throws IOException, ClassNotFoundException
     {
         isListening = true;
         if (isAgent)
         {
-            try
-            {
-
-//                agent.setPortNumber(20000);
-
-                client = new ServerSocket(agent.getPortNumber());
-                taAgentOutput.appendText("Agent listening on port " + getAgent().getPortNumber() + "\n");
-                pipeConnection = client.accept();
-                out = new ObjectOutputStream(pipeConnection.getOutputStream());
-                in = new ObjectInputStream(pipeConnection.getInputStream());
-                while (true)
-                {
-
-
-                    Message incomingMessage = (Message) in.readObject();
-                    System.out.println("you got a message");
-                    System.out.println(incomingMessage.getType());
-                    if (incomingMessage.getType() == MessageType.PLACE_HOLD)
-                    {
-                        System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: "); //TODO: Do we have a name in this msg?
-                        if (incomingMessage.getBidResponse() == BidResponse.REJECT)
-                        {
-                            System.out.println("You didn't have enough money");
-                        }
-                        else if (incomingMessage.getBidResponse() == BidResponse.ACCEPT)
-                        {
-                            System.out.println("Good job you blew your money");
-                        }
-                    }
-                    else if (incomingMessage.getType() == MessageType.ITEM_SOLD)
-                    {
-                        System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getItem().getCurrentHighestBidderID());
-                        System.out.println("You won");
-                    }
-                    else if (incomingMessage.getType() == MessageType.PLACE_BID && incomingMessage.getBidResponse() == BidResponse.REJECT)
-                    {
-                        System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
-                        System.out.println("Your bid was rejected");
-                    }
-                }
-
-
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
+            client = new ServerSocket(agent.getPortNumber());
+            taAgentOutput.appendText("Agent listening on port " + getAgent().getPortNumber() + "\n");
         }
-        //client is auction house
         else
         {
-            try
+            client = new ServerSocket(auctionHouse.getPublicID());
+            System.out.println(auctionHouse.getName() + " listening on port " + auctionHouse.getPublicID());
+        }
+
+        pipeConnection = client.accept();
+        out = new ObjectOutputStream(pipeConnection.getOutputStream());
+        in = new ObjectInputStream(pipeConnection.getInputStream());
+
+        while(true)
+        {
+            Message incomingMessage = (Message) in.readObject();
+            // Agent listening
+            if(isAgent)
             {
-                System.out.println(auctionHouse.getName() + " listening on port " + auctionHouse.getPublicID());
-                client = new ServerSocket(auctionHouse.getPublicID());
-                pipeConnection = client.accept();
-                
-
-                while (true)
+                if (incomingMessage.getType() == MessageType.PLACE_HOLD)
                 {
-
-                    out = new ObjectOutputStream(pipeConnection.getOutputStream());
-                    out.flush();
-                    in = new ObjectInputStream(pipeConnection.getInputStream());
-
-
-                    Message incomingMessage = (Message) in.readObject();
-                    System.out.println(incomingMessage.getType());
-
-                    System.out.println("Auction House just got a message.");
-
-                    if (incomingMessage.getType() == MessageType.PLACE_BID)
+                    System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: "); //TODO: Do we have a name in this msg?
+                    if (incomingMessage.getBidResponse() == BidResponse.REJECT)
                     {
-                        System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
-                        if (auctionHouse.placeBid(incomingMessage.getBiddingKey(), incomingMessage.getBidAmount(), incomingMessage.getItemID(), incomingMessage.getItem().getAhID()))
-                        {
-                            incomingMessage.setBidResponse(BidResponse.ACCEPT);
-                        }
-                        else
-                        {
-                            incomingMessage.setBidResponse(BidResponse.REJECT);
-                        }
-                        out.writeObject(incomingMessage);
+                        System.out.println("You didn't have enough money");
                     }
-                    else if (incomingMessage.getType() == MessageType.PLACE_HOLD)
+                    else if (incomingMessage.getBidResponse() == BidResponse.ACCEPT)
                     {
-                        System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
-                        if (incomingMessage.getBidResponse() == BidResponse.ACCEPT)
-                        {
-                            acceptBid(incomingMessage);
-                            
-                            //All other code moved into above method.
-
-                        }
-                        else if (incomingMessage.getBidResponse() == BidResponse.REJECT)
-                        {
-                            System.out.println("Your bid was rejected due to lack of funds."); //TODO: Make this a better println
-
-                        }
+                        System.out.println("Good job you blew your money");
                     }
-
-
+                }
+                else if (incomingMessage.getType() == MessageType.ITEM_SOLD)
+                {
+                    System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getItem().getCurrentHighestBidderID());
+                    System.out.println("You won");
+                }
+                else if (incomingMessage.getType() == MessageType.PLACE_BID && incomingMessage.getBidResponse() == BidResponse.REJECT)
+                {
+                    System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
+                    System.out.println("Your bid was rejected");
                 }
             }
-            catch (Exception e)
+            // Auction House listening
+            else
             {
-                e.printStackTrace();
-                e.getLocalizedMessage();
-                e.getMessage();
+                System.out.println("Auction House just got a message.");
+
+                if (incomingMessage.getType() == MessageType.PLACE_BID)
+                {
+                    System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
+                    if (auctionHouse.placeBid(incomingMessage.getBiddingKey(), incomingMessage.getBidAmount(), incomingMessage.getItemID(), incomingMessage.getItem().getAhID()))
+                    {
+                        incomingMessage.setBidResponse(BidResponse.ACCEPT);
+                    }
+                    else
+                    {
+                        incomingMessage.setBidResponse(BidResponse.REJECT);
+                    }
+                    out.writeObject(incomingMessage);
+                }
+                else if (incomingMessage.getType() == MessageType.PLACE_HOLD)
+                {
+                    System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
+                    if (incomingMessage.getBidResponse() == BidResponse.ACCEPT)
+                    {
+                        acceptBid(incomingMessage);
+
+                        //All other code moved into above method.
+
+                    }
+                    else if (incomingMessage.getBidResponse() == BidResponse.REJECT)
+                    {
+                        System.out.println("Your bid was rejected due to lack of funds."); //TODO: Make this a better println
+
+                    }
+                }
             }
-
-
         }
+
+
+
     }
     
     /**
