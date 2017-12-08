@@ -77,6 +77,8 @@ public class AgentController
         client = new Client(true, Main.askName(), taAgentOutput);
         boughtItems = new ArrayList<>();
 
+        boughtItems.add(new Item("Dust Bunny", "DustBunny.png", 0.0));
+
 
         // Initializing the user's GUI with a dust bunny in their inventory
         addImageToGUI("DustBunny.png", "Dust Bunny");

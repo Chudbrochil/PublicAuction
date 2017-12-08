@@ -486,6 +486,7 @@ public class Client
         }
         else
         {
+            System.out.println("My port is: " + auctionHouse.getPublicID()); // TODO: Remove this.
             client = new ServerSocket(auctionHouse.getPublicID());
             System.out.println(auctionHouse.getName() + " listening on port " + auctionHouse.getPublicID());
         }
