@@ -618,9 +618,9 @@ public class Client
      */
     private void sendOutBidMessage(double prevBidAmount, String prevBidder, Item item) throws IOException
     {
-        Message outbidMessage = new Message();
+        //Message outbidMessage = new Message();
         
-        out.writeObject(outbidMessage);
+        //out.writeObject(outbidMessage);
     }
     
     /**
