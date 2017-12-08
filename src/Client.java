@@ -506,22 +506,22 @@ public class Client
                     System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
                     if (incomingMessage.getBidResponse() == BidResponse.REJECT)
                     {
-                        System.out.println("You didn't have enough money");
+                        System.out.println("You didn't have $"+incomingMessage.getBidAmount()+" for "+incomingMessage.getItem().getItemName());
                     }
                     else if (incomingMessage.getBidResponse() == BidResponse.ACCEPT)
                     {
-                        System.out.println("Good job you blew your money");
+                        System.out.println("Good job you blew $"+incomingMessage.getBidAmount()+"on "+incomingMessage.getItem().getItemName());
                     }
                 }
                 else if (incomingMessage.getType() == MessageType.ITEM_SOLD)
                 {
                     System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getItem().getCurrentHighestBidderID());
-                    System.out.println("You won");
+                    System.out.println("You won "+incomingMessage.getItem().getItemName()+" for "+incomingMessage.getBidAmount());
                 }
                 else if (incomingMessage.getType() == MessageType.PLACE_BID && incomingMessage.getBidResponse() == BidResponse.REJECT)
                 {
                     System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
-                    System.out.println("Your bid was rejected from AH:" + incomingMessage.getItem().getAhID());
+                    System.out.println("Your bid on "+incomingMessage.getItem().getItemName()+" was rejected from AH:" + incomingMessage.getItem().getAhID());
                 }
             }
             // Auction House listening
@@ -566,6 +566,7 @@ public class Client
     }
     
     /**
+     * acceptBid()
      * @param incomingMessage Message of type PLACE_HOLD with BidResponse.ACCEPT.
      * @throws IOException if the out stream throws an exception when writing to it.
      *
@@ -579,7 +580,6 @@ public class Client
             @Override
             public void handle(ActionEvent arg0)
             {
-                // This is setting the member variable of client from the auction house to eventually send to auction central
                 String itemSoldReport = auctionHouse.itemSold(incomingMessage.getItemID());
                 System.out.println("Item Sold Report: " + itemSoldReport);
                 setSoldItem(auctionHouse.getSoldItem());
@@ -588,8 +588,7 @@ public class Client
                 //todo: close AH if it has no more items.
                 boolean ahHasItems = auctionHouse.hasItems();
                 
-                // TODO: Jacob, I'm not sure if this is properly implemented to send a message to AC, I don't think it is.
-                // Use the newly made soldItem to send the itemSold msg...
+                //todo: notify winner.
             }
         });
         
@@ -598,11 +597,25 @@ public class Client
             incomingMessage.getItemID(), timer);
         if(prevBidder != null)
         {
-            //todo: use prevBidAmount and prevBidder to send OUT_BID message
+            
         }
         
         //Comment out this line if you want to run testTimer()
         out.writeObject(incomingMessage);
+    }
+    
+    /**
+     *
+     * @param prevBidAmount The amount of the bid that is now null--needed by the bank to release the right amount from the hold.
+     * @param prevBidder The biddingID of the bidder who should be notified that their bid has been passed.
+     * @param item The item on which the bid was outbid.
+     * @throws IOException Thrown from writing to the out port. Caught by the larger body method.
+     */
+    private void sendOutBidMessage(double prevBidAmount, String prevBidder, Item item) throws IOException
+    {
+        Message outbidMessage = new Message();
+        
+        out.writeObject(outbidMessage);
     }
     
     /**
