@@ -55,7 +55,7 @@ public class Main extends Application
         {
             Parent root = FXMLLoader.load(getClass().getResource("AgentUI.fxml"));
             primaryStage.setTitle("Agent");
-            primaryStage.setScene(new Scene(root, 700, 600));
+            primaryStage.setScene(new Scene(root, 700, 500));
             isClient = true;
         }
         else if(result.get().equals("Auction House"))

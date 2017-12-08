@@ -10,6 +10,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,7 +53,9 @@ public class AgentController
     private TextField tfBidAmount;
 
     @FXML
-    private ImageView ivTest;
+    private GridPane gpBoughtItems;
+
+    private ArrayList<Item> boughtItems;
 
     Item currentSelectedItem;
 
@@ -71,9 +74,17 @@ public class AgentController
     {
         itemsAsList = new ArrayList<>();
         client = new Client(true, Main.askName(), taAgentOutput);
+        boughtItems = new ArrayList<>();
 
 
-        ivTest.setImage(new Image((getClass().getResource("DustBunny.png")).toExternalForm())); // TODO: Won't work in a jar.
+        // Initializing the user's GUI with a dust bunny in their inventory
+        addImageToGUI("DustBunny.png", "Dust Bunny");
+
+
+        // Testing having a "bought item"
+        // TODO: Fix sizing issue where images are placed like spots away
+        //boughtItems.add(new Item("Mountain Air", "MountainAir.png", 30.00, 2));
+        //addImageToGUI("MountainAir.png", "Mountain Air");
 
         // TODO: Jacob, unleash this thread on the wild when clientListening is ready...
         Thread newThread = new Thread(new Runnable() {
@@ -229,6 +240,23 @@ public class AgentController
     private void btnConnectAC()
     {
         client.setAcHostname(tfAuctionCentralIP.getText()); // TODO: handle bad input?
+    }
+
+    /**
+     * addImageToGUI()
+     *
+     * Useful for adding images to GUI when an agent buys an item.
+     *
+     * @param imgPath The path to the image we are adding, usually in the item.
+     */
+    private void addImageToGUI(String imgPath, String itemName)
+    {
+        Image imageToAdd = new Image(getClass().getResource(imgPath).toExternalForm());
+        ImageView imgView = new ImageView(imageToAdd);
+        System.out.println(boughtItems.size());
+        int row = boughtItems.size() / 10;
+        int column = boughtItems.size() % 10;
+        gpBoughtItems.add(imgView, column, row);
     }
 
 
