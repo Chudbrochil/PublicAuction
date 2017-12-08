@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
@@ -70,6 +71,9 @@ public class AgentController
     {
         itemsAsList = new ArrayList<>();
         client = new Client(true, Main.askName(), taAgentOutput);
+
+
+        ivTest.setImage(new Image((getClass().getResource("DustBunny.png")).toExternalForm())); // TODO: Won't work in a jar.
 
         // TODO: Jacob, unleash this thread on the wild when clientListening is ready...
         Thread newThread = new Thread(new Runnable() {
@@ -194,11 +198,19 @@ public class AgentController
      * Handler for user clicking that they want to place a bid.
      */
     @FXML
-    private void btnPlaceBid() // TODO: handle bad input?
+    private void btnPlaceBid()
     {
-        Double bidAmount = Double.valueOf(tfBidAmount.getText());
-        taAgentOutput.appendText("Placing bid for " + bidAmount + " on item:\n" + currentSelectedItem.toString() + "\n");
-        client.placeAHBid(bidAmount, agent.getBiddingKey(), currentSelectedItem);
+        if(currentSelectedItem != null)
+        {
+            Double bidAmount = Double.valueOf(tfBidAmount.getText());
+            taAgentOutput.appendText("Placing bid for " + bidAmount + " on item:\n" + currentSelectedItem.toString() + "\n");
+            client.placeAHBid(bidAmount, agent.getBiddingKey(), currentSelectedItem);
+        }
+        else
+        {
+            taAgentOutput.appendText("Please select an item before placing a bid.\n");
+        }
+
     }
 
     @FXML

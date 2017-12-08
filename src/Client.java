@@ -645,8 +645,8 @@ public class Client
      */
     public static void unsubscribe() throws IOException
     {
-        String name;
-        String clientKey;
+        String name = "";
+        String clientKey = "";
         ObjectOutputStream out;
 
         // Unsubscribing the agent from the bank.
@@ -658,7 +658,7 @@ public class Client
             out = new ObjectOutputStream(staticBankSocket.getOutputStream());
             out.writeObject(new Message(MessageType.UNREGISTER, isAgent, clientKey, name));
         }
-        else
+        else if(!isAgent)
         {
             name = auctionHouse.getName();
             clientKey = auctionHouse.getAhKey();
