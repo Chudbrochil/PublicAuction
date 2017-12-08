@@ -76,8 +76,10 @@ public class AgentController
             @Override
             public void run()
             {
-                client.clientListening();
-            }
+                if(client.getAgent().isRegistered()) {
+                    client.clientListening();
+                }
+                }
         });
         newThread.start();
         agent = client.getAgent();

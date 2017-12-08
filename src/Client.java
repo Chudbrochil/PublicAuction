@@ -28,6 +28,7 @@ public class Client
     private Socket pipeConnection;
     private Item soldItem;
 
+
     // These need to be static so that we can eventually terminate our connection to the AC and Bank
     private static Agent agent;
     private static AuctionHouse auctionHouse;
@@ -48,6 +49,8 @@ public class Client
     public Client(boolean isAgent, String name)
     {
         this(isAgent, name, null);
+
+
     }
 
     /**
@@ -158,8 +161,10 @@ public class Client
     {
         out = new ObjectOutputStream(auctionCentralSocket.getOutputStream());
         in = new ObjectInputStream(auctionCentralSocket.getInputStream());
-        out.writeObject(new Message(MessageType.REGISTER_AGENT, agent.getName(), agent.getBankKey(), ""));
+        out.writeObject(new Message(MessageType.REGISTER_AGENT, agent.getName(), agent.getBankKey(), "", 0));
         Message response = (Message) in.readObject();
+        agent.setPortNumber(response.getPortNumber());
+        agent.setRegistered(true);
         agent.setBiddingKey(response.getBiddingKey());
         taAgentOutput.appendText("Bidding Key: " + response.getBiddingKey() + "\n");
         acConnected = true;
@@ -468,6 +473,7 @@ public class Client
                 agent.setPortNumber(20000);
 
                 client = new ServerSocket(20000);
+                System.out.println("Client connecting on port " + getAgent().getPortNumber());
                 while (true)
                 {
                     pipeConnection = client.accept();
@@ -697,4 +703,5 @@ public class Client
     {
         this.soldItem = soldItem;
     }
+
 }

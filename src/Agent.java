@@ -11,11 +11,13 @@ public class Agent
     private String biddingKey;
     private double accountBalance;
     private int portNumber;
+    private boolean isRegistered;
 
 
     public Agent(String name)
     {
         this.name = name;
+        isRegistered = false;
     }
 
     public void setAccountInfo(Account account)
@@ -23,6 +25,7 @@ public class Agent
         accountNum = account.getAccountNum();
         accountBalance = account.getAccountBalance();
         bankKey = account.getBankKey();
+
     }
 
     public void setBankKey(String bankKey)
@@ -81,5 +84,12 @@ public class Agent
 
     public void setPortNumber(int portNumber) {
         this.portNumber = portNumber;
+    }
+    public boolean isRegistered() {
+        return isRegistered;
+    }
+
+    public void setRegistered(boolean registered) {
+        isRegistered = registered;
     }
 }

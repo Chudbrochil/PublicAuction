@@ -19,6 +19,7 @@ public class Server
     private boolean isBank;
     private ObjectInputStream in;
     private ObjectOutputStream out;
+    private int portNumber = 20000;
     /**
      * Server()
      *
@@ -237,7 +238,7 @@ public class Server
                 {
                     System.out.println("\nMESSAGE: REGISTER_AGENT - FROM: " + incomingMessage.getName());
                     String biddingKey = auctionCentral.registerAgent(incomingMessage.getName(), incomingMessage.getBankKey());
-
+                    incomingMessage.setPortNumber(getPortNumber());
                     incomingMessage.setBiddingKey(biddingKey);
                 }
                 // Registering a new AH with AC
@@ -365,6 +366,11 @@ public class Server
             }
 
         }
+    }
+
+    private int getPortNumber(){
+        ++portNumber;
+        return portNumber;
     }
 
     public String getAgentsAsString()

@@ -38,6 +38,7 @@ public class AuctionHouseController
             {
                 client = new Client(false, name, lblAuctionHouseList);
                 //client.testTimer();
+
                 client.clientListening();
             }
 
