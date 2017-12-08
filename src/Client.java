@@ -593,11 +593,14 @@ public class Client
             public void handle(ActionEvent arg0)
             {
                 // This is setting the member variable of client from the auction house to eventually send to auction central
-                //todo: close AH if it has no more items.
-                boolean ahStillHasItems = auctionHouse.itemSold(incomingMessage.getItemID());
+                String itemSoldReport = auctionHouse.itemSold(incomingMessage.getItemID());
+                System.out.println(itemSoldReport);
                 setSoldItem(auctionHouse.getSoldItem());
-                System.out.println("Timer for "+incomingMessage.getItem().toString()+" just went off!");
-            
+                //System.out.println("Timer for "+incomingMessage.getItem().toString()+" just went off!");
+    
+                //todo: close AH if it has no more items.
+                boolean ahHasItems = auctionHouse.hasItems();
+                
                 // TODO: Jacob, I'm not sure if this is properly implemented to send a message to AC, I don't think it is.
                 // Use the newly made soldItem to send the itemSold msg...
             }

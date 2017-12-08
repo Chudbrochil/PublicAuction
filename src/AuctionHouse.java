@@ -54,23 +54,6 @@ public class AuctionHouse implements Serializable
         itemTimers = new HashMap<>();
         populateItems();
     }
-
-    /**
-     * populateItems()
-     *
-     * This method fills the auctionHouse with 3 random items. A given item will be initialized with a -1 for it's
-     * ahID and will be initialized to an actual valid ahID after the auction house registers with auction central.
-     */
-    public void populateItems()
-    {
-        for (int i = 0; i < 3; ++i)
-        {
-            Item item = ItemDB.getRandomItem();
-            item.setItemID(itemCounter);
-            items.put(itemCounter, item);
-            itemCounter++;
-        }
-    }
     
     /**
      * getItemsAsString()
@@ -110,12 +93,21 @@ public class AuctionHouse implements Serializable
             itemsAsList.get(i).setAhID(this.publicID);
         }
     }
-
+    
+    /**
+     * getPublicID
+     * @return get this AuctionHouse's publicID as an int.
+     * Also used as the Port Number.
+     */
     public int getPublicID()
     {
         return publicID;
     }
-
+    
+    /**
+     * getName()
+     * @return name as a String
+     */
     public String getName()
     {
         return name;
@@ -211,17 +203,73 @@ public class AuctionHouse implements Serializable
      * itemSold()
      * @param itemID    ID of the item stored in the timer that is called when the item is sold.
      * Called when a 'winning' item timer goes off.
-     * Sets the soldItem to the item of the itemID. Does this so that Client can retrieve it by calling getSoldItem.
-     * @return true if AuctionHouse still has items
-     *          false if AuctionHouse is out of items and needs to close.
+     * Sets the soldItem to the item of the itemID. Does this so that Client can retrieve it by calling getSoldItem().
+     * @return
      */
-    public boolean itemSold(int itemID)
+    public String itemSold(int itemID)
     {
         Item itemSold = items.remove(itemID);
         itemTimers.remove(itemID);
         this.soldItem = itemSold;
+        return "Item "+itemSold.getItemName()+" has been sold for $"+itemSold.getCurrentBid()+"!";
+    }
+    
+    /**
+     * hasItems()
+     * @return true if AuctionHouse still has items
+     *         false if AuctionHouse is out of items and needs to close.
+     */
+    public boolean hasItems()
+    {
         return !items.isEmpty();
-        //return "Item "+itemSold.getItemName()+" has been sold for $"+itemSold.getCurrentBid()+"!";
+    }
+    
+    /**
+     * getSoldItem()
+     * @return the item that was sold by the timer that just went off.
+     * (set by calling itemSold.)
+     */
+    public Item getSoldItem()
+    {
+        Item sold = soldItem;
+        soldItem = null;
+        return sold;
+    }
+    
+    /**
+     * getAhKey()
+     * @return this AuctionHouse's secret key.
+     */
+    public String getAhKey()
+    {
+        return ahKey;
+    }
+    
+    /**
+     * setAhKey()
+     * @param ahKey A private key this AuctionHouse can use to be secret.
+     */
+    public void setAhKey(String ahKey)
+    {
+        this.ahKey = ahKey;
+    }
+    
+    
+    /**
+     * populateItems()
+     *
+     * This method fills the auctionHouse with 3 random items. A given item will be initialized with a -1 for it's
+     * ahID and will be initialized to an actual valid ahID after the auction house registers with auction central.
+     */
+    private void populateItems()
+    {
+        for (int i = 0; i < 3; ++i)
+        {
+            Item item = ItemDB.getRandomItem();
+            item.setItemID(itemCounter);
+            items.put(itemCounter, item);
+            itemCounter++;
+        }
     }
     
     /**
@@ -237,23 +285,6 @@ public class AuctionHouse implements Serializable
         }
         itemTimers.put(itemID, timer);
         timer.playFromStart();
-    }
-
-    public Item getSoldItem()
-    {
-        Item sold = soldItem;
-        soldItem = null;
-        return sold;
-    }
-
-    public String getAhKey()
-    {
-        return ahKey;
-    }
-
-    public void setAhKey(String ahKey)
-    {
-        this.ahKey = ahKey;
     }
 
     /**
