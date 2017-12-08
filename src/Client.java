@@ -584,17 +584,6 @@ public class Client
      */
     private void acceptBid(Message incomingMessage) throws IOException
     {
-        //out.writeObject(new Message(MessageType.PLACE_BID, biddingKey, bidAmount, item));
-    
-        // TODO: This code is a bit wild, I'm not sure if this works....
-    
-        // The keyvalue only consumes things that are "writable", so we use a readonlyint?
-//                            ReadOnlyIntegerWrapper theWrappedInt = new ReadOnlyIntegerWrapper(incomingMessage.getItem().getItemID());
-//
-//                            final KeyFrame keyFrame = new KeyFrame(Duration.hours(100), new KeyValue(theWrappedInt, incomingMessage.getItem().getItemID()));
-//
-//                            timeline.getKeyFrames().add(keyFrame);
-    
         AuctionTimer timer = new AuctionTimer(incomingMessage.getItem());
         timer.setOnFinished(new EventHandler<ActionEvent>()
         {
@@ -621,8 +610,13 @@ public class Client
     }
     
     /**
+     * testTimer()
      * Run to test whether the timers work or not. Creates a message that is phoey that causes Client to act as though AH just received a
      * valid bid for its item with ID 0. Sets the timer. It should go off and possibly print a message.
+     *
+     * NOTE: You will need to comment out any lines that send outgoing messages in acceptBid() for this test method to work.
+     *
+     * For testing only.
      */
     public void testTimer()
     {

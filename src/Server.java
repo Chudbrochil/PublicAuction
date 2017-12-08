@@ -16,10 +16,18 @@ public class Server
     private Bank bank;
     private AuctionCentral auctionCentral;
     private Label lblClientsList, lblConnectionInfo;
-    private boolean isBank;
+
     private ObjectInputStream in;
     private ObjectOutputStream out;
     private int portNumber = 20000;
+
+    private static boolean isBank;
+    private static String staticAcHostname = "127.0.0.1";
+    private static String staticBankHostname = "127.0.0.1";
+    private static boolean bankConnectedToAC;
+    private static boolean acConnectedToBank;
+
+
     /**
      * Server()
      *
@@ -238,8 +246,7 @@ public class Server
                 {
                     System.out.println("\nMESSAGE: REGISTER_AGENT - FROM: " + incomingMessage.getName());
                     String biddingKey = auctionCentral.registerAgent(incomingMessage.getName(), incomingMessage.getBankKey());
-                    incomingMessage.setPortNumber(getPortNumber());
-                    System.out.println("port number is now " + incomingMessage.getPortNumber());
+
                     incomingMessage.setBiddingKey(biddingKey);
                 }
                 // Registering a new AH with AC
@@ -273,7 +280,7 @@ public class Server
                             centralOut.writeObject(incomingMessage);
                             System.out.println("AC says you didn't have enough");
 
-                            Socket clientSocket = new Socket("127.0.0.1", 20001);
+                            Socket clientSocket = new Socket("127.0.0.1", 20000);
                             out = new ObjectOutputStream(clientSocket.getOutputStream());
                             in = new ObjectInputStream(clientSocket.getInputStream());
 
@@ -375,8 +382,27 @@ public class Server
     }
 
     public String getAgentsAsString()
+    /**
+     * setPeerConnection()
+     * <p>
+     * Connects a bank to an AC or an AC to a bank.
+     *
+     * @param peerHostname Hostname we are connecting to.
+     */
+    public static void setPeerConnection(String peerHostname)
     {
-        return bank.getAgentsAsString();
+        if (isBank)
+        {
+            staticAcHostname = peerHostname;
+            bankConnectedToAC = true;
+            System.out.println("Initializing Auction Central to: " + staticAcHostname + ":" + Main.auctionCentralPort);
+        }
+        else
+        {
+            staticBankHostname = peerHostname;
+            acConnectedToBank = true;
+            System.out.println("Initializing Bank connection to: " + staticBankHostname + ":" + Main.bankPort);
+        }
     }
 
     /**
