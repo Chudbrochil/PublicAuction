@@ -415,7 +415,7 @@ public class Client
     }
 
     // TODO: Do we care if the bank is connected?
-    public boolean getBankConnected()
+    public static boolean getBankConnected()
     {
         return bankConnected;
     }
@@ -425,7 +425,7 @@ public class Client
      *
      * @return Boolean representing whether this client has connected with the AC already.
      */
-    public boolean getAcConnected()
+    public static boolean getAcConnected()
     {
         return acConnected;
     }
@@ -691,4 +691,5 @@ public class Client
     {
         this.soldItem = soldItem;
     }
+
 }

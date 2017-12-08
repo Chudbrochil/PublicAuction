@@ -76,7 +76,12 @@ public class AgentController
             @Override
             public void run()
             {
-                client.clientListening();
+                // If we already got assigned our port from the AC
+                if(Client.getAcConnected())
+                {
+                    client.clientListening();
+                }
+
             }
         });
         newThread.start();

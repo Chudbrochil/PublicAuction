@@ -38,6 +38,10 @@ public class AuctionHouseController
             {
                 client = new Client(false, name, lblAuctionHouseList);
                 //client.testTimer();
+//                if(Client.getAcConnected())
+//                {
+//                    client.clientListening();
+//                }
                 client.clientListening();
             }
 
