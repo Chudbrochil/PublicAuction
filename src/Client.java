@@ -598,7 +598,7 @@ public class Client
             incomingMessage.getItemID(), timer);
         if(prevBidder != null)
         {
-            //todo: use prevBidAmount and prevBidder to send message, releasing hold in bank and notifying bidder.
+            //todo: use prevBidAmount and prevBidder to send OUT_BID message
         }
         
         //Comment out this line if you want to run testTimer()
