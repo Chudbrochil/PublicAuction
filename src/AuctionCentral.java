@@ -10,7 +10,7 @@ public class AuctionCentral
 
     private ArrayList<AuctionHouse> listOfAHs;
     private static int auctionHouseID = 6000; //This will become the port# for the AH.
-    private int agentPort = 20000;
+    private int agentPort = 20000;          //These become port numbers for Agents.
     /**
      * auctionCentral()
      *
