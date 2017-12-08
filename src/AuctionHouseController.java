@@ -38,21 +38,14 @@ public class AuctionHouseController
             {
                 client = new Client(false, name, lblAuctionHouseList);
                 //client.testTimer();
-                System.out.println(Client.getAcConnected());
-
-
-
-//                if(Client.getAcConnected())
-//                {
-//                    System.out.println(Client.getAcConnected());
-//                    client.clientListening();
-//                }
-                //client.clientListening();
+                //System.out.println(Client.getAcConnected());
             }
 
         });
 
         newThread.start();
+
+
 
         Thread clientListeningThread = new Thread(new Runnable() {
             @Override
@@ -60,9 +53,13 @@ public class AuctionHouseController
             {
                 while(true)
                 {
+                    // Don't delete this line, this thread gets stopped(garbage collected) without running clientListening()
+                    System.out.print("");
+
                     // If the client isn't already listening, but is connected to the AC, start listening for msg's.
                     if(!Client.isListening() && Client.getAcConnected())
                     {
+                        System.out.println("Listening");
                         client.clientListening(); // This will listen for messages forever
                     }
                 }

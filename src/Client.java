@@ -71,6 +71,8 @@ public class Client
         bankConnected = false;
         acConnected = false;
 
+        //Client.isListening = false;
+
         if (name == null)
         {
             name = "NONAME CLIENT";
@@ -190,6 +192,8 @@ public class Client
         Message incomingMessage = (Message) in.readObject();
         auctionHouse = incomingMessage.getAuctionHouse();
         acConnected = true;
+
+        //System.out.println("From register in Client: " + Client.getAcConnected() + " " + Client.isListening());
     }
 
     /**
@@ -477,7 +481,7 @@ public class Client
 //                agent.setPortNumber(20000);
 
                 client = new ServerSocket(agent.getPortNumber());
-                System.out.println("Client connecting on port " + getAgent().getPortNumber());
+                taAgentOutput.appendText("Agent listening on port " + getAgent().getPortNumber() + "\n");
                 pipeConnection = client.accept();
                 out = new ObjectOutputStream(pipeConnection.getOutputStream());
                 in = new ObjectInputStream(pipeConnection.getInputStream());
@@ -523,17 +527,19 @@ public class Client
         {
             try
             {
-                System.out.println(auctionHouse.getName() + " connected on port " + auctionHouse.getPublicID());
+                System.out.println(auctionHouse.getName() + " listening on port " + auctionHouse.getPublicID());
                 client = new ServerSocket(auctionHouse.getPublicID());
                 pipeConnection = client.accept();
+
+                out = new ObjectOutputStream(pipeConnection.getOutputStream());
+                out.flush();
+                in = new ObjectInputStream(pipeConnection.getInputStream());
 
 
                 while (true)
                 {
 
-                    out = new ObjectOutputStream(pipeConnection.getOutputStream());
-                    out.flush();
-                    in = new ObjectInputStream(pipeConnection.getInputStream());
+
                     Message incomingMessage = (Message) in.readObject();
                     System.out.println(incomingMessage.getType());
 
@@ -541,6 +547,7 @@ public class Client
 
                     if (incomingMessage.getType() == MessageType.PLACE_BID)
                     {
+                        System.out.println(incomingMessage.getAuctionHousePublicID());
                         if (auctionHouse.placeBid(incomingMessage.getBiddingKey(), incomingMessage.getBidAmount(), incomingMessage.getItemID(), incomingMessage.getAuctionHousePublicID()))
                         {
                             incomingMessage.setBidResponse(BidResponse.ACCEPT);
