@@ -56,11 +56,14 @@ public class AgentController
     @FXML
     private GridPane gpBoughtItems;
 
-    private ArrayList<Item> boughtItems;
+    //private ArrayList<Item> boughtItems;
 
     Item currentSelectedItem;
 
-    ArrayList<Item> itemsAsList;
+    private ArrayList<Item> itemsAsList;
+    private ArrayList<Item> freshItems;
+    private ArrayList<AuctionHouse> listOfAHs;
+    private ObservableList<String> observableItems;
 
 
     Agent agent; // Inside class that keeps account information and item information
@@ -75,9 +78,13 @@ public class AgentController
     {
         itemsAsList = new ArrayList<>();
         client = new Client(true, Main.askName(), taAgentOutput);
-        boughtItems = new ArrayList<>();
+        freshItems = new ArrayList<>();
+        listOfAHs = new ArrayList<>();
+        observableItems = FXCollections.observableArrayList();
+        //observableItems = FXCollections.
+        //boughtItems = new ArrayList<>();
 
-        boughtItems.add(new Item("Dust Bunny", "DustBunny.png", 0.0));
+        //boughtItems.add(new Item("Dust Bunny", "DustBunny.png", 0.0));
 
 
         // Initializing the user's GUI with a dust bunny in their inventory
@@ -91,14 +98,6 @@ public class AgentController
 
 
         agent = client.getAgent();
-        lvItems.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                setCurrentSelectedItem(newValue);
-            }
-        });
-        update();
-
 
         Thread clientListeningThread = new Thread(new Runnable() {
             @Override
@@ -123,6 +122,12 @@ public class AgentController
         clientListeningThread.start();
 
 
+        lvItems.getSelectionModel().selectedItemProperty().addListener((obvList, oldVal, newVal) ->
+        {
+            setCurrentSelectedItem(newVal.toString());
+        });
+
+        update();
 
     }
 
@@ -159,30 +164,53 @@ public class AgentController
      */
     private void updateItemList()
     {
-        ArrayList<AuctionHouse> listOfAHs = agent.getAuctionHouses();
-        ArrayList<Item> items = new ArrayList<>();
-        ObservableList<String> itemNames = FXCollections.observableArrayList();
+        listOfAHs = agent.getAuctionHouses();
+        //freshItems.clear();
 
-        if(listOfAHs != null)
+        //observableItems.clear();
+
+        //itemsAsList.clear();
+        //observableItems.clear();
+        lvItems.getItems().clear(); // TODO:
+
+
+        for(int i = 0; i < listOfAHs.size(); ++i)
         {
-            for(int i = 0; i < listOfAHs.size(); ++i)
-            {
-                HashMap<Integer, Item> ahItems = listOfAHs.get(i).getItems();
-                itemsAsList = new ArrayList<Item>(ahItems.values());
+            HashMap<Integer, Item> ahItems = listOfAHs.get(i).getItems();
+            itemsAsList.addAll(ahItems.values());
+            //itemsAsList = new ArrayList<Item>(ahItems.values());
+        }
 
-                for(int j = 0; j < itemsAsList.size(); ++j)
-                {
-                    // Checking to make sure the global items list doesn't already have the item before adding it
-                    if(!items.contains(itemsAsList.get(j)))
-                    {
-                        items.add(itemsAsList.get(j));
-                        itemNames.add(itemsAsList.get(j).toString());
-                    }
-                }
+        for(int i = 0; i < itemsAsList.size(); ++i)
+        {
+            if(!itemsAsList.contains(itemsAsList.get(i)))
+            {
+                itemsAsList.add(itemsAsList.get(i));
+            }
+            // Checking to make sure the global items list doesn't already have the item before adding it
+//            if(!observableItems.contains(itemsAsList.get(i)))
+//            {
+////                freshItems.add(itemsAsList.get(i));
+//                observableItems.add(itemsAsList.get(i).toString());
+//            }
+        }
+
+//        for(int i = 0; i < itemsAsList.size(); ++i)
+//        {
+//            if(observableItems)
+//        }
+
+        for(int i = 0; i < itemsAsList.size(); ++i)
+        {
+            if(!observableItems.contains(itemsAsList.get(i).toString()))
+            {
+                observableItems.add(itemsAsList.get(i).toString());
             }
         }
 
-        lvItems.setItems(itemNames);
+
+        if(observableItems != null) lvItems.setItems(observableItems); //lvItems.getItems().addAll(observableItems);  //setItems(observableItems);
+
     }
 
 
@@ -208,8 +236,10 @@ public class AgentController
      */
     private void setCurrentSelectedItem(String itemString)
     {
-        if(itemString != null)
+        System.out.println("setCurentSelectedItem call:");
+        if(itemString != null && !itemsAsList.isEmpty())
         {
+            System.out.println("setCurentSelectedItem call: item not null");
             for(int i = 0; i < itemsAsList.size(); ++i)
             {
                 if(itemString.equals(itemsAsList.get(i).toString()))
@@ -267,16 +297,16 @@ public class AgentController
      *
      * @param imgPath The path to the image we are adding, usually in the item.
      */
-    private void addImageToGUI(String imgPath, String itemName)
-    {
-        Image imageToAdd = new Image(getClass().getResource(imgPath).toExternalForm());
-        ImageView imgView = new ImageView(imageToAdd);
-        //imgView.set
-        //System.out.println(boughtItems.size());
-        int row = boughtItems.size() / 10;
-        int column = boughtItems.size() % 10;
-        gpBoughtItems.add(imgView, column, row);
-    }
+//    private void addImageToGUI(String imgPath, String itemName)
+//    {
+//        Image imageToAdd = new Image(getClass().getResource(imgPath).toExternalForm());
+//        ImageView imgView = new ImageView(imageToAdd);
+//        //imgView.set
+//        //System.out.println(boughtItems.size());
+//        int row = boughtItems.size() / 10;
+//        int column = boughtItems.size() % 10;
+//        gpBoughtItems.add(imgView, column, row);
+//    }
 
 
 

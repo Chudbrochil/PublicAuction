@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class AuctionCentral
 {
@@ -10,7 +11,7 @@ public class AuctionCentral
 
     private ArrayList<AuctionHouse> listOfAHs;
     private static int auctionHouseID = 6000; //This will become the port# for the AH.
-    private int agentPort = 20000;          //These become port numbers for Agents.
+    private static int agentPort = 20000;          //These become port numbers for Agents.
     /**
      * auctionCentral()
      *
@@ -22,6 +23,7 @@ public class AuctionCentral
         bankKeyToBiddingKey = new HashMap<>();
         agentNameToPort = new HashMap<>();
         listOfAHs = new ArrayList<>();
+        agentPort = ThreadLocalRandom.current().nextInt(7000, 8000);
     }
 
     /**
@@ -58,6 +60,7 @@ public class AuctionCentral
         auctionHouse.setIDs(auctionHouseID, auctionHouseKey);
         listOfAHs.add(auctionHouse);
         System.out.println("Auction House " + auctionHouse.getName() + " registered.");
+        auctionHouseID++;
     }
 
     /**

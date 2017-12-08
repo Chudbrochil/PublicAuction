@@ -39,7 +39,7 @@ public class Item implements Serializable
         this.setItemName(itemName);
         this.imgPath = imgPath;
         this.setMinimumBid(minimumBid);
-        //ahID = -1; // Sentinel value so that we know ahID hasn't been initialized yet.
+        ahID = -1; // Sentinel value so that we know ahID hasn't been initialized yet.
         currentBid = 0.0;
         currentHighestBidderID = null;
     }
@@ -90,10 +90,11 @@ public class Item implements Serializable
     @Override
     public String toString()
     {
-        if(currentBid==0)
-            return itemName + " ID: " + itemID + " ahID: " + ahID + " MinBid: "+ minimumBid;
-        else
-            return itemName + " ID: " + itemID + " ahID: " + ahID + " CurrBid: "+ currentBid;
+//        if(currentBid==0)
+//            return itemName + " ID: " + itemID + " ahID: " + ahID + " MinBid: "+ minimumBid;
+//        else
+//            return itemName + " ID: " + itemID + " ahID: " + ahID + " CurrBid: "+ currentBid;
+        return itemName + " ID: " + itemID + " ahID: " + ahID + " minBid: " + minimumBid;
     }
 
     public Double getMinimumBid()
