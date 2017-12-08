@@ -336,9 +336,9 @@ public class Server
 
                     out = new ObjectOutputStream(bankSocket.getOutputStream());
                     in = new ObjectInputStream(bankSocket.getInputStream());
-
+                    String bankKey = auctionCentral.getBiddingKeyToBankKey().get(incomingMessage.getBiddingKey());
                     // Sending a message of type Item_Sold.
-                    out.writeObject(new Message(MessageType.ITEM_SOLD, incomingMessage.getItemID(), incomingMessage.getAuctionHousePublicID(),incomingMessage.getBankKey(), incomingMessage.getBidAmount()));
+                    out.writeObject(new Message(MessageType.ITEM_SOLD, incomingMessage.getItemID(), incomingMessage.getAuctionHousePublicID(),bankKey, incomingMessage.getBidAmount()));
                     // ToDO make ac talk to agent.
                     needsReturnMessage = false;
                 }
@@ -349,8 +349,9 @@ public class Server
                     out = new ObjectOutputStream(bankSocket.getOutputStream());
                     in = new ObjectInputStream(bankSocket.getInputStream());
 
-                    // Sending a message of type Item_Sold.
-                    out.writeObject(new Message(MessageType.OUT_BID, incomingMessage.getAuctionHousePublicID(),incomingMessage.getBankKey(), incomingMessage.getBidAmount()));
+                    String bankKey = auctionCentral.getBiddingKeyToBankKey().get(incomingMessage.getBiddingKey());
+                    // Sending a message of type OUT_BID.
+                    out.writeObject(new Message(MessageType.OUT_BID, incomingMessage.getAuctionHousePublicID(),bankKey, incomingMessage.getBidAmount()));
                     // ToDO make ac talk to agent.
                     needsReturnMessage = false;
                 }

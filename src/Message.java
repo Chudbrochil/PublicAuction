@@ -104,11 +104,11 @@ public class Message implements Serializable
 
     // TODO: This constructor is out of date
     //ITEM_SOLD Constructor
-    public Message(MessageType t, int item, int ahID, String bankK, Double b)
+    public Message(MessageType t, int item, int ahID, String bidK, Double b)
     {
         type = t;
         auctionHousePublicID = ahID;
-        bankKey = bankK;
+        biddingKey = bidK;
         bidAmount = b;
         itemID = item;
     }
