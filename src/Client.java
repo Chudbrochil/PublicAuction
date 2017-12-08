@@ -438,12 +438,6 @@ public class Client
         }
     }
 
-    // TODO: Do we care if the bank is connected?
-    public static boolean getBankConnected()
-    {
-        return bankConnected;
-    }
-
     /**
      * getAcConnected()
      *

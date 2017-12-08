@@ -190,7 +190,7 @@ public class AgentController
      * On action method for the withdraw button on the GUI.
      */
     @FXML
-    private void btnWithdraw() // TODO: handle bad input?
+    private void btnWithdraw()
     {
         taAgentOutput.appendText("Submitted withdraw request to bank for: " + tfBidAmount.getText() + "\n");
         client.withdraw(Double.valueOf(tfBidAmount.getText()), agent);
@@ -249,13 +249,13 @@ public class AgentController
     @FXML
     private void btnConnectBank()
     {
-        client.setBankHostname(tfBankIP.getText()); // TODO: handle bad input?
+        client.setBankHostname(tfBankIP.getText());
     }
 
     @FXML
     private void btnConnectAC()
     {
-        client.setAcHostname(tfAuctionCentralIP.getText()); // TODO: handle bad input?
+        client.setAcHostname(tfAuctionCentralIP.getText());
     }
 
     /**

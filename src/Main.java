@@ -50,7 +50,6 @@ public class Main extends Application
 
         boolean isClient = false;
 
-        // TODO: Doing string comparison here is probably bad...
         if(!result.isPresent() || result.get().equals("Agent"))
         {
             Parent root = FXMLLoader.load(getClass().getResource("AgentUI.fxml"));

@@ -100,7 +100,7 @@ public class Message implements Serializable
     public Message(MessageType t, ArrayList<AuctionHouse> listOfAHs)
     {
         type = t;
-        listOfAHs = new ArrayList<>(); // TODO: Do we need this?
+        this.listOfAHs = listOfAHs;
     }
 
     // TODO: This constructor is out of date

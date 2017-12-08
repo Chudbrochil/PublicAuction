@@ -76,7 +76,7 @@ public class AuctionHouseController
     @FXML
     private void btnConnectAC()
     {
-        client.setAcHostname(tfAuctionCentralIP.getText()); // TODO: handle bad input?
+        client.setAcHostname(tfAuctionCentralIP.getText());
     }
 
 
