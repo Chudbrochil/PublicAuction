@@ -597,7 +597,7 @@ public class Client
             incomingMessage.getItemID(), timer);
         if(prevBidder != null)
         {
-            
+            sendOutBidMessage(prevBidAmount, prevBidder, incomingMessage.getItem());
         }
         
         //Comment out this line if you want to run testTimer()
@@ -605,7 +605,7 @@ public class Client
     }
     
     /**
-     *
+     * sendOutBidMessage()
      * @param prevBidAmount The amount of the bid that is now null--needed by the bank to release the right amount from the hold.
      * @param prevBidder The biddingID of the bidder who should be notified that their bid has been passed.
      * @param item The item on which the bid was outbid.

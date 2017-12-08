@@ -1,5 +1,5 @@
 /**
- * This sipmly incapsulates the port and IP address
+ * This simply incapsulates the port and IP address
  */
 public class SocketInfoStruct
 {
