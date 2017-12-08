@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 
 public class Server
 {
-    private boolean isListening;
     private Bank bank;
     private AuctionCentral auctionCentral;
     private Label lblClientsList, lblConnectionInfo;
@@ -50,8 +49,6 @@ public class Server
         // If we didn't originate from the command line then spin up a thread to update the clients label
         if (lblClientsList != null) updateClientsLabel();
 
-        // TODO: isListening is a stand-in for having a Bank/AC being spun down and up. This may be an extra feature...
-        isListening = false;
         try
         {
             if (isBank)
@@ -112,7 +109,6 @@ public class Server
     {
         bank = new Bank();
         ServerSocket bankSocket = new ServerSocket(Main.bankPort);
-        isListening = true;
 
         Platform.runLater(() -> lblConnectionInfo.setText(Main.returnNetworkInfo() + " Port: " + Main.bankPort));
 
@@ -153,13 +149,13 @@ public class Server
                 else if (incomingMessage.getType() == MessageType.PLACE_BID)
                 {
                     Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
-                    System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: " + account.getName());
+                    System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: " + account.getName());
                     // If we were able to deduct the bidding amount, then take it out, send a success back.
                     if (account.deductAccountBalance(incomingMessage.getBidAmount()))
                     {
                         incomingMessage.setBidResponse(BidResponse.ACCEPT);
                         incomingMessage.setType(MessageType.PLACE_HOLD);
-                        System.out.println("Bank has placed a hold on account:");
+                        System.out.println("Bank has placed a hold on account for: " + incomingMessage.getBidAmount());
                     }
                     // If there wasn't enough money, send a rejection back.
                     else
@@ -170,19 +166,19 @@ public class Server
                     }
                     System.out.println(account.toString());
                     bankOut.writeObject(incomingMessage);
-                    System.out.println("\nSEND_MSG: " + incomingMessage.getType() + " - TO: Auction Central");
+                    System.out.println("SEND_MSG: " + incomingMessage.getType() + " - TO: Auction Central");
                 }
                 // Initializing an agent with an account (name, account#, balance, bankkey)
                 else if (incomingMessage.getType() == MessageType.REGISTER_AGENT)
                 {
-                    System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getAccount().getName());
+                    System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getAccount().getName());
                     bank.registerAgent(incomingMessage.getAccount());
                 }
                 // If an agent goes offline it will unsubscribe itself from the bank.
                 else if (incomingMessage.getType() == MessageType.UNREGISTER)
                 {
                     ;
-                    System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getName());
+                    System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getName());
                     bank.unregisterAgent(incomingMessage.getClientKey());
                     System.out.println("Agent " + incomingMessage.getName() + " un-registered.");
                     needsReturnMessage = false;
@@ -227,168 +223,161 @@ public class Server
         auctionCentral = new AuctionCentral();
         ServerSocket auctionCentralSocket = new ServerSocket(Main.auctionCentralPort);
 
-        isListening = true;
         Platform.runLater(() -> lblConnectionInfo.setText(Main.returnNetworkInfo() + " Port: " + Main.auctionCentralPort));
         System.out.println("Auction Central online.");
 
+
+
         while (true)
         {
+
             Socket otherPipeConnection = auctionCentralSocket.accept();
             ObjectOutputStream centralOut = new ObjectOutputStream(otherPipeConnection.getOutputStream());
             ObjectInputStream centralIn = new ObjectInputStream(otherPipeConnection.getInputStream());
+            Message incomingMessage = (Message) centralIn.readObject();
 
-            Object object = centralIn.readObject();
-            if (object instanceof Message)
+            boolean needsReturnMessage = true;
+
+            // Updating the list of AHs to the agent
+            if (incomingMessage.getType() == MessageType.UPDATE_AHS)
             {
-                Message incomingMessage = (Message) object;
-
-                boolean needsReturnMessage = true;
-
-                // Updating the list of AHs to the agent
-                if (incomingMessage.getType() == MessageType.UPDATE_AHS)
+                incomingMessage.setListOfAHs(auctionCentral.getListOfAHs());
+            }
+            // Registering a new agent with AC
+            else if (incomingMessage.getType() == MessageType.REGISTER_AGENT)
+            {
+                System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getName());
+                String biddingKey = auctionCentral.registerAgent(incomingMessage.getName(), incomingMessage.getBankKey());
+                incomingMessage.setPortNumber(portNumber++);
+                incomingMessage.setBiddingKey(biddingKey);
+            }
+            // Registering a new AH with AC
+            else if (incomingMessage.getType() == MessageType.REGISTER_AH)
+            {
+                System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getAuctionHouse().getName());
+                auctionCentral.registerAuctionHouse(incomingMessage.getAuctionHouse());
+            }
+            //if place bid is null then its from agent, anything else is response from auctionhouse
+            else if (incomingMessage.getType() == MessageType.PLACE_BID)
+            {
+                if (incomingMessage.getBidResponse() == null)
                 {
-                    incomingMessage.setListOfAHs(auctionCentral.getListOfAHs());
-                }
-                // Registering a new agent with AC
-                else if (incomingMessage.getType() == MessageType.REGISTER_AGENT)
-                {
-                    System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getName());
-                    String biddingKey = auctionCentral.registerAgent(incomingMessage.getName(), incomingMessage.getBankKey());
-                    incomingMessage.setPortNumber(portNumber++);
+                    System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: bidKey-" + incomingMessage.getBiddingKey());
+                    Socket auctionHouseSocket = new Socket(staticAcHostname, 6000); // TODO: Hard coded port
 
-                    incomingMessage.setBiddingKey(biddingKey);
-                }
-                // Registering a new AH with AC
-                else if (incomingMessage.getType() == MessageType.REGISTER_AH)
-                {
-                    System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getAuctionHouse().getName());
-                    auctionCentral.registerAuctionHouse(incomingMessage.getAuctionHouse());
-                    System.out.println(incomingMessage.getAuctionHouse().getPublicID() + "is the id");
+                    out = new ObjectOutputStream(auctionHouseSocket.getOutputStream());
+                    out.flush();
+                    in = new ObjectInputStream(auctionHouseSocket.getInputStream());
 
-                }
-                //if place bid is null then its from agent, anything else is from auctionhouse
-                else if (incomingMessage.getType() == MessageType.PLACE_BID)
-                {
-                    if (incomingMessage.getBidResponse() == null)
+                    System.out.println("SEND_MSG: " + incomingMessage.getType() + " - TO: AH-ID:" + incomingMessage.getItem().getAhID());
+                    out.writeObject(incomingMessage);
+
+                    incomingMessage = (Message) in.readObject();
+                    System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: AH-ID:" + incomingMessage.getItem().getAhID());
+
+                    if (incomingMessage.getBidResponse() == BidResponse.REJECT)
                     {
-                        System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: bidKey-" + incomingMessage.getBiddingKey());
-                        System.out.println(incomingMessage.getItem().getAhID());
-                        Socket auctionHouseSocket = new Socket(staticAcHostname, 6000); // TODO: CHANGE THE LOCAL HOST?
+                        centralOut.writeObject(incomingMessage);
+                        System.out.println("AC says you didn't have enough");
 
-                        out = new ObjectOutputStream(auctionHouseSocket.getOutputStream());
-                        out.flush();
-                        in = new ObjectInputStream(auctionHouseSocket.getInputStream());
+                        Socket clientSocket = new Socket("127.0.0.1", 20000); // TODO: Hard coded port
+                        out = new ObjectOutputStream(clientSocket.getOutputStream());
+                        in = new ObjectInputStream(clientSocket.getInputStream());
 
-                        System.out.println("\nSEND_MSG: " + incomingMessage.getType() + " - TO: AH-ID" + incomingMessage.getItem().getAhID());
                         out.writeObject(incomingMessage);
 
-
-                        incomingMessage = (Message) in.readObject();
-                        System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: AH-ID:" + incomingMessage.getItem().getAhID());
-
-                        if (incomingMessage.getBidResponse() == BidResponse.REJECT)
-                        {
-                            centralOut.writeObject(incomingMessage);
-                            System.out.println("AC says you didn't have enough");
-
-                            Socket clientSocket = new Socket("127.0.0.1", 20000);
-                            out = new ObjectOutputStream(clientSocket.getOutputStream());
-                            in = new ObjectInputStream(clientSocket.getInputStream());
-
-                            out.writeObject(incomingMessage);
-
-                        }
-                        else if (incomingMessage.getBidResponse() == BidResponse.ACCEPT)
-                        {
-                            System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: bidKey-" + incomingMessage.getBiddingKey());
-                            Socket bankSocket = new Socket(staticBankHostname, Main.bankPort);
-                            ObjectOutputStream outToBank = new ObjectOutputStream(bankSocket.getOutputStream());
-                            ObjectInputStream inFromBank = new ObjectInputStream(bankSocket.getInputStream());
-
-                            incomingMessage.setBankKey(auctionCentral.getBiddingKeyToBankKey().get(incomingMessage.getBiddingKey()));
-                            outToBank.writeObject(incomingMessage);
-                            System.out.println("\nSEND_MSG: " + incomingMessage.getType() + " - TO: Bank");
-
-
-                            Message bankResponse = (Message) inFromBank.readObject();
-                            bankResponse.setBiddingKey(auctionCentral.getBankKeyToBiddingKey().get(incomingMessage.getBankKey()));
-
-                            System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: Bank");
-
-                            if (bankResponse.getBidResponse() == BidResponse.ACCEPT)
-                            {
-                                System.out.println("successful bid that needs to go to auction house");
-                            }
-                            else if (bankResponse.getBidResponse() == BidResponse.REJECT)
-                            {
-                                System.out.println("you didn't have enough money");
-                            }
-                            out.writeObject(bankResponse);
-                            centralOut.writeObject(bankResponse);
-
-                            // TODO: centralIn, centralOut agent->AC. in, out ah->AC
-
-                        }
-
                     }
-
-
-//                    needsReturnMessage = false;
-
-
-                }
-                // If an agent or AH goes down it will unsubscribe from the auction central
-                else if (incomingMessage.getType() == MessageType.UNREGISTER)
-                {
-                    System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getName());
-                    if (!incomingMessage.isAgent())
+                    else if (incomingMessage.getBidResponse() == BidResponse.ACCEPT)
                     {
-                        auctionCentral.unregisterAuctionHouse(incomingMessage.getClientKey());
-                        System.out.println("Auction House " + incomingMessage.getName() + " un-registered.");
+                        System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: bidKey-" + incomingMessage.getBiddingKey());
+                        Socket bankSocket = new Socket(staticBankHostname, Main.bankPort);
+                        ObjectOutputStream outToBank = new ObjectOutputStream(bankSocket.getOutputStream());
+                        ObjectInputStream inFromBank = new ObjectInputStream(bankSocket.getInputStream());
+
+                        incomingMessage.setBankKey(auctionCentral.getBiddingKeyToBankKey().get(incomingMessage.getBiddingKey()));
+                        outToBank.writeObject(incomingMessage);
+                        System.out.println("SEND_MSG: " + incomingMessage.getType() + " - TO: Bank");
+
+
+                        Message bankResponse = (Message) inFromBank.readObject();
+                        bankResponse.setBiddingKey(auctionCentral.getBankKeyToBiddingKey().get(incomingMessage.getBankKey()));
+
+                        System.out.println("RCV_MSG: " + bankResponse.getType() + " - FROM: Bank");
+
+                        if (bankResponse.getBidResponse() == BidResponse.ACCEPT)
+                        {
+                            System.out.println("successful bid that needs to go to auction house");
+                        }
+                        else if (bankResponse.getBidResponse() == BidResponse.REJECT)
+                        {
+                            System.out.println("you didn't have enough money");
+                        }
+                        out.writeObject(bankResponse);
+                        centralOut.writeObject(bankResponse);
+
+                        // TODO: centralIn, centralOut agent->AC. in, out ah->AC
+
                     }
-                    else
-                    {
-                        System.out.println("Agent " + incomingMessage.getName() + " un-registered.");
-                    }
 
-                    needsReturnMessage = false;
-                }
-                // sends a message of ITEM_SOLD to bank and agent.
-                else if (incomingMessage.getType() == MessageType.ITEM_SOLD)
-                {
-                    Socket bankSocket = new Socket(staticBankHostname, Main.bankPort);
-
-                    out = new ObjectOutputStream(bankSocket.getOutputStream());
-                    in = new ObjectInputStream(bankSocket.getInputStream());
-                    String bankKey = auctionCentral.getBiddingKeyToBankKey().get(incomingMessage.getBiddingKey());
-                    // Sending a message of type Item_Sold.
-                    out.writeObject(new Message(MessageType.ITEM_SOLD, incomingMessage.getItemID(), incomingMessage.getAuctionHousePublicID(), bankKey, incomingMessage.getBidAmount()));
-                    // ToDO make ac talk to agent.
-                    needsReturnMessage = false;
-                }
-                else if (incomingMessage.getType() == MessageType.OUT_BID)
-                {
-                    Socket bankSocket = new Socket(staticBankHostname, Main.bankPort);
-
-                    out = new ObjectOutputStream(bankSocket.getOutputStream());
-                    in = new ObjectInputStream(bankSocket.getInputStream());
-
-                    String bankKey = auctionCentral.getBiddingKeyToBankKey().get(incomingMessage.getBiddingKey());
-                    // Sending a message of type OUT_BID.
-                    out.writeObject(new Message(MessageType.OUT_BID, incomingMessage.getAuctionHousePublicID(), bankKey, incomingMessage.getBidAmount()));
-                    // ToDO make ac talk to agent.
-                    needsReturnMessage = false;
                 }
 
-                if (needsReturnMessage)
-                {
-                    centralOut.writeObject(incomingMessage);
-                }
+
+
+                needsReturnMessage = false;
 
 
             }
+            // If an agent or AH goes down it will unsubscribe from the auction central
+            else if (incomingMessage.getType() == MessageType.UNREGISTER)
+            {
+                System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getName());
+                if (!incomingMessage.isAgent())
+                {
+                    auctionCentral.unregisterAuctionHouse(incomingMessage.getClientKey());
+                    System.out.println("Auction House " + incomingMessage.getName() + " un-registered.");
+                }
+                else
+                {
+                    System.out.println("Agent " + incomingMessage.getName() + " un-registered.");
+                }
+
+                needsReturnMessage = false;
+            }
+            // sends a message of ITEM_SOLD to bank and agent.
+            else if (incomingMessage.getType() == MessageType.ITEM_SOLD)
+            {
+                Socket bankSocket = new Socket(staticBankHostname, Main.bankPort);
+
+                out = new ObjectOutputStream(bankSocket.getOutputStream());
+                in = new ObjectInputStream(bankSocket.getInputStream());
+                String bankKey = auctionCentral.getBiddingKeyToBankKey().get(incomingMessage.getBiddingKey());
+                // Sending a message of type Item_Sold.
+                out.writeObject(new Message(MessageType.ITEM_SOLD, incomingMessage.getItemID(), incomingMessage.getAuctionHousePublicID(), bankKey, incomingMessage.getBidAmount()));
+                // ToDO make ac talk to agent.
+                needsReturnMessage = false;
+            }
+            else if (incomingMessage.getType() == MessageType.OUT_BID)
+            {
+                Socket bankSocket = new Socket(staticBankHostname, Main.bankPort);
+
+                out = new ObjectOutputStream(bankSocket.getOutputStream());
+                in = new ObjectInputStream(bankSocket.getInputStream());
+
+                String bankKey = auctionCentral.getBiddingKeyToBankKey().get(incomingMessage.getBiddingKey());
+                // Sending a message of type OUT_BID.
+                out.writeObject(new Message(MessageType.OUT_BID, incomingMessage.getAuctionHousePublicID(), bankKey, incomingMessage.getBidAmount()));
+                // ToDO make ac talk to agent.
+                needsReturnMessage = false;
+            }
+
+            if (needsReturnMessage)
+            {
+                centralOut.writeObject(incomingMessage);
+            }
+
 
         }
+
     }
 
     private int getPortNumber()

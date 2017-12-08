@@ -28,8 +28,6 @@ public class Client
     private Socket pipeConnection;
     private Item soldItem;
 
-
-
     // These need to be static so that we can eventually terminate our connection to the AC and Bank
     private static boolean isListening;
     private static Agent agent;
@@ -51,8 +49,6 @@ public class Client
     public Client(boolean isAgent, String name)
     {
         this(isAgent, name, null);
-
-
     }
 
     /**
@@ -206,6 +202,19 @@ public class Client
     }
 
 
+    /**
+     * placeAHBid()
+     *
+     * This gets called when an agent clicks the place bid button. This will send a message from
+     * Agent->AC->AH(Check Item/BidAmt)->AC->Bank($ check)->AC to Agent and AH for final response.
+     *
+     * If the resulting PLACE_HOLD is a success then the Agent successfully placed a bid.
+     * Otherwise
+     *
+     * @param bidAmount
+     * @param biddingKey
+     * @param item
+     */
     public void placeAHBid(double bidAmount, String biddingKey, Item item)
     {
         try
@@ -216,11 +225,22 @@ public class Client
             in = new ObjectInputStream(auctionCentralSocket.getInputStream());
 
 
-            System.out.println("writing to ac...");
-            out.writeObject(new Message(MessageType.PLACE_BID, biddingKey, bidAmount, item));
+            Message placeBidMsg = new Message(MessageType.PLACE_BID, biddingKey, bidAmount, item);
+            //System.out.println("SEND_MSG: " + placeBidMsg.getType() + " - TO: Auction Central");
+            out.writeObject(placeBidMsg);
 
             Message response = (Message) in.readObject();
-            System.out.println("received message back from ac");
+            //System.out.println("RCV_MSG: " + response.getType() + " - FROM: Auction Central");
+
+            if(response.getBidResponse() == BidResponse.ACCEPT)
+            {
+                taAgentOutput.appendText("Congratulations! You successfully bid:" + response.getBidAmount() + " on " + response.getItem().getItemName());
+            }
+            else
+            {
+                taAgentOutput.appendText("Your bid of: " + response.getBidAmount() + " was refused due to insufficient funds.");
+            }
+
 
 
             if (response.getBidResponse() == BidResponse.ACCEPT && response.getItem().getCurrentBid() < response.getBidAmount()
@@ -245,12 +265,6 @@ public class Client
         }
 
     }
-
-
-    /**
-     * AuctionHouse and Agent messaging methods live here
-     */
-
 
     /**
      * withdraw()
@@ -494,7 +508,7 @@ public class Client
             {
                 if (incomingMessage.getType() == MessageType.PLACE_HOLD)
                 {
-                    System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: "); //TODO: Do we have a name in this msg?
+                    System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
                     if (incomingMessage.getBidResponse() == BidResponse.REJECT)
                     {
                         System.out.println("You didn't have enough money");
@@ -506,23 +520,21 @@ public class Client
                 }
                 else if (incomingMessage.getType() == MessageType.ITEM_SOLD)
                 {
-                    System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getItem().getCurrentHighestBidderID());
+                    System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getItem().getCurrentHighestBidderID());
                     System.out.println("You won");
                 }
                 else if (incomingMessage.getType() == MessageType.PLACE_BID && incomingMessage.getBidResponse() == BidResponse.REJECT)
                 {
-                    System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
-                    System.out.println("Your bid was rejected");
+                    System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
+                    System.out.println("Your bid was rejected from AH:" + incomingMessage.getItem().getAhID());
                 }
             }
             // Auction House listening
             else
             {
-                System.out.println("Auction House just got a message.");
-
                 if (incomingMessage.getType() == MessageType.PLACE_BID)
                 {
-                    System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
+                    System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
                     if (auctionHouse.placeBid(incomingMessage.getBiddingKey(), incomingMessage.getBidAmount(), incomingMessage.getItemID(), incomingMessage.getItem().getAhID()))
                     {
                         incomingMessage.setBidResponse(BidResponse.ACCEPT);
@@ -535,7 +547,7 @@ public class Client
                 }
                 else if (incomingMessage.getType() == MessageType.PLACE_HOLD)
                 {
-                    System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
+                    System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
                     if (incomingMessage.getBidResponse() == BidResponse.ACCEPT)
                     {
                         acceptBid(incomingMessage);
