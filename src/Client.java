@@ -487,6 +487,7 @@ public class Client
                     System.out.println(incomingMessage.getType());
                     if (incomingMessage.getType() == MessageType.PLACE_HOLD)
                     {
+                        System.out.println("\nMESSAGE: PLACE_HOLD - FROM: "); //TODO: Do we have a name in this msg?
                         if (incomingMessage.getBidResponse() == BidResponse.REJECT)
                         {
                             System.out.println("You didn't have enough money");
@@ -498,6 +499,7 @@ public class Client
                     }
                     else if (incomingMessage.getType() == MessageType.ITEM_SOLD)
                     {
+                        System.out.println("\nMESSAGE: ITEM_SOLD - FROM: " + incomingMessage.getItem().getCurrentHighestBidderID());
                         System.out.println("You won");
                     }
                     else if (incomingMessage.getType() == MessageType.PLACE_BID && incomingMessage.getBidResponse() == BidResponse.REJECT)
@@ -518,7 +520,7 @@ public class Client
         {
             try
             {
-                System.out.println("AH conected on port " + auctionHouse.getPublicID());
+                System.out.println(auctionHouse.getName() + " connected on port " + auctionHouse.getPublicID());
                 client = new ServerSocket(auctionHouse.getPublicID());
                 pipeConnection = client.accept();
 

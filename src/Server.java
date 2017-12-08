@@ -341,7 +341,7 @@ public class Server
                 // sends a message of ITEM_SOLD to bank and agent.
                 else if(incomingMessage.getType() == MessageType.ITEM_SOLD)
                 {
-                    Socket bankSocket = new Socket("127.0.0.1", 4444);
+                    Socket bankSocket = new Socket(staticBankHostname, Main.bankPort);
 
                     out = new ObjectOutputStream(bankSocket.getOutputStream());
                     in = new ObjectInputStream(bankSocket.getInputStream());
@@ -353,7 +353,7 @@ public class Server
                 }
                 else if(incomingMessage.getType() == MessageType.OUT_BID)
                 {
-                    Socket bankSocket = new Socket("127.0.0.1", 4444);
+                    Socket bankSocket = new Socket(staticBankHostname, Main.bankPort);
 
                     out = new ObjectOutputStream(bankSocket.getOutputStream());
                     in = new ObjectInputStream(bankSocket.getInputStream());
@@ -381,7 +381,6 @@ public class Server
         return portNumber;
     }
 
-    public String getAgentsAsString()
     /**
      * setPeerConnection()
      * <p>
