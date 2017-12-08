@@ -1,6 +1,8 @@
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+
 import java.io.PrintStream;
 
 // TODO: BankController and ACController are almost exactly the same. Please fix this...
@@ -11,6 +13,11 @@ public class AuctionCentralController
 
     @FXML
     private Label lblAuctionHousesList, lblConnectionInfo;
+
+    @FXML
+    private TextField tfBankIP;
+
+
 
     @FXML
     public void initialize()
@@ -28,6 +35,13 @@ public class AuctionCentralController
         });
 
         newThread.start();
+    }
+
+    // TODO: Remember to do error checking for if the bank isn't connected in AC/Server.
+    @FXML
+    private void btnConnectBank()
+    {
+        Server.setPeerConnection(tfBankIP.getText());
     }
 
 }
