@@ -87,18 +87,20 @@ public class AgentController
         //addImageToGUI("MountainAir.png", "Mountain Air");
 
         // TODO: Jacob, unleash this thread on the wild when clientListening is ready...
-        Thread newThread = new Thread(new Runnable() {
-            @Override
-            public void run()
-            {
-                // If we already got assigned our port from the AC
-                if(Client.getAcConnected())
-                {
-                    client.clientListening();
-                }
-            }
-        });
-        newThread.start();
+//        Thread newThread = new Thread(new Runnable() {
+//            @Override
+//            public void run()
+//            {
+//                System.out.println(Client.getAcConnected());
+//                // If we already got assigned our port from the AC
+//                if(Client.getAcConnected())
+//                {
+//                    System.out.println("Inside loop" + Client.getAcConnected());
+//                    client.clientListening();
+//                }
+//            }
+//        });
+//        newThread.start();
         agent = client.getAgent();
         lvItems.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -121,6 +123,12 @@ public class AgentController
             @Override
             public void run()
             {
+                // If the client isn't already listening, but is connected to the AC, start listening for msg's.
+                if(!client.isListening() && client.getAcConnected())
+                {
+                    client.clientListening();
+                }
+
                 // Getting the latest list of auction houses that are up and updates the item list
                 if(client.getAcConnected()) client.updateListOfAHs();
 
@@ -253,7 +261,7 @@ public class AgentController
     {
         Image imageToAdd = new Image(getClass().getResource(imgPath).toExternalForm());
         ImageView imgView = new ImageView(imageToAdd);
-        System.out.println(boughtItems.size());
+        //System.out.println(boughtItems.size());
         int row = boughtItems.size() / 10;
         int column = boughtItems.size() % 10;
         gpBoughtItems.add(imgView, column, row);

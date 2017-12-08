@@ -27,6 +27,7 @@ public class Client
     private ServerSocket client;
     private Socket pipeConnection;
     private Item soldItem;
+    private boolean isListening;
 
 
     // These need to be static so that we can eventually terminate our connection to the AC and Bank
@@ -466,6 +467,7 @@ public class Client
 
     public void clientListening()
     {
+        isListening = true;
         if (isAgent)
         {
             try
@@ -705,4 +707,13 @@ public class Client
         this.soldItem = soldItem;
     }
 
+    public boolean isListening()
+    {
+        return isListening;
+    }
+
+    public void setListening(boolean listening)
+    {
+        isListening = listening;
+    }
 }

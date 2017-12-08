@@ -246,6 +246,7 @@ public class Server
                 {
                     System.out.println("\nMESSAGE: REGISTER_AGENT - FROM: " + incomingMessage.getName());
                     String biddingKey = auctionCentral.registerAgent(incomingMessage.getName(), incomingMessage.getBankKey());
+                    incomingMessage.setPortNumber(portNumber++);
 
                     incomingMessage.setBiddingKey(biddingKey);
                 }
