@@ -272,6 +272,7 @@ public class Server
             {
                 System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getAuctionHouse().getName());
                 auctionCentral.registerAuctionHouse(incomingMessage.getAuctionHouse());
+                //todo: assign and save ports, I believe.
             }
             //if place bid is null then its from agent, anything else is response from auctionhouse
             else if (incomingMessage.getType() == MessageType.PLACE_BID)
