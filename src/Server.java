@@ -19,6 +19,7 @@ public class Server
 
     private ObjectInputStream in;
     private ObjectOutputStream out;
+    private int portNumber = 20000;
 
     private static boolean isBank;
     private static String staticAcHostname = "127.0.0.1";
@@ -29,7 +30,7 @@ public class Server
 
     /**
      * Server()
-     * <p>
+     *
      * Server constructor
      *
      * @param isBank Boolean representing if this is a bank or not. True if bank, false if it's AC.
@@ -42,18 +43,18 @@ public class Server
     // TODO: This design of passing in a label might not be the best way to do this.... (Getting registered agents/ah's)
     public Server(boolean isBank, Label lblClientsList, Label lblConnectionInfo)
     {
-        Server.isBank = isBank;
+        this.isBank = isBank;
         this.lblClientsList = lblClientsList;
         this.lblConnectionInfo = lblConnectionInfo;
 
         // If we didn't originate from the command line then spin up a thread to update the clients label
-        if (lblClientsList != null) updateClientsLabel();
+        if(lblClientsList != null) updateClientsLabel();
 
         // TODO: isListening is a stand-in for having a Bank/AC being spun down and up. This may be an extra feature...
         isListening = false;
         try
         {
-            if (isBank)
+            if(isBank)
             {
                 bankLaunch();
             }
@@ -62,15 +63,9 @@ public class Server
                 auctionCentralLaunch();
             }
         }
-        catch (IOException e)
-        {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
-        catch (ClassNotFoundException e)
-        {
-            System.out.println(e.getMessage());
-        }
+        catch(IOException e) { System.out.println(e.getMessage());
+        e.printStackTrace();}
+        catch(ClassNotFoundException e) { System.out.println(e.getMessage()); }
 
 
     }
@@ -84,7 +79,7 @@ public class Server
             public void run()
             {
                 Platform.runLater(() -> {
-                    if (isBank)
+                    if(isBank)
                     {
                         lblClientsList.setText(bank.getAgentsAsString());
                     }
@@ -101,10 +96,10 @@ public class Server
 
     /**
      * bankLaunch()
-     * <p>
+     *
      * Launchs a bank object and opens a socket for listening for messages
      *
-     * @throws IOException            Can be thrown from bad input/output in the streams
+     * @throws IOException Can be thrown from bad input/output in the streams
      * @throws ClassNotFoundException Can be thrown from bad cast from readObject()
      */
     private void bankLaunch() throws IOException, ClassNotFoundException
@@ -113,7 +108,7 @@ public class Server
         ServerSocket bankSocket = new ServerSocket(Main.bankPort);
         isListening = true;
 
-        Platform.runLater(() -> lblConnectionInfo.setText(Main.returnNetworkInfo() + " Port: " + Main.bankPort));
+        Platform.runLater(() ->lblConnectionInfo.setText(Main.returnNetworkInfo() + " Port: " + Main.bankPort));
 
         System.out.println("Bank online.");
 
@@ -126,16 +121,16 @@ public class Server
 
             boolean needsReturnMessage = true;
 
-            if (object instanceof Message)
+            if(object instanceof Message)
             {
-                Message incomingMessage = (Message) object;
+                Message incomingMessage = (Message)object;
                 // Performing a withdrawl for an agent
-                if (incomingMessage.getType() == MessageType.WITHDRAW)
+                if(incomingMessage.getType() == MessageType.WITHDRAW)
                 {
                     Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
                     System.out.println("MSG RECV: WITHDRAW - FROM: " + account.getName());
                     // If we were able to deduct the bidding amount, then take it out, send a success back.
-                    if (account.deductAccountBalance(incomingMessage.getBidAmount()))
+                    if(account.deductAccountBalance(incomingMessage.getBidAmount()))
                     {
                         incomingMessage.setBidResponse(BidResponse.ACCEPT);
                         System.out.println("Bank accepted withdrawl of " + incomingMessage.getBidAmount() + " on account:");
@@ -149,12 +144,12 @@ public class Server
                     System.out.println(account.toString());
                 }
                 //When we place a bid
-                else if (incomingMessage.getType() == MessageType.PLACE_BID)
+                 else if(incomingMessage.getType() == MessageType.PLACE_BID)
                 {
                     Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
                     System.out.println("\nMESSAGE: PLACE_BID - FROM: " + account.getName());
                     // If we were able to deduct the bidding amount, then take it out, send a success back.
-                    if (account.deductAccountBalance(incomingMessage.getBidAmount()))
+                    if(account.deductAccountBalance(incomingMessage.getBidAmount()))
                     {
                         incomingMessage.setBidResponse(BidResponse.ACCEPT);
                         incomingMessage.setType(MessageType.PLACE_HOLD);
@@ -172,36 +167,32 @@ public class Server
                     System.out.println(account.toString());
                 }
                 // Initializing an agent with an account (name, account#, balance, bankkey)
-                else if (incomingMessage.getType() == MessageType.REGISTER_AGENT)
+                else if(incomingMessage.getType() == MessageType.REGISTER_AGENT)
                 {
                     System.out.println("\nMESSAGE: REGISTER_AGENT - FROM: " + incomingMessage.getAccount().getName());
                     bank.registerAgent(incomingMessage.getAccount());
                 }
                 // If an agent goes offline it will unsubscribe itself from the bank.
-                else if (incomingMessage.getType() == MessageType.UNREGISTER)
-                {
-                    ;
+                else if(incomingMessage.getType() == MessageType.UNREGISTER)
+                { ;
                     System.out.println("\nMESSAGE: UNREGISTER - FROM: " + incomingMessage.getName());
                     bank.unregisterAgent(incomingMessage.getClientKey());
                     System.out.println("Agent " + incomingMessage.getName() + " un-registered.");
                     needsReturnMessage = false;
                 }
                 // removes hold from bank.
-                else if (incomingMessage.getType() == MessageType.ITEM_SOLD)
+                else if(incomingMessage.getType() == MessageType.ITEM_SOLD)
                 {
                     // ToDo Remove hold from bank account
 
                 }
-                else if (incomingMessage.getType() == MessageType.OUT_BID)
+                else if(incomingMessage.getType() == MessageType.OUT_BID)
                 {
                     // ToDo Remove hold from bank and put hold amount back in account
 
                 }
 
-                if (needsReturnMessage)
-                {
-                    bankOut.writeObject(incomingMessage);
-                }
+                if(needsReturnMessage) { bankOut.writeObject(incomingMessage); }
 
             }
             else
@@ -210,15 +201,17 @@ public class Server
             }
 
 
+
+
         }
     }
 
     /**
      * auctionCentralLaunch()
-     * <p>
+     *
      * Launchs an Auction Central and opens a socket for listening to messages.
      *
-     * @throws IOException            Can be thrown from bad input/output in the streams
+     * @throws IOException Can be thrown from bad input/output in the streams
      * @throws ClassNotFoundException Can be thrown from bad cast from readObject()
      */
     private void auctionCentralLaunch() throws IOException, ClassNotFoundException
@@ -227,7 +220,7 @@ public class Server
         ServerSocket auctionCentralSocket = new ServerSocket(Main.auctionCentralPort);
 
         isListening = true;
-        Platform.runLater(() -> lblConnectionInfo.setText(Main.returnNetworkInfo() + " Port: " + Main.auctionCentralPort));
+        Platform.runLater(() ->lblConnectionInfo.setText(Main.returnNetworkInfo() + " Port: " + Main.auctionCentralPort));
         System.out.println("Auction Central online.");
 
         while (true)
@@ -237,19 +230,19 @@ public class Server
             ObjectInputStream centralIn = new ObjectInputStream(otherPipeConnection.getInputStream());
 
             Object object = centralIn.readObject();
-            if (object instanceof Message)
+            if(object instanceof Message)
             {
-                Message incomingMessage = (Message) object;
+                Message incomingMessage = (Message)object;
 
                 boolean needsReturnMessage = true;
 
                 // Updating the list of AHs to the agent
-                if (incomingMessage.getType() == MessageType.UPDATE_AHS)
+                if(incomingMessage.getType() == MessageType.UPDATE_AHS)
                 {
                     incomingMessage.setListOfAHs(auctionCentral.getListOfAHs());
                 }
                 // Registering a new agent with AC
-                else if (incomingMessage.getType() == MessageType.REGISTER_AGENT)
+                else if(incomingMessage.getType() == MessageType.REGISTER_AGENT)
                 {
                     System.out.println("\nMESSAGE: REGISTER_AGENT - FROM: " + incomingMessage.getName());
                     String biddingKey = auctionCentral.registerAgent(incomingMessage.getName(), incomingMessage.getBankKey());
@@ -257,7 +250,7 @@ public class Server
                     incomingMessage.setBiddingKey(biddingKey);
                 }
                 // Registering a new AH with AC
-                else if (incomingMessage.getType() == MessageType.REGISTER_AH)
+                else if(incomingMessage.getType() == MessageType.REGISTER_AH)
                 {
                     System.out.println("\nMESSAGE: REGISTER_AH - FROM: " + incomingMessage.getAuctionHouse().getName());
                     auctionCentral.registerAuctionHouse(incomingMessage.getAuctionHouse());
@@ -265,10 +258,9 @@ public class Server
 
                 }
                 //if place bid is null then its from agent, anything else is from auctionhouse
-                else if (incomingMessage.getType() == MessageType.PLACE_BID)
+                else if(incomingMessage.getType() == MessageType.PLACE_BID)
                 {
-                    if (incomingMessage.getBidResponse() == null)
-                    {
+                    if(incomingMessage.getBidResponse() == null) {
                         System.out.println("\nMESSAGE: PLACE_BID - FROM: bidKey-" + incomingMessage.getBiddingKey());
                         System.out.println(incomingMessage.getItem().getAhID());
                         Socket auctionHouseSocket = new Socket("127.0.0.1", 6000); // TODO: CHANGE THE LOCAL HOST?
@@ -281,11 +273,10 @@ public class Server
                         out.writeObject(incomingMessage);
 
 
-                        incomingMessage = (Message) in.readObject();
+                            incomingMessage = (Message) in.readObject();
                         System.out.println("message came back from AH");
 
-                        if (incomingMessage.getBidResponse() == BidResponse.REJECT)
-                        {
+                        if(incomingMessage.getBidResponse() == BidResponse.REJECT){
                             centralOut.writeObject(incomingMessage);
                             System.out.println("AC says you didn't have enough");
 
@@ -296,11 +287,11 @@ public class Server
                             out.writeObject(incomingMessage);
 
                         }
-                        else if (incomingMessage.getBidResponse() == BidResponse.ACCEPT)
+                        else if(incomingMessage.getBidResponse() == BidResponse.ACCEPT)
                         {
                             System.out.println("we are in bid response accept");
                             System.out.println("\nMESSAGE: PLACE_BID - FROM: bidKey-" + incomingMessage.getBiddingKey());
-                            Socket bankSocket = new Socket(staticBankHostname, Main.bankPort);
+                            Socket bankSocket = new Socket("127.0.0.1", Main.bankPort); // TODO: CHANGE THE LOCAL HOST?
                             ObjectOutputStream outToBank = new ObjectOutputStream(bankSocket.getOutputStream());
                             ObjectInputStream inFromBank = new ObjectInputStream(bankSocket.getInputStream());
 
@@ -311,12 +302,11 @@ public class Server
                             Message bankResponse = (Message) inFromBank.readObject();
                             bankResponse.setBiddingKey(auctionCentral.getBankKeyToBiddingKey().get(incomingMessage.getBankKey()));
 
-                            if (bankResponse.getBidResponse() == BidResponse.ACCEPT)
+                            if(bankResponse.getBidResponse() == BidResponse.ACCEPT)
                             {
                                 //go to auction house
                                 System.out.println("succesful bid that needs to go to auction house");
-                            }
-                            else if (bankResponse.getBidResponse() == BidResponse.REJECT)
+                            } else if (bankResponse.getBidResponse() == BidResponse.REJECT)
                             {
                                 //do nothing
                                 System.out.println("you didn't have enough money");
@@ -333,10 +323,10 @@ public class Server
 
                 }
                 // If an agent or AH goes down it will unsubscribe from the auction central
-                else if (incomingMessage.getType() == MessageType.UNREGISTER)
+                else if(incomingMessage.getType() == MessageType.UNREGISTER)
                 {
                     System.out.println("\nMESSAGE: UNREGISTER - FROM: " + incomingMessage.getName());
-                    if (!incomingMessage.isAgent())
+                    if(!incomingMessage.isAgent())
                     {
                         auctionCentral.unregisterAuctionHouse(incomingMessage.getClientKey());
                         System.out.println("Auction House " + incomingMessage.getName() + " un-registered.");
@@ -349,33 +339,36 @@ public class Server
                     needsReturnMessage = false;
                 }
                 // sends a message of ITEM_SOLD to bank and agent.
-                else if (incomingMessage.getType() == MessageType.ITEM_SOLD)
+                else if(incomingMessage.getType() == MessageType.ITEM_SOLD)
                 {
-                    Socket bankSocket = new Socket(staticBankHostname, Main.bankPort);
+                    Socket bankSocket = new Socket("127.0.0.1", 4444);
 
                     out = new ObjectOutputStream(bankSocket.getOutputStream());
                     in = new ObjectInputStream(bankSocket.getInputStream());
                     String bankKey = auctionCentral.getBiddingKeyToBankKey().get(incomingMessage.getBiddingKey());
                     // Sending a message of type Item_Sold.
-                    out.writeObject(new Message(MessageType.ITEM_SOLD, incomingMessage.getItemID(), incomingMessage.getAuctionHousePublicID(), bankKey, incomingMessage.getBidAmount()));
+                    out.writeObject(new Message(MessageType.ITEM_SOLD, incomingMessage.getItemID(), incomingMessage.getAuctionHousePublicID(),bankKey, incomingMessage.getBidAmount()));
                     // ToDO make ac talk to agent.
                     needsReturnMessage = false;
                 }
-                else if (incomingMessage.getType() == MessageType.OUT_BID)
+                else if(incomingMessage.getType() == MessageType.OUT_BID)
                 {
-                    Socket bankSocket = new Socket(staticBankHostname, Main.bankPort);
+                    Socket bankSocket = new Socket("127.0.0.1", 4444);
 
                     out = new ObjectOutputStream(bankSocket.getOutputStream());
                     in = new ObjectInputStream(bankSocket.getInputStream());
 
                     String bankKey = auctionCentral.getBiddingKeyToBankKey().get(incomingMessage.getBiddingKey());
                     // Sending a message of type OUT_BID.
-                    out.writeObject(new Message(MessageType.OUT_BID, incomingMessage.getAuctionHousePublicID(), bankKey, incomingMessage.getBidAmount()));
+                    out.writeObject(new Message(MessageType.OUT_BID, incomingMessage.getAuctionHousePublicID(),bankKey, incomingMessage.getBidAmount()));
                     // ToDO make ac talk to agent.
                     needsReturnMessage = false;
                 }
 
-                if (needsReturnMessage) { centralOut.writeObject(incomingMessage); }
+                if(needsReturnMessage)
+                {
+                    centralOut.writeObject(incomingMessage);
+                }
 
 
             }
@@ -383,6 +376,12 @@ public class Server
         }
     }
 
+    private int getPortNumber(){
+        ++portNumber;
+        return portNumber;
+    }
+
+    public String getAgentsAsString()
     /**
      * setPeerConnection()
      * <p>
@@ -406,10 +405,9 @@ public class Server
         }
     }
 
-
     /**
      * main()
-     * <p>
+     *
      * Strictly for spinning up Servers on the command line. Mostly used for debugging.
      */
     public static void main(String[] args)

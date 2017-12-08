@@ -79,13 +79,14 @@ public class Message implements Serializable
     }
 
     //Constructor for a REGISTER_AGENT message (to AC)
-    public Message(MessageType t, String name, String bankKey, String biddingKey)
+    public Message(MessageType t, String name, String bankKey, String biddingKey, int portNumber)
     {
         type = t;
 
         this.name = name;
         this.bankKey = bankKey;
         this.biddingKey = biddingKey;
+        this.portNumber = portNumber;
     }
 
     //Constructor for a REGISTER_AH message (to AC)

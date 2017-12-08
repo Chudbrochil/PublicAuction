@@ -81,7 +81,6 @@ public class AgentController
                 {
                     client.clientListening();
                 }
-
             }
         });
         newThread.start();
