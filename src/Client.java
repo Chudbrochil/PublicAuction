@@ -505,7 +505,7 @@ public class Client
                 e.printStackTrace();
             }
         }
-        //client is auction hosue
+        //client is auction house
         else
         {
             try
@@ -542,37 +542,9 @@ public class Client
                     {
                         if (incomingMessage.getBidResponse() == BidResponse.ACCEPT)
                         {
-                            //out.writeObject(new Message(MessageType.PLACE_BID, biddingKey, bidAmount, item));
-
-                            // TODO: This code is a bit wild, I'm not sure if this works....
+                            acceptBid(incomingMessage);
                             
-                            // The keyvalue only consumes things that are "writable", so we use a readonlyint?
-//                            ReadOnlyIntegerWrapper theWrappedInt = new ReadOnlyIntegerWrapper(incomingMessage.getItem().getItemID());
-//
-//                            final KeyFrame keyFrame = new KeyFrame(Duration.hours(100), new KeyValue(theWrappedInt, incomingMessage.getItem().getItemID()));
-//
-//                            timeline.getKeyFrames().add(keyFrame);
-    
-                            AuctionTimer timer = new AuctionTimer(incomingMessage.getItem());
-                            timer.setOnFinished(new EventHandler<ActionEvent>()
-                            {
-                                @Override
-                                public void handle(ActionEvent arg0)
-                                {
-                                    // This is setting the member variable of client from the auction house to eventually send to auction central
-                                    //todo: close AH if it has no more items.
-                                    boolean ahStillHasItems = auctionHouse.itemSold(incomingMessage.getItemID());
-                                    setSoldItem(auctionHouse.getSoldItem());
-    
-                                    // TODO: Jacob, I'm not sure if this is properly implemented to send a message to AC, I don't think it is.
-                                    // Use the newly made soldItem to send the itemSold msg...
-                                }
-                            });
-
-                            //todo: send a PASS to prevBidder of this item.
-                            String prevBidder = auctionHouse.processHoldResponse(incomingMessage.getBiddingKey(), incomingMessage.getBidAmount(),
-                                    incomingMessage.getItemID(), timer);
-                            out.writeObject(incomingMessage);
+                            //All other code moved into above method.
 
                         }
                         else if (incomingMessage.getBidResponse() == BidResponse.REJECT)
@@ -595,7 +567,68 @@ public class Client
 
         }
     }
-
+    
+    /**
+     * @param incomingMessage Message of type PLACE_HOLD with BidResponse.ACCEPT.
+     * @throws IOException if the out stream throws an exception when writing to it.
+     *
+     * **This method was encapsulated to allow for testing.
+     */
+    private void acceptBid(Message incomingMessage) throws IOException
+    {
+        //out.writeObject(new Message(MessageType.PLACE_BID, biddingKey, bidAmount, item));
+    
+        // TODO: This code is a bit wild, I'm not sure if this works....
+    
+        // The keyvalue only consumes things that are "writable", so we use a readonlyint?
+//                            ReadOnlyIntegerWrapper theWrappedInt = new ReadOnlyIntegerWrapper(incomingMessage.getItem().getItemID());
+//
+//                            final KeyFrame keyFrame = new KeyFrame(Duration.hours(100), new KeyValue(theWrappedInt, incomingMessage.getItem().getItemID()));
+//
+//                            timeline.getKeyFrames().add(keyFrame);
+    
+        AuctionTimer timer = new AuctionTimer(incomingMessage.getItem());
+        timer.setOnFinished(new EventHandler<ActionEvent>()
+        {
+            @Override
+            public void handle(ActionEvent arg0)
+            {
+                // This is setting the member variable of client from the auction house to eventually send to auction central
+                //todo: close AH if it has no more items.
+                boolean ahStillHasItems = auctionHouse.itemSold(incomingMessage.getItemID());
+                setSoldItem(auctionHouse.getSoldItem());
+                System.out.println("Timer for "+incomingMessage.getItem().toString()+" just went off!");
+            
+                // TODO: Jacob, I'm not sure if this is properly implemented to send a message to AC, I don't think it is.
+                // Use the newly made soldItem to send the itemSold msg...
+            }
+        });
+    
+        //todo: send a PASS to prevBidder of this item.
+        String prevBidder = auctionHouse.processHoldResponse(incomingMessage.getBiddingKey(), incomingMessage.getBidAmount(),
+            incomingMessage.getItemID(), timer);
+        
+        //Comment out this line if you want to run testTimer()
+        out.writeObject(incomingMessage);
+    }
+    
+    /**
+     * Run to test whether the timers work or not. Creates a message that is phoey that causes Client to act as though AH just received a
+     * valid bid for its item with ID 0. Sets the timer. It should go off and possibly print a message.
+     */
+    public void testTimer()
+    {
+        Item item = auctionHouse.getItems().get(0); //the first item
+        Message message = new Message(MessageType.PLACE_HOLD, "fooBiddingKey", 10000, item);
+        message.setBidResponse(BidResponse.ACCEPT);
+        try{acceptBid(message);}
+        catch(Exception e)
+        {
+            System.out.println(e.getMessage());
+            System.out.println(e.getLocalizedMessage());
+            e.printStackTrace();
+        }
+    }
 
     /**
      * unsubscribe()
