@@ -81,7 +81,7 @@ public class AgentController
 
 
         // Initializing the user's GUI with a dust bunny in their inventory
-        addImageToGUI("DustBunny.png", "Dust Bunny");
+        //addImageToGUI("DustBunny.png", "Dust Bunny");
 
 
         // Testing having a "bought item"

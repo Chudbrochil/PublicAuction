@@ -135,6 +135,7 @@ public class AuctionHouse implements Serializable
                 "not match its public ID "+publicID+". Returning.");
             return false;
         }
+        
         Item item = items.get(itemID);
         if (item == null)
         {
@@ -147,7 +148,6 @@ public class AuctionHouse implements Serializable
         //If it's a valid bid AMOUNT
         if (amount >= item.getMinimumBid() && amount > item.getCurrentBid())
         {
-            //Agent didn't bid enough USER OUTPUT
             return true;
         }
         //todo: else, USER OUTPUT whoops, bid more.

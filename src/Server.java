@@ -151,7 +151,7 @@ public class Server
                     Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
                     System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: " + account.getName());
                     // If we were able to deduct the bidding amount, then take it out, send a success back.
-                    if (account.deductAccountBalance(incomingMessage.getBidAmount()))
+                    if (account.placeHold(incomingMessage.getBidAmount()))
                     {
                         incomingMessage.setBidResponse(BidResponse.ACCEPT);
                         incomingMessage.setType(MessageType.PLACE_HOLD);
@@ -187,11 +187,27 @@ public class Server
                 else if (incomingMessage.getType() == MessageType.ITEM_SOLD)
                 {
                     // ToDo Remove hold from bank account
+                    //todo: this will do the trick:
+                    
+                    /** Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
+                    if(account.deductFromHold(incomingMessage.getBidAmount()))
+                    {
+                        //send message if applicable.
+                    }
+                    //else something has gone very wrong--the amount must have been switched or something. */
 
                 }
                 else if (incomingMessage.getType() == MessageType.OUT_BID)
                 {
                     // ToDo Remove hold from bank and put hold amount back in account
+                    //todo: this will do the trick:
+    
+                     /** Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
+                     if(account.releaseHold(incomingMessage.getBidAmount())) //todo, Anna: currently this amount is not the old bid amount THIS user placed. Fix that.
+                     {
+                     //send message if applicable.
+                     }
+                     //else something has gone very wrong--the amount must have been switched or something. */
 
                 }
 
@@ -256,6 +272,7 @@ public class Server
             {
                 System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getAuctionHouse().getName());
                 auctionCentral.registerAuctionHouse(incomingMessage.getAuctionHouse());
+                //todo: assign and save ports, I believe.
             }
             //if place bid is null then its from agent, anything else is response from auctionhouse
             else if (incomingMessage.getType() == MessageType.PLACE_BID)
