@@ -169,7 +169,7 @@ public class Client
         Message response = (Message) in.readObject();
         agent.setPortNumber(response.getPortNumber());
         agent.setRegistered(true);
-        taAgentOutput.appendText("Port Number " + agent.getPortNumber());
+        //taAgentOutput.appendText("Port Number " + agent.getPortNumber());
         agent.setBiddingKey(response.getBiddingKey());
         taAgentOutput.appendText("Bidding Key: " + response.getBiddingKey() + "\n");
         acConnected = true;
@@ -492,7 +492,7 @@ public class Client
                     System.out.println(incomingMessage.getType());
                     if (incomingMessage.getType() == MessageType.PLACE_HOLD)
                     {
-                        System.out.println("\nRCV_MSG: PLACE_HOLD - FROM: "); //TODO: Do we have a name in this msg?
+                        System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: "); //TODO: Do we have a name in this msg?
                         if (incomingMessage.getBidResponse() == BidResponse.REJECT)
                         {
                             System.out.println("You didn't have enough money");
@@ -504,12 +504,12 @@ public class Client
                     }
                     else if (incomingMessage.getType() == MessageType.ITEM_SOLD)
                     {
-                        System.out.println("\nRCV_MSG: ITEM_SOLD - FROM: " + incomingMessage.getItem().getCurrentHighestBidderID());
+                        System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getItem().getCurrentHighestBidderID());
                         System.out.println("You won");
                     }
                     else if (incomingMessage.getType() == MessageType.PLACE_BID && incomingMessage.getBidResponse() == BidResponse.REJECT)
                     {
-                        System.out.println("\nRCV_MSG: PLACE_BID - FROM: Auction Central");
+                        System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
                         System.out.println("Your bid was rejected");
                     }
                 }
@@ -546,7 +546,7 @@ public class Client
 
                     if (incomingMessage.getType() == MessageType.PLACE_BID)
                     {
-                        System.out.println("RCV_MSG: PLACE_BID - FROM: Auction Central");
+                        System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
                         if (auctionHouse.placeBid(incomingMessage.getBiddingKey(), incomingMessage.getBidAmount(), incomingMessage.getItemID(), incomingMessage.getItem().getAhID()))
                         {
                             incomingMessage.setBidResponse(BidResponse.ACCEPT);
@@ -559,7 +559,7 @@ public class Client
                     }
                     else if (incomingMessage.getType() == MessageType.PLACE_HOLD)
                     {
-                        System.out.println("RCV_MSG: PLACE_HOLD - FROM: Auction Central");
+                        System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
                         if (incomingMessage.getBidResponse() == BidResponse.ACCEPT)
                         {
                             acceptBid(incomingMessage);

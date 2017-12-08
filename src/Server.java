@@ -153,13 +153,13 @@ public class Server
                 else if (incomingMessage.getType() == MessageType.PLACE_BID)
                 {
                     Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
-                    System.out.println("\nRCV_MSG: PLACE_BID - FROM: " + account.getName());
+                    System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: " + account.getName());
                     // If we were able to deduct the bidding amount, then take it out, send a success back.
                     if (account.deductAccountBalance(incomingMessage.getBidAmount()))
                     {
                         incomingMessage.setBidResponse(BidResponse.ACCEPT);
                         incomingMessage.setType(MessageType.PLACE_HOLD);
-                        //bankOut.writeObject(incomingMessage);
+
                         System.out.println("Bank has placed a hold on account:");
                     }
                     // If there wasn't enough money, send a rejection back.
@@ -167,22 +167,23 @@ public class Server
                     {
                         incomingMessage.setBidResponse(BidResponse.REJECT);
                         incomingMessage.setType(MessageType.PLACE_HOLD);
-                        //bankOut.writeObject(incomingMessage);
                         System.out.println("Bank has refused a hold on account:");
                     }
                     System.out.println(account.toString());
+                    bankOut.writeObject(incomingMessage);
+                    System.out.println("\nSEND_MSG: " + incomingMessage.getType() + " - TO: Auction Central");
                 }
                 // Initializing an agent with an account (name, account#, balance, bankkey)
                 else if (incomingMessage.getType() == MessageType.REGISTER_AGENT)
                 {
-                    System.out.println("\nRCV_MSG: REGISTER_AGENT - FROM: " + incomingMessage.getAccount().getName());
+                    System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getAccount().getName());
                     bank.registerAgent(incomingMessage.getAccount());
                 }
                 // If an agent goes offline it will unsubscribe itself from the bank.
                 else if (incomingMessage.getType() == MessageType.UNREGISTER)
                 {
                     ;
-                    System.out.println("\nRCV_MSG: UNREGISTER - FROM: " + incomingMessage.getName());
+                    System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getName());
                     bank.unregisterAgent(incomingMessage.getClientKey());
                     System.out.println("Agent " + incomingMessage.getName() + " un-registered.");
                     needsReturnMessage = false;
@@ -252,7 +253,7 @@ public class Server
                 // Registering a new agent with AC
                 else if (incomingMessage.getType() == MessageType.REGISTER_AGENT)
                 {
-                    System.out.println("\nRCV_MSG: REGISTER_AGENT - FROM: " + incomingMessage.getName());
+                    System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getName());
                     String biddingKey = auctionCentral.registerAgent(incomingMessage.getName(), incomingMessage.getBankKey());
                     incomingMessage.setPortNumber(portNumber++);
 
@@ -261,7 +262,7 @@ public class Server
                 // Registering a new AH with AC
                 else if (incomingMessage.getType() == MessageType.REGISTER_AH)
                 {
-                    System.out.println("\nRCV_MSG: REGISTER_AH - FROM: " + incomingMessage.getAuctionHouse().getName());
+                    System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getAuctionHouse().getName());
                     auctionCentral.registerAuctionHouse(incomingMessage.getAuctionHouse());
                     System.out.println(incomingMessage.getAuctionHouse().getPublicID() + "is the id");
 
@@ -271,7 +272,7 @@ public class Server
                 {
                     if (incomingMessage.getBidResponse() == null)
                     {
-                        System.out.println("\nRCV_MSG: PLACE_BID - FROM: bidKey-" + incomingMessage.getBiddingKey());
+                        System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: bidKey-" + incomingMessage.getBiddingKey());
                         System.out.println(incomingMessage.getItem().getAhID());
                         Socket auctionHouseSocket = new Socket(staticAcHostname, 6000); // TODO: CHANGE THE LOCAL HOST?
 
@@ -279,12 +280,13 @@ public class Server
                         out.flush();
                         in = new ObjectInputStream(auctionHouseSocket.getInputStream());
 
-                        System.out.println("SEND_MSG: PLACE_BID - TO: " + incomingMessage.getItem().getAhID());
+                        System.out.println("SEND_MSG: " + incomingMessage.getType() + " - TO: AH-ID" + incomingMessage.getItem().getAhID());
                         out.writeObject(incomingMessage);
 
 
                         incomingMessage = (Message) in.readObject();
                         System.out.println("message came back from AH");
+                        System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: AH-ID:" + incomingMessage.getItem().getAhID());
 
                         if (incomingMessage.getBidResponse() == BidResponse.REJECT)
                         {
@@ -300,22 +302,24 @@ public class Server
                         }
                         else if (incomingMessage.getBidResponse() == BidResponse.ACCEPT)
                         {
-                            System.out.println("\nRCV_MSG: PLACE_BID - FROM: bidKey-" + incomingMessage.getBiddingKey());
+                            System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: bidKey-" + incomingMessage.getBiddingKey());
                             Socket bankSocket = new Socket(staticBankHostname, Main.bankPort);
                             ObjectOutputStream outToBank = new ObjectOutputStream(bankSocket.getOutputStream());
                             ObjectInputStream inFromBank = new ObjectInputStream(bankSocket.getInputStream());
 
                             incomingMessage.setBankKey(auctionCentral.getBiddingKeyToBankKey().get(incomingMessage.getBiddingKey()));
                             outToBank.writeObject(incomingMessage);
-                            System.out.println("\nSEND_MSG: PLACE_BID - TO: Bank");
+                            System.out.println("\nSEND_MSG: " + incomingMessage.getType() + " - TO: Bank");
 
 
                             Message bankResponse = (Message) inFromBank.readObject();
                             bankResponse.setBiddingKey(auctionCentral.getBankKeyToBiddingKey().get(incomingMessage.getBankKey()));
 
+                            System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
+
                             if (bankResponse.getBidResponse() == BidResponse.ACCEPT)
                             {
-                                //go to auction house
+                                //go to auction house7
                                 System.out.println("successful bid that needs to go to auction house");
                             }
                             else if (bankResponse.getBidResponse() == BidResponse.REJECT)
@@ -339,7 +343,7 @@ public class Server
                 // If an agent or AH goes down it will unsubscribe from the auction central
                 else if (incomingMessage.getType() == MessageType.UNREGISTER)
                 {
-                    System.out.println("\nRCV_MSG: UNREGISTER - FROM: " + incomingMessage.getName());
+                    System.out.println("\nRCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getName());
                     if (!incomingMessage.isAgent())
                     {
                         auctionCentral.unregisterAuctionHouse(incomingMessage.getClientKey());
