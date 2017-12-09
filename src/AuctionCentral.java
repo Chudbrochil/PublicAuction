@@ -10,7 +10,7 @@ public class AuctionCentral
     private HashMap<String, Integer> agentNameToPort;
 
     private ArrayList<AuctionHouse> listOfAHs;
-    private static int auctionHouseID = 4100; //This will become the port# for the AH.
+    private static int auctionHouseID = 50100; //This will become the port# for the AH.
 
 
 

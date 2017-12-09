@@ -248,7 +248,7 @@ public class Server
         auctionCentral = new AuctionCentral();
         ServerSocket auctionCentralSocket = new ServerSocket(Main.auctionCentralPort);
 
-        agentPort = ThreadLocalRandom.current().nextInt(4200, 4900);
+        agentPort = ThreadLocalRandom.current().nextInt(50200, 50900);
         System.out.println("Agent port: " + agentPort);
 
         Platform.runLater(() -> lblConnectionInfo.setText(Main.returnNetworkInfo() + " Port: " + Main.auctionCentralPort));
@@ -261,6 +261,7 @@ public class Server
             ObjectOutputStream centralOut = new ObjectOutputStream(otherPipeConnection.getOutputStream());
             ObjectInputStream centralIn = new ObjectInputStream(otherPipeConnection.getInputStream());
             Message incomingMessage = (Message) centralIn.readObject();
+
 
             boolean needsReturnMessage = true;
 

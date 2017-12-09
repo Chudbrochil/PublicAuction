@@ -508,8 +508,6 @@ public class Client
         while(true)
         {
 
-
-
             Message incomingMessage = (Message) in.readObject();
             // Agent listening
             if(isAgent)
