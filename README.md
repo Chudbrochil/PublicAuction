@@ -1,18 +1,14 @@
 PublicAuction Readme:
 
+Consult the User Guide.txt for how to run PublicAuction
+
+PLEASE NOTE!!!
+If a JavaFX "outofboundsexception" error is thrown. Please close Agent and try again.
+We have spent an enormous amount of time on this bug. It is a known issue online with
+Java and has absolutely nothing to do with an "outofboundsexception", it is being
+thrown from a thread and then a component somewhere getting a null ref.
 
 
-Where to Start:
-
-"Assigned roles"
-
-Anthony: GUI, Database, Agent
-Jacob: Sockets, (proxy setup?), Bank
-Vincent: AuctionCentral
-Anna: AuctionHouse
-
-
-Feel free to add contributions to this above list that you'd like to do.
 
 Message Life Cycle.
 
