@@ -134,7 +134,7 @@ public class Server
             pipeConnection = bankSocket.accept();
             outputStream = new ObjectOutputStream(pipeConnection.getOutputStream());
             inputStream = new ObjectInputStream(pipeConnection.getInputStream());
-            Message incomingMessage = (Message) inputStream.readObject(); // TODO: CATCH ERROR OFF THIS
+            Message incomingMessage = (Message) inputStream.readObject();
             boolean sendReturnMessage = true;
 
             // Performing a withdrawl for an agent
@@ -288,8 +288,6 @@ public class Server
                 ahPublicIDToSocketInfo.put(ahToRegister.getPublicID(), new SocketInfo(incomingMessage.getHostname(), ahToRegister.getPublicID()));
                 System.out.println("SEND_MSG: " + incomingMessage.getType() + " - TO: " + ahToRegister.getName());
             }
-
-            // TODO: centralIn, centralOut agent->AC. in, out ah->AC
 
             // Place_Bid came from agent
             else if (incomingMessage.getType() == MessageType.PLACE_BID && incomingMessage.getBidResponse() == null)

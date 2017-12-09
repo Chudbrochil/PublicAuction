@@ -5,7 +5,6 @@ import javafx.scene.control.TextField;
 
 import java.io.PrintStream;
 
-// TODO: BankController and ACController are almost exactly the same. Please fix this...
 public class BankController
 {
     @FXML
@@ -35,7 +34,6 @@ public class BankController
         newThread.start();
     }
 
-    // TODO: Remember to do error checking for if the bank isn't connected in AC/Server.
     @FXML
     private void btnConnectAC()
     {

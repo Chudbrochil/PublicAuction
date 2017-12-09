@@ -22,8 +22,10 @@ After an item is sold at the Auction House we are losing the "ITEM_SOLD" msg tha
 the Auction Central and then to the Bank(to remove hold) and to Agent (to congratulate)
 After an agent is passed on an item, the OUT_BID msg is also being lost at Auction Central.
 
+
 Extras:
-Images on the UI.
+Images on the GUI, we didn't have time to finish this though. Look at all
+    the pretty images. :( A dust bunny at least appears on the GUI.
 GUIs for every class. Agent, Auction House, Auction Central, Bank
 The way that standard out is captured on the GUIs is pretty clever.
 Each GUI has the ability to custom connect to different IPs. This was non-trivial.

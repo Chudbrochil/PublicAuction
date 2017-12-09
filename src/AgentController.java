@@ -21,23 +21,6 @@ import java.util.concurrent.TimeUnit;
 
 public class AgentController
 {
-
-    /**
-     * UI TODO's
-     *
-     * REQUIRED
-     * 1. List of items agent has already won.
-     * 2. Display for what they have on hold. (i.e. Temp Hold: $544.12)
-     *
-     *
-     *
-     * OPTIONAL
-     * 1. Status next to each item, highlight red for "in-progress"? Could even update currentbid on item
-     * 2. Make scenarios running on timers... i.e. at 20s turn on an auction house. at 40s turn on 2 more, etc.
-     * 3. Consolidate the other Controller's/FXML's
-     * 4. Error-handling/input-checking on captured fields
-     */
-
     @FXML
     private Label lblBalance;
 
@@ -84,11 +67,6 @@ public class AgentController
 
         // Initializing the user's GUI with a dust bunny in their inventory
         displayBoughtItem(new Item("Dust Bunny", "DustBunny.png", 0.0));
-
-        // Testing having a "bought item"
-        // TODO: Fix sizing issue where images are placed like spots away
-        //boughtItems.add(new Item("Mountain Air", "MountainAir.png", 30.00, 2));
-        //addImageToGUI("MountainAir.png", "Mountain Air");
 
 
         agent = client.getAgent();

@@ -245,7 +245,7 @@ public class Client
             }
             else
             {
-                taAgentOutput.appendText("Your bid of: " + response.getBidAmount() + " was refused."); // TODO: This msg could be better...
+                taAgentOutput.appendText("Your bid of: " + response.getBidAmount() + " was refused.");
             }
 
             //System.out.println("INSIDE PLACEAHBID " + response.getBidAmount() + " " + response.getName());
@@ -347,7 +347,6 @@ public class Client
                 }
                 else
                 {
-                    // TODO: What if messages somehow get interleaved? Haven't tested this.
                     System.out.print("Whoops, received a message other than update AHs");
                 }
             }
@@ -561,7 +560,7 @@ public class Client
                     }
                     else if (incomingMessage.getBidResponse() == BidResponse.REJECT)
                     {
-                        System.out.println("Your bid was rejected due to lack of funds."); //TODO: Make this a better println
+                        System.out.println("Your bid was rejected due to lack of funds.");
 
                     }
                 }

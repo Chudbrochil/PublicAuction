@@ -106,9 +106,8 @@ public class Message implements Serializable
         this.listOfAHs = listOfAHs;
     }
 
-    // TODO: This constructor is out of date
     //ITEM_SOLD Constructor
-    public Message(MessageType t, int item, int ahID, String bidK, Double b)//todo: delete this, replace by below.
+    public Message(MessageType t, int item, int ahID, String bidK, Double b)
     {
         type = t;
         auctionHousePublicID = ahID;
