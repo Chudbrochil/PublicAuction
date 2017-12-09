@@ -170,17 +170,6 @@ public class Server
                 else
                 {
                     incomingMessage.setBidResponse(BidResponse.REJECT);
-                    // ToDo Remove hold from bank and put hold amount back in account
-                    //todo: this will do the trick:
-                    if(account.releaseHold(incomingMessage.getBidAmount())) //todo, Anna: currently this amount is not the old bid amount THIS user placed. Fix that.
-                    {
-                        System.out.println("Hold successfully released for $"+incomingMessage.getBidAmount()+" for biddingID "+incomingMessage.getBiddingKey());
-                    }
-                    else
-                    {
-                        System.out.println("There was not enough money on hold bidding ID "+incomingMessage.getBiddingKey()+" to release " +
-                                "$"+incomingMessage.getBidAmount());
-                    }
                     System.out.println("Bank has refused a hold on account:");
                 }
                 System.out.println(account.toString());
@@ -217,15 +206,16 @@ public class Server
             }
             else if (incomingMessage.getType() == MessageType.OUT_BID)
             {
-                // ToDo Remove hold from bank and put hold amount back in account
-                //todo: this will do the trick:
-
-                 /** Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
-                 if(account.releaseHold(incomingMessage.getBidAmount())) //todo, Anna: currently this amount is not the old bid amount THIS user placed. Fix that.
-                 {
-                 //send message if applicable.
-                 }
-                 //else something has gone very wrong--the amount must have been switched or something. */
+                Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
+                if(account.releaseHold(incomingMessage.getBidAmount()))
+                {
+                    System.out.println("Hold successfully released for $"+incomingMessage.getBidAmount()+" for biddingID "+incomingMessage.getBiddingKey());
+                }
+                else
+                {
+                    System.out.println("There was not enough money on hold bidding ID "+incomingMessage.getBiddingKey()+" to release " +
+                        "$"+incomingMessage.getBidAmount());
+                }
 
             }
 
