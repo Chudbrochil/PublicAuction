@@ -628,8 +628,8 @@ public class Client
      */
     private void notifyWinner(Item item)
     {
-        System.out.println("SEND_MSG: Bidding ID"+ );
-        out.writeObject(winnerMessage);
+        //System.out.println("SEND_MSG: Bidding ID"+ );
+        //out.writeObject(winnerMessage);
     }
     
     /**
