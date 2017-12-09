@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 public class Server
@@ -19,12 +20,12 @@ public class Server
 
     private ObjectInputStream in;
     private ObjectOutputStream out;
-    //private int portNumber = 20000;
+
+    private static int agentPort;
 
 
-    private static int agentPortNumber = 20000;
     private HashMap<String, SocketInfo> agentBiddingKeyToSocketInfo;
-    private HashMap<String, SocketInfo> ahKeyToSocketInfo;
+    private HashMap<Integer, SocketInfo> ahPublicIDToSocketInfo;
 
     private static boolean isBank;
     private static String staticAcHostname = "127.0.0.1";
@@ -52,7 +53,7 @@ public class Server
         this.lblConnectionInfo = lblConnectionInfo;
 
         agentBiddingKeyToSocketInfo = new HashMap<>();
-        ahKeyToSocketInfo = new HashMap<>();
+        ahPublicIDToSocketInfo = new HashMap<>();
 
         // If we didn't originate from the command line then spin up a thread to update the clients label
         if (lblClientsList != null) updateClientsLabel();
@@ -247,6 +248,9 @@ public class Server
         auctionCentral = new AuctionCentral();
         ServerSocket auctionCentralSocket = new ServerSocket(Main.auctionCentralPort);
 
+        agentPort = ThreadLocalRandom.current().nextInt(4200, 4900);
+        System.out.println("Agent port: " + agentPort);
+
         Platform.runLater(() -> lblConnectionInfo.setText(Main.returnNetworkInfo() + " Port: " + Main.auctionCentralPort));
         System.out.println("Auction Central online.");
 
@@ -275,9 +279,9 @@ public class Server
 
                 // TODO: ON DEREGISTER, REMOVE AGENT AND AH
                 // Set the agent into the socket info map...
-                incomingMessage.setPortNumber(agentPortNumber);
-                agentBiddingKeyToSocketInfo.put(biddingKey, new SocketInfo(incomingMessage.getHostname(), agentPortNumber));
-                agentPortNumber++;
+                incomingMessage.setPortNumber(agentPort);
+                agentBiddingKeyToSocketInfo.put(biddingKey, new SocketInfo(incomingMessage.getHostname(), agentPort));
+                agentPort++;
             }
             // Registering a new AH with AC
             else if (incomingMessage.getType() == MessageType.REGISTER_AH)
@@ -285,7 +289,7 @@ public class Server
                 AuctionHouse ahToRegister = incomingMessage.getAuctionHouse();
                 System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: " + ahToRegister.getName());
                 auctionCentral.registerAuctionHouse(ahToRegister);
-                ahKeyToSocketInfo.put(ahToRegister.getAhKey(), new SocketInfo(incomingMessage.getHostname(), ahToRegister.getPublicID()));
+                ahPublicIDToSocketInfo.put(ahToRegister.getPublicID(), new SocketInfo(incomingMessage.getHostname(), ahToRegister.getPublicID()));
             }
             //if place bid is null then its from agent, anything else is response from auctionhouse
             else if (incomingMessage.getType() == MessageType.PLACE_BID)
@@ -295,7 +299,7 @@ public class Server
                     System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: bidKey-" + incomingMessage.getBiddingKey());
 
                     // Open a new connection to the auction house that has the item to bid on.
-                    SocketInfo ahSocketInfo = ahKeyToSocketInfo.get(incomingMessage.getItem().getAhID());
+                    SocketInfo ahSocketInfo = ahPublicIDToSocketInfo.get(incomingMessage.getItem().getAhID());
                     Socket auctionHouseSocket = new Socket(ahSocketInfo.HOSTNAME, ahSocketInfo.PORT);
 
                     out = new ObjectOutputStream(auctionHouseSocket.getOutputStream());

@@ -486,6 +486,7 @@ public class Client
         isListening = true;
         if (isAgent)
         {
+            System.out.println("Agent thinks it's port is: " + agent.getPortNumber());
             client = new ServerSocket(agent.getPortNumber());
             taAgentOutput.appendText("Agent listening for msg's on port " + getAgent().getPortNumber() + "\n");
         }
@@ -526,7 +527,7 @@ public class Client
                 else if (incomingMessage.getType() == MessageType.PLACE_BID && incomingMessage.getBidResponse() == BidResponse.REJECT)
                 {
                     System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
-                    System.out.println("Your bid was rejected from AH:" + incomingMessage.getItem().getAhID());
+                    System.out.println("Your bid was rejected from AH publicID: " + incomingMessage.getItem().getAhID());
                 }
             }
             // Auction House listening

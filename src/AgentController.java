@@ -61,7 +61,6 @@ public class AgentController
     Item currentSelectedItem;
 
     private ArrayList<Item> itemsAsList;
-    private ArrayList<Item> freshItems;
     private ArrayList<AuctionHouse> listOfAHs;
     private ObservableList<String> observableItems;
 
@@ -78,10 +77,9 @@ public class AgentController
     {
         itemsAsList = new ArrayList<>();
         client = new Client(true, Main.askName(), taAgentOutput);
-        freshItems = new ArrayList<>();
         listOfAHs = new ArrayList<>();
         observableItems = FXCollections.observableArrayList();
-        //observableItems = FXCollections.
+
         //boughtItems = new ArrayList<>();
 
         //boughtItems.add(new Item("Dust Bunny", "DustBunny.png", 0.0));
@@ -165,13 +163,6 @@ public class AgentController
     private void updateItemList()
     {
         listOfAHs = agent.getAuctionHouses();
-        //freshItems.clear();
-
-        //observableItems.clear();
-
-        //itemsAsList.clear();
-        //observableItems.clear();
-        lvItems.getItems().clear(); // TODO:
 
 
         for(int i = 0; i < listOfAHs.size(); ++i)
@@ -187,26 +178,16 @@ public class AgentController
             {
                 itemsAsList.add(itemsAsList.get(i));
             }
-            // Checking to make sure the global items list doesn't already have the item before adding it
-//            if(!observableItems.contains(itemsAsList.get(i)))
-//            {
-////                freshItems.add(itemsAsList.get(i));
-//                observableItems.add(itemsAsList.get(i).toString());
-//            }
-        }
-
-//        for(int i = 0; i < itemsAsList.size(); ++i)
-//        {
-//            if(observableItems)
-//        }
-
-        for(int i = 0; i < itemsAsList.size(); ++i)
-        {
             if(!observableItems.contains(itemsAsList.get(i).toString()))
             {
                 observableItems.add(itemsAsList.get(i).toString());
             }
         }
+
+//        for(int i = 0; i < itemsAsList.size(); ++i)
+//        {
+//
+//        }
 
 
         if(observableItems != null) lvItems.setItems(observableItems); //lvItems.getItems().addAll(observableItems);  //setItems(observableItems);
@@ -236,10 +217,8 @@ public class AgentController
      */
     private void setCurrentSelectedItem(String itemString)
     {
-        System.out.println("setCurentSelectedItem call:");
         if(itemString != null && !itemsAsList.isEmpty())
         {
-            System.out.println("setCurentSelectedItem call: item not null");
             for(int i = 0; i < itemsAsList.size(); ++i)
             {
                 if(itemString.equals(itemsAsList.get(i).toString()))

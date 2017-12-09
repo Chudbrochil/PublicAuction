@@ -10,8 +10,11 @@ public class AuctionCentral
     private HashMap<String, Integer> agentNameToPort;
 
     private ArrayList<AuctionHouse> listOfAHs;
-    private static int auctionHouseID = 6000; //This will become the port# for the AH.
-    private static int agentPort = 20000;          //These become port numbers for Agents.
+    private static int auctionHouseID = 4100; //This will become the port# for the AH.
+
+
+
+
     /**
      * auctionCentral()
      *
@@ -23,7 +26,6 @@ public class AuctionCentral
         bankKeyToBiddingKey = new HashMap<>();
         agentNameToPort = new HashMap<>();
         listOfAHs = new ArrayList<>();
-        agentPort = ThreadLocalRandom.current().nextInt(7000, 8000);
     }
 
     /**
@@ -111,11 +113,6 @@ public class AuctionCentral
 
     }
 
-    public int getPortNumber(){
-        agentPort++;
-        return agentPort;
-    }
-
     public HashMap<String, Integer> getAgentNameToPort() {
         return agentNameToPort;
     }
@@ -132,12 +129,5 @@ public class AuctionCentral
         return bankKeyToBiddingKey;
     }
 
-    public int getAgentPort() {
-        return agentPort;
-    }
-
-    public void setAgentPort(int agentPort) {
-        this.agentPort = agentPort;
-    }
 }
 

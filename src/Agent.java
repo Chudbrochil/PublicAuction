@@ -3,8 +3,6 @@ import java.util.ArrayList;
 
 public class Agent
 {
-    private Bank bank;
-    private AuctionCentral central;
     private ArrayList<AuctionHouse> auctionHouses;
     private int accountNum;
     private String bankKey, name;
