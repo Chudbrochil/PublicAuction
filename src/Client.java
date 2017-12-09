@@ -258,6 +258,7 @@ public class Client
         }
         catch (IOException e)
         {
+
             System.out.println(e.getMessage());
             System.out.println(e.getLocalizedMessage());
             e.printStackTrace();
@@ -486,23 +487,29 @@ public class Client
         isListening = true;
         if (isAgent)
         {
-            System.out.println("Agent thinks it's port is: " + agent.getPortNumber());
+            System.out.println("Agent thinks the port is " + agent.getPortNumber());
             client = new ServerSocket(agent.getPortNumber());
             taAgentOutput.appendText("Agent listening for msg's on port " + getAgent().getPortNumber() + "\n");
         }
         else
         {
-            System.out.println("My port is: " + auctionHouse.getPublicID()); // TODO: Remove this.
+            System.out.println("AH thinks the port is: " + auctionHouse.getPublicID());
             client = new ServerSocket(auctionHouse.getPublicID());
             System.out.println(auctionHouse.getName() + " listening for msg's on port " + auctionHouse.getPublicID());
         }
 
+
+        // TODO: Does this need to be inside while(true)?
         pipeConnection = client.accept();
         out = new ObjectOutputStream(pipeConnection.getOutputStream());
         in = new ObjectInputStream(pipeConnection.getInputStream());
 
+
         while(true)
         {
+
+
+
             Message incomingMessage = (Message) in.readObject();
             // Agent listening
             if(isAgent)
