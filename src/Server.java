@@ -339,6 +339,16 @@ public class Server
                     System.out.println("RCV_MSG: " + bankResponse.getType() + " - FROM: Bank");
                     System.out.println("SEND_MSG: " + bankResponse.getType() + " - TO: AH-ID: " + incomingMessage.getItem().getAhID());
                     System.out.println("SEND_MSG " + bankResponse.getType() + " - TO: bidKey-" + incomingMessage.getBiddingKey());
+    
+                    ////////
+                    ahSocketInfo = ahPublicIDToSocketInfo.get(incomingMessage.getItem().getAhID());
+                    auctionHouseSocket = new Socket(ahSocketInfo.HOSTNAME, ahSocketInfo.PORT);
+    
+                    out = new ObjectOutputStream(auctionHouseSocket.getOutputStream());
+                    out.flush();
+                    in = new ObjectInputStream(auctionHouseSocket.getInputStream());
+                    ////////
+                    
                     out.writeObject(bankResponse);
                     centralOut.writeObject(bankResponse);
                 }
