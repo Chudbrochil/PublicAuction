@@ -163,6 +163,8 @@ public class AgentController
     private void updateItemList()
     {
         listOfAHs = agent.getAuctionHouses();
+        itemsAsList.clear();
+        //observableItems.clear();
 
 
         for(int i = 0; i < listOfAHs.size(); ++i)
@@ -172,8 +174,14 @@ public class AgentController
             //itemsAsList = new ArrayList<Item>(ahItems.values());
         }
 
+        if(observableItems.size() > itemsAsList.size())
+        {
+            observableItems.clear();
+        }
+
         for(int i = 0; i < itemsAsList.size(); ++i)
         {
+            System.out.println("Index: " + i + " " + itemsAsList.get(i).getItemName());
             if(!itemsAsList.contains(itemsAsList.get(i)))
             {
                 itemsAsList.add(itemsAsList.get(i));
@@ -183,6 +191,8 @@ public class AgentController
                 observableItems.add(itemsAsList.get(i).toString());
             }
         }
+
+
 
 
         if(observableItems != null) lvItems.setItems(observableItems); //lvItems.getItems().addAll(observableItems);  //setItems(observableItems);

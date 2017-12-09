@@ -274,7 +274,6 @@ public class Server
 
                 incomingMessage.setBiddingKey(biddingKey);
 
-                // TODO: ON DEREGISTER, REMOVE AGENT AND AH
                 // Set the agent into the socket info map...
                 incomingMessage.setPortNumber(agentPort);
                 agentBiddingKeyToSocketInfo.put(biddingKey, new SocketInfo(incomingMessage.getHostname(), agentPort));
@@ -414,6 +413,15 @@ public class Server
                 // ****** I changed this code to add the bankKey to the message and forward it. --Anna
                 String bankKey = auctionCentral.getBiddingKeyToBankKey().get(incomingMessage.getBiddingKey());
                 incomingMessage.setBankKey(bankKey);
+
+
+                out.writeObject(incomingMessage);
+                System.out.println("SEND_MSG: " + incomingMessage.getType() + " - TO: Bank");
+
+
+                // ToDO make ac talk to agent.
+
+                // Sending a message of type OUT_BID.
                 
                 //get Agent socket
                 SocketInfo agentSocketInfo = agentBiddingKeyToSocketInfo.get(incomingMessage.getBiddingKey());
