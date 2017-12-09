@@ -159,18 +159,28 @@ public class Server
             {
                 Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
                 System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
+                incomingMessage.setType(MessageType.PLACE_HOLD);
                 // If we were able to deduct the bidding amount, then take it out, send a success back.
                 if (account.placeHold(incomingMessage.getBidAmount()))
                 {
                     incomingMessage.setBidResponse(BidResponse.ACCEPT);
-                    incomingMessage.setType(MessageType.PLACE_HOLD);
                     System.out.println("Bank has placed a hold on account for: " + incomingMessage.getBidAmount());
                 }
                 // If there wasn't enough money, send a rejection back.
                 else
                 {
                     incomingMessage.setBidResponse(BidResponse.REJECT);
-                    incomingMessage.setType(MessageType.PLACE_HOLD);
+                    // ToDo Remove hold from bank and put hold amount back in account
+                    //todo: this will do the trick:
+                    if(account.releaseHold(incomingMessage.getBidAmount())) //todo, Anna: currently this amount is not the old bid amount THIS user placed. Fix that.
+                    {
+                        System.out.println("Hold successfully released for $"+incomingMessage.getBidAmount()+" for biddingID "+incomingMessage.getBiddingKey());
+                    }
+                    else
+                    {
+                        System.out.println("There was not enough money on hold bidding ID "+incomingMessage.getBiddingKey()+" to release " +
+                                "$"+incomingMessage.getBidAmount());
+                    }
                     System.out.println("Bank has refused a hold on account:");
                 }
                 System.out.println(account.toString());
@@ -399,10 +409,15 @@ public class Server
                 out = new ObjectOutputStream(bankSocket.getOutputStream());
                 in = new ObjectInputStream(bankSocket.getInputStream());
 
+                // ****** I changed this code to add the bankKey to the message and forward it. --Anna
                 String bankKey = auctionCentral.getBiddingKeyToBankKey().get(incomingMessage.getBiddingKey());
-                // Sending a message of type OUT_BID.
-                out.writeObject(new Message(MessageType.OUT_BID, incomingMessage.getAuctionHousePublicID(), bankKey, incomingMessage.getBidAmount()));
+                incomingMessage.setBankKey(bankKey);
+                
+                
                 // ToDO make ac talk to agent.
+                
+                // Sending a message of type OUT_BID.
+                out.writeObject(incomingMessage);
                 needsReturnMessage = false;
             }
 
