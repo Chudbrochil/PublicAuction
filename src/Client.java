@@ -239,7 +239,7 @@ public class Client
 
             if(response.getBidResponse() == BidResponse.ACCEPT)
             {
-                taAgentOutput.appendText("Congratulations! You successfully bid:" + response.getBidAmount() + " on " + response.getItem().getItemName());
+                taAgentOutput.appendText("Congratulations! You successfully bid: " + response.getBidAmount() + " on " + response.getItem().getItemName());
             }
             else
             {
@@ -504,10 +504,8 @@ public class Client
         out = new ObjectOutputStream(pipeConnection.getOutputStream());
         in = new ObjectInputStream(pipeConnection.getInputStream());
 
-
         while(true)
         {
-
             Message incomingMessage = (Message) in.readObject();
             // Agent listening
             if(isAgent)

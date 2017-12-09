@@ -20,12 +20,17 @@ public class Server
 
     private ObjectInputStream in;
     private ObjectOutputStream out;
-
     private static int agentPort;
-
-
     private HashMap<String, SocketInfo> agentBiddingKeyToSocketInfo;
     private HashMap<Integer, SocketInfo> ahPublicIDToSocketInfo;
+
+    // Project CLEAN UP SERVER
+    private Socket pipeConnection;
+    private ObjectInputStream inputStream;
+    private ObjectOutputStream outputStream;
+
+
+
 
     private static boolean isBank;
     private static String staticAcHostname = "127.0.0.1";
@@ -118,121 +123,108 @@ public class Server
     {
         bank = new Bank();
         ServerSocket bankSocket = new ServerSocket(Main.bankPort);
-
         Platform.runLater(() -> lblConnectionInfo.setText(Main.returnNetworkInfo() + " Port: " + Main.bankPort));
-
         System.out.println("Bank online.");
 
         while (true)
         {
-            Socket pipeConnection = bankSocket.accept();
-            ObjectOutputStream bankOut = new ObjectOutputStream(pipeConnection.getOutputStream());
-            ObjectInputStream bankIn = new ObjectInputStream(pipeConnection.getInputStream());
-            Object object = bankIn.readObject();
+            pipeConnection = bankSocket.accept();
+            outputStream = new ObjectOutputStream(pipeConnection.getOutputStream());
+            inputStream = new ObjectInputStream(pipeConnection.getInputStream());
+            Message incomingMessage = (Message) inputStream.readObject(); // TODO: CATCH ERROR OFF THIS
+            boolean sendReturnMessage = true;
 
-            boolean needsReturnMessage = true;
-
-            if (object instanceof Message)
+            // Performing a withdrawl for an agent
+            if (incomingMessage.getType() == MessageType.WITHDRAW)
             {
-                Message incomingMessage = (Message) object;
-                // Performing a withdrawl for an agent
-                if (incomingMessage.getType() == MessageType.WITHDRAW)
+                Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
+                System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: " + account.getName());
+                // If we were able to deduct the bidding amount, then take it out, send a success back.
+                if (account.deductAccountBalance(incomingMessage.getBidAmount()))
                 {
-                    Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
-                    System.out.println("RCV_MSG: WITHDRAW - FROM: " + account.getName());
-                    // If we were able to deduct the bidding amount, then take it out, send a success back.
-                    if (account.deductAccountBalance(incomingMessage.getBidAmount()))
-                    {
-                        incomingMessage.setBidResponse(BidResponse.ACCEPT);
-                        System.out.println("Bank accepted withdrawl of " + incomingMessage.getBidAmount() + " on account:");
-                    }
-                    // If there wasn't enough money, send a rejection back.
-                    else
-                    {
-                        incomingMessage.setBidResponse(BidResponse.REJECT);
-                        System.out.println("Bank refused withdrawl of " + incomingMessage.getBidAmount() + " on account:");
-                    }
-                    System.out.println(account.toString());
+                    incomingMessage.setBidResponse(BidResponse.ACCEPT);
+                    System.out.println("Bank accepted withdrawl of " + incomingMessage.getBidAmount() + " on account:");
                 }
-                //When we place a bid
-                else if (incomingMessage.getType() == MessageType.PLACE_BID)
+                // If there wasn't enough money, send a rejection back.
+                else
                 {
-                    Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
-                    System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
-                    // If we were able to deduct the bidding amount, then take it out, send a success back.
-                    if (account.placeHold(incomingMessage.getBidAmount()))
-                    {
-                        incomingMessage.setBidResponse(BidResponse.ACCEPT);
-                        incomingMessage.setType(MessageType.PLACE_HOLD);
-                        System.out.println("Bank has placed a hold on account for: " + incomingMessage.getBidAmount());
-                    }
-                    // If there wasn't enough money, send a rejection back.
-                    else
-                    {
-                        incomingMessage.setBidResponse(BidResponse.REJECT);
-                        incomingMessage.setType(MessageType.PLACE_HOLD);
-                        System.out.println("Bank has refused a hold on account:");
-                    }
-                    System.out.println(account.toString());
-                    bankOut.writeObject(incomingMessage);
-                    System.out.println("SEND_MSG: " + incomingMessage.getType() + " - TO: Auction Central");
+                    incomingMessage.setBidResponse(BidResponse.REJECT);
+                    System.out.println("Bank refused withdrawl of " + incomingMessage.getBidAmount() + " on account:");
                 }
-                // Initializing an agent with an account (name, account#, balance, bankkey)
-                else if (incomingMessage.getType() == MessageType.REGISTER_AGENT)
+                System.out.println(account.toString());
+                System.out.println("SEND_MSG: " + incomingMessage.getType() + " - TO: " + account.getName());
+            }
+            //When we place a bid
+            else if (incomingMessage.getType() == MessageType.PLACE_BID)
+            {
+                Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
+                System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
+                // If we were able to deduct the bidding amount, then take it out, send a success back.
+                if (account.placeHold(incomingMessage.getBidAmount()))
                 {
-                    System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getAccount().getName());
-                    bank.registerAgent(incomingMessage.getAccount());
+                    incomingMessage.setBidResponse(BidResponse.ACCEPT);
+                    incomingMessage.setType(MessageType.PLACE_HOLD);
+                    System.out.println("Bank has placed a hold on account for: " + incomingMessage.getBidAmount());
                 }
-                // If an agent goes offline it will unsubscribe itself from the bank.
-                else if (incomingMessage.getType() == MessageType.UNREGISTER)
+                // If there wasn't enough money, send a rejection back.
+                else
                 {
-                    ;
-                    System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getName());
-                    bank.unregisterAgent(incomingMessage.getClientKey());
-                    System.out.println("Agent " + incomingMessage.getName() + " un-registered.");
-                    needsReturnMessage = false;
+                    incomingMessage.setBidResponse(BidResponse.REJECT);
+                    incomingMessage.setType(MessageType.PLACE_HOLD);
+                    System.out.println("Bank has refused a hold on account:");
                 }
-                // removes hold from bank.
-                else if (incomingMessage.getType() == MessageType.ITEM_SOLD)
-                {
-                    // ToDo Remove hold from bank account
-                    //todo: this will do the trick:
-                    
-                    /** Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
-                    if(account.deductFromHold(incomingMessage.getBidAmount()))
-                    {
-                        //send message if applicable.
-                    }
-                    //else something has gone very wrong--the amount must have been switched or something. */
+                System.out.println(account.toString());
+                System.out.println("SEND_MSG: " + incomingMessage.getType() + " - TO: Auction Central");
+            }
+            // Initializing an agent with an account (name, account#, balance, bankkey)
+            else if (incomingMessage.getType() == MessageType.REGISTER_AGENT)
+            {
+                System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getAccount().getName());
+                bank.registerAgent(incomingMessage.getAccount());
+                System.out.println("SEND_MSG: " + incomingMessage.getType() + " - TO: " + incomingMessage.getAccount().getName());
+            }
+            // If an agent goes offline it will unsubscribe itself from the bank.
+            else if (incomingMessage.getType() == MessageType.UNREGISTER)
+            {
+                System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getName());
+                bank.unregisterAgent(incomingMessage.getClientKey());
+                System.out.println("Agent " + incomingMessage.getName() + " un-registered.");
+                sendReturnMessage = false;
+            }
+            // removes hold from bank.
+            else if (incomingMessage.getType() == MessageType.ITEM_SOLD)
+            {
+                // ToDo Remove hold from bank account
+                //todo: this will do the trick:
 
-                }
-                else if (incomingMessage.getType() == MessageType.OUT_BID)
+                /** Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
+                if(account.deductFromHold(incomingMessage.getBidAmount()))
                 {
-                    // ToDo Remove hold from bank and put hold amount back in account
-                    //todo: this will do the trick:
-    
-                     /** Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
-                     if(account.releaseHold(incomingMessage.getBidAmount())) //todo, Anna: currently this amount is not the old bid amount THIS user placed. Fix that.
-                     {
-                     //send message if applicable.
-                     }
-                     //else something has gone very wrong--the amount must have been switched or something. */
-
+                    //send message if applicable.
                 }
-
-                if (needsReturnMessage)
-                {
-                    bankOut.writeObject(incomingMessage);
-                }
+                //else something has gone very wrong--the amount must have been switched or something. */
 
             }
-            else
+            else if (incomingMessage.getType() == MessageType.OUT_BID)
             {
-                System.out.println("Bank received unrecognized message. Doing nothing"); // TODO: Will this hold the socket open?
+                // ToDo Remove hold from bank and put hold amount back in account
+                //todo: this will do the trick:
+
+                 /** Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
+                 if(account.releaseHold(incomingMessage.getBidAmount())) //todo, Anna: currently this amount is not the old bid amount THIS user placed. Fix that.
+                 {
+                 //send message if applicable.
+                 }
+                 //else something has gone very wrong--the amount must have been switched or something. */
+
             }
 
+            if (sendReturnMessage) { outputStream.writeObject(incomingMessage); }
 
         }
+
+
+
     }
 
     /**
@@ -261,6 +253,8 @@ public class Server
             ObjectOutputStream centralOut = new ObjectOutputStream(otherPipeConnection.getOutputStream());
             ObjectInputStream centralIn = new ObjectInputStream(otherPipeConnection.getInputStream());
             Message incomingMessage = (Message) centralIn.readObject();
+
+
 
 
             boolean needsReturnMessage = true;
