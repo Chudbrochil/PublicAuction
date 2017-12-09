@@ -206,6 +206,7 @@ public class Server
             }
             else if (incomingMessage.getType() == MessageType.OUT_BID)
             {
+                System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
                 Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
                 if(account.releaseHold(incomingMessage.getBidAmount()))
                 {
@@ -269,7 +270,6 @@ public class Server
 
                 incomingMessage.setBiddingKey(biddingKey);
 
-                // TODO: ON DEREGISTER, REMOVE AGENT AND AH
                 // Set the agent into the socket info map...
                 incomingMessage.setPortNumber(agentPort);
                 agentBiddingKeyToSocketInfo.put(biddingKey, new SocketInfo(incomingMessage.getHostname(), agentPort));
@@ -398,11 +398,14 @@ public class Server
                 String bankKey = auctionCentral.getBiddingKeyToBankKey().get(incomingMessage.getBiddingKey());
                 incomingMessage.setBankKey(bankKey);
 
+                out.writeObject(incomingMessage);
+                System.out.println("SEND_MSG: " + incomingMessage.getType() + " - TO: Bank");
+
 
                 // ToDO make ac talk to agent.
 
                 // Sending a message of type OUT_BID.
-                out.writeObject(incomingMessage);
+
                 needsReturnMessage = false;
             }
 

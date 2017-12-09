@@ -196,7 +196,6 @@ public class Client
     }
 
     /**
-     * TODO: Can I somehow get rid of this method?
      * getAgent()
      *
      * @return The agent that is held within this client
@@ -243,7 +242,7 @@ public class Client
             }
             else
             {
-                taAgentOutput.appendText("Your bid of: " + response.getBidAmount() + " was refused due to insufficient funds.");
+                taAgentOutput.appendText("Your bid of: " + response.getBidAmount() + " was refused."); // TODO: This msg could be better...
             }
 
             //System.out.println("INSIDE PLACEAHBID " + response.getBidAmount() + " " + response.getName());
