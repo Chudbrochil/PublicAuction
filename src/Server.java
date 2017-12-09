@@ -335,17 +335,8 @@ public class Server
                     Message bankResponse = (Message) inFromBank.readObject();
                     bankResponse.setBiddingKey(auctionCentral.getBankKeyToBiddingKey().get(incomingMessage.getBankKey()));
 
+                    // We get a response back from the bank on whether or not the agent had the money.
                     System.out.println("RCV_MSG: " + bankResponse.getType() + " - FROM: Bank");
-
-                    if (bankResponse.getBidResponse() == BidResponse.ACCEPT)
-                    {
-                        System.out.println("successful bid that needs to go to auction house");
-                    }
-                    else if (bankResponse.getBidResponse() == BidResponse.REJECT)
-                    {
-                        System.out.println("you didn't have enough money");
-                    }
-
                     System.out.println("SEND_MSG: " + bankResponse.getType() + " - TO: AH-ID: " + incomingMessage.getItem().getAhID());
                     System.out.println("SEND_MSG " + bankResponse.getType() + " - TO: bidKey-" + incomingMessage.getBiddingKey());
                     out.writeObject(bankResponse);

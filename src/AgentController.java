@@ -56,7 +56,7 @@ public class AgentController
     @FXML
     private GridPane gpBoughtItems;
 
-    //private ArrayList<Item> boughtItems;
+    private ArrayList<Item> boughtItems;
 
     Item currentSelectedItem;
 
@@ -79,15 +79,11 @@ public class AgentController
         client = new Client(true, Main.askName(), taAgentOutput);
         listOfAHs = new ArrayList<>();
         observableItems = FXCollections.observableArrayList();
-
-        //boughtItems = new ArrayList<>();
-
-        //boughtItems.add(new Item("Dust Bunny", "DustBunny.png", 0.0));
+        boughtItems = new ArrayList<>();
 
 
         // Initializing the user's GUI with a dust bunny in their inventory
-        //addImageToGUI("DustBunny.png", "Dust Bunny");
-
+        displayBoughtItem(new Item("Dust Bunny", "DustBunny.png", 0.0));
 
         // Testing having a "bought item"
         // TODO: Fix sizing issue where images are placed like spots away
@@ -188,11 +184,6 @@ public class AgentController
             }
         }
 
-//        for(int i = 0; i < itemsAsList.size(); ++i)
-//        {
-//
-//        }
-
 
         if(observableItems != null) lvItems.setItems(observableItems); //lvItems.getItems().addAll(observableItems);  //setItems(observableItems);
 
@@ -278,18 +269,16 @@ public class AgentController
      *
      * Useful for adding images to GUI when an agent buys an item.
      *
-     * @param imgPath The path to the image we are adding, usually in the item.
      */
-//    private void addImageToGUI(String imgPath, String itemName)
-//    {
-//        Image imageToAdd = new Image(getClass().getResource(imgPath).toExternalForm());
-//        ImageView imgView = new ImageView(imageToAdd);
-//        //imgView.set
-//        //System.out.println(boughtItems.size());
-//        int row = boughtItems.size() / 10;
-//        int column = boughtItems.size() % 10;
-//        gpBoughtItems.add(imgView, column, row);
-//    }
+    private void displayBoughtItem(Item item)//      String imgPath, String itemName)
+    {
+        Image imageToAdd = new Image(getClass().getResource(item.getImgPath()).toExternalForm());
+        ImageView imgView = new ImageView(imageToAdd);
+        boughtItems.add(item);
+        int row = boughtItems.size() / 10;
+        int column = boughtItems.size() % 10;
+        gpBoughtItems.add(imgView, column, row);
+    }
 
 
 

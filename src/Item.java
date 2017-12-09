@@ -54,12 +54,12 @@ public class Item implements Serializable
 
     public int getItemID() { return itemID; }
 
-    public synchronized Double getCurrentBid()
+    public Double getCurrentBid()
     {
         return currentBid;
     }
 
-    public synchronized String getCurrentHighestBidderID()
+    public String getCurrentHighestBidderID()
     {
         return currentHighestBidderID;
     }
@@ -70,7 +70,7 @@ public class Item implements Serializable
      * @param newBid
      * @param newBiddingKey Agent who is making the bid of AMOUNT newBid
      */
-    public synchronized void setCurrentBidAndBidder(Double newBid, String newBiddingKey)
+    public void setCurrentBidAndBidder(Double newBid, String newBiddingKey)
     {
         currentBid = newBid;
         currentHighestBidderID = newBiddingKey;
@@ -120,4 +120,6 @@ public class Item implements Serializable
     {
         this.currentHighestBidderID = currentHighestBidderID;
     }
+
+    public String getImgPath() { return imgPath; }
 }
