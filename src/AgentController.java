@@ -142,13 +142,17 @@ public class AgentController
             @Override
             public void run()
             {
-                // Getting the latest list of auction houses that are up and updates the item list
-                if(client.getAcConnected()) client.updateListOfAHs();
+//                // Getting the latest list of auction houses that are up and updates the item list
+//                if(Client.getAcConnected()) client.updateListOfAHs();
 
                 // Platform syncs this command with the UI, fixes javafx thread bugs
                 Platform.runLater(() -> {
                     // If the client has connected to the bank and ac already, update your items
-                    if(client.getAcConnected()) updateItemList();
+                    if(Client.getAcConnected())
+                    {
+                        client.updateListOfAHs();
+                        updateItemList();
+                    }
                     lblBalance.setText(String.valueOf(agent.getAccountBalance()));
                 });
             }

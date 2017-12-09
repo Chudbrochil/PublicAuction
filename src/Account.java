@@ -110,7 +110,6 @@ public class Account implements Serializable
     {
         if(accountBalance >= amntToHold)
         {
-            System.out.println("In account, you had enough money.");
             accountBalance -= amntToHold;
             temporaryHold += amntToHold;
             return true;
