@@ -17,7 +17,11 @@ public class AuctionTimer
     private Timeline timeline;
     private IntegerProperty timeSeconds;
     private final Item item; //the item in AH for which this timer is set.
-    
+
+    /**
+     * Auction Timer Constructor
+     * @param item
+     */
     AuctionTimer(Item item)
     {
         this.item = item;

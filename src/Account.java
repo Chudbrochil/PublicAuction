@@ -113,11 +113,19 @@ public class Account implements Serializable
      */
     public String getBankKey() { return bankKey; }
 
+    /**
+     * Gets the agents name.
+     * @return agents anme
+     */
     public String getName()
     {
         return name;
     }
 
+    /**
+     * Set Agents name.
+     * @param name Agents name
+     */
     public void setName(String name)
     {
         this.name = name;
