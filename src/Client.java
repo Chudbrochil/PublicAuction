@@ -592,8 +592,7 @@ public class Client
                 System.out.println(itemSoldReport);
                 setSoldItem(auctionHouse.getSoldItem());
                 //System.out.println("Timer for "+incomingMessage.getItem().toString()+" just went off!");
-    
-                //todo: close AH if it has no more items.
+                
                 boolean ahHasItems = auctionHouse.hasItems();
                 if(!ahHasItems)
                 {
@@ -611,15 +610,14 @@ public class Client
         });
         
         
-        double prevBidAmount = incomingMessage.getItem().getCurrentBid(); //todo: DEBUGGING not sure about this line.
+        double prevBidAmount = incomingMessage.getItem().getCurrentBid();
         //System.out.println("THE BID AMOUNT INSIDE ACCEPT BID IS: " + incomingMessage.getBidAmount());
         String prevBidder = auctionHouse.processHoldResponse(incomingMessage.getBiddingKey(), incomingMessage.getBidAmount(),
             incomingMessage.getItem().getItemID(), timer);
         if(prevBidder != null)
         {
-            System.out.println("Sendingout message"); //***
+            System.out.println("Sending OUT_BID message to bidID "+ prevBidder);
             sendOutBidMessage(prevBidAmount, prevBidder, incomingMessage.getItem());
-            System.out.println("Out message sent"); //***
         }
         
         //Comment out this line if you want to run testTimer()
@@ -637,6 +635,11 @@ public class Client
             System.out.println("Bidding ID"+ item.getCurrentHighestBidderID()+ " just won "+item.getItemName()+" for $"+item.getCurrentBid()+"!");
             Message winnerMessage = new Message(MessageType.ITEM_SOLD, auctionHouse.getPublicID(), item.getCurrentHighestBidderID(),
                     item.getCurrentBid(), item);
+    
+            out = new ObjectOutputStream(pipeConnection.getOutputStream());
+            
+            try{Thread.sleep(2);}
+            catch(Exception e) {}
             out.writeObject(winnerMessage);
         }
         catch(IOException e) { System.out.println(e.getMessage()); }
@@ -653,6 +656,8 @@ public class Client
     private void sendOutBidMessage(double prevBidAmount, String prevBidder, Item item) throws IOException
     {
         Message outbidMessage = new Message(MessageType.OUT_BID, auctionHouse.getPublicID(), prevBidder, prevBidAmount, item);
+    
+        out = new ObjectOutputStream(pipeConnection.getOutputStream());
         out.writeObject(outbidMessage);
     }
     

@@ -196,15 +196,16 @@ public class Server
             // removes hold from bank.
             else if (incomingMessage.getType() == MessageType.ITEM_SOLD)
             {
-                // ToDo Remove hold from bank account
-                //todo: this will do the trick:
-
-                /** Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
+                Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
                 if(account.deductFromHold(incomingMessage.getBidAmount()))
                 {
-                    //send message if applicable.
+                    System.out.println("Hold successfully deducted from for $"+incomingMessage.getBidAmount()+" for biddingID "+incomingMessage.getBiddingKey());
                 }
-                //else something has gone very wrong--the amount must have been switched or something. */
+                else
+                {
+                    System.out.println("There was not enough money on hold bidding ID "+incomingMessage.getBiddingKey()+" to pay for this! Amount: " +
+                        "$"+incomingMessage.getBidAmount());
+                }
 
             }
             else if (incomingMessage.getType() == MessageType.OUT_BID)
@@ -378,18 +379,30 @@ public class Server
             // sends a message of ITEM_SOLD to bank and agent.
             else if (incomingMessage.getType() == MessageType.ITEM_SOLD)
             {
+                System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: " + incomingMessage.getName());
                 Socket bankSocket = new Socket(staticBankHostname, Main.bankPort);
 
                 out = new ObjectOutputStream(bankSocket.getOutputStream());
                 in = new ObjectInputStream(bankSocket.getInputStream());
+                
                 String bankKey = auctionCentral.getBiddingKeyToBankKey().get(incomingMessage.getBiddingKey());
+                incomingMessage.setBankKey(bankKey);
+                
+                //get Agent socket
+                SocketInfo agentSocketInfo = agentBiddingKeyToSocketInfo.get(incomingMessage.getBiddingKey());
+                Socket agentSocket = new Socket(agentSocketInfo.HOSTNAME, agentSocketInfo.PORT);
+                ObjectOutputStream agentOut = new ObjectOutputStream(agentSocket.getOutputStream());
+    
                 // Sending a message of type Item_Sold.
-                out.writeObject(new Message(MessageType.ITEM_SOLD, incomingMessage.getItemID(), incomingMessage.getAuctionHousePublicID(), bankKey, incomingMessage.getBidAmount()));
-                // ToDO make ac talk to agent.
+                System.out.println("SEND_MSG: " + incomingMessage.getType() + " - TO: bidID "+ incomingMessage.getBiddingKey());
+                agentOut.writeObject(incomingMessage);
+                out.writeObject(incomingMessage);
+                
                 needsReturnMessage = false;
             }
             else if (incomingMessage.getType() == MessageType.OUT_BID)
             {
+                System.out.println("SEND_MSG: " + incomingMessage.getType() + " - TO: bidID "+ incomingMessage.getBiddingKey());
                 Socket bankSocket = new Socket(staticBankHostname, Main.bankPort);
 
                 out = new ObjectOutputStream(bankSocket.getOutputStream());
