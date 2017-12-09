@@ -17,6 +17,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Wrapper class for AuctionHouse and Agents. Sends and receives messages.
+ */
 public class Client
 {
     private ObjectOutputStream out;
