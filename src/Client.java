@@ -486,6 +486,7 @@ public class Client
         isListening = true;
         if (isAgent)
         {
+            System.out.println("Agent thinks it's port is: " + agent.getPortNumber());
             client = new ServerSocket(agent.getPortNumber());
             taAgentOutput.appendText("Agent listening for msg's on port " + getAgent().getPortNumber() + "\n");
         }
