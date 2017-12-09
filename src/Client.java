@@ -631,10 +631,12 @@ public class Client
      * notifyWinner()
      * @param item that has been sold! The bidding ID and amount is stored in it.
      */
-    private void notifyWinner(Item item)
+    private void notifyWinner(Item item) throws IOException
     {
-        //System.out.println("SEND_MSG: Bidding ID"+ );
-        //out.writeObject(winnerMessage);
+        System.out.println("Bidding ID"+ item.getCurrentHighestBidderID()+ " just won "+item.getItemName()+" for $"+item.getCurrentBid()+"!");
+        Message winnerMessage = new Message(MessageType.ITEM_SOLD, auctionHouse.getPublicID(), item.getCurrentHighestBidderID(),
+            item.getCurrentBid(), item);
+        out.writeObject(winnerMessage);
     }
     
     /**

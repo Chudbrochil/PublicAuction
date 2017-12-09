@@ -108,7 +108,7 @@ public class Message implements Serializable
 
     // TODO: This constructor is out of date
     //ITEM_SOLD Constructor
-    public Message(MessageType t, int item, int ahID, String bidK, Double b)
+    public Message(MessageType t, int item, int ahID, String bidK, Double b)//todo: delete this, replace by below.
     {
         type = t;
         auctionHousePublicID = ahID;
@@ -117,13 +117,14 @@ public class Message implements Serializable
         itemID = item;
     }
 
-    //OUT_BID Constructor
+    //OUT_BID Constructor AND ITEM_SOLD constructor
     public Message(MessageType t, int ahID, String bKey, Double amount, Item item)
     {
         type = t;
         auctionHousePublicID = ahID;
         biddingKey = bKey;
         bidAmount = amount;
+        this.item = item;
     }
 
 
