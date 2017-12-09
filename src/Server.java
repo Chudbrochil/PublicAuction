@@ -339,8 +339,10 @@ public class Server
                     System.out.println("RCV_MSG: " + bankResponse.getType() + " - FROM: Bank");
                     System.out.println("SEND_MSG: " + bankResponse.getType() + " - TO: AH-ID: " + incomingMessage.getItem().getAhID());
                     System.out.println("SEND_MSG " + bankResponse.getType() + " - TO: bidKey-" + incomingMessage.getBiddingKey());
+                    //out.flush();
                     out.writeObject(bankResponse);
                     centralOut.writeObject(bankResponse);
+                    //centralOut.writeObject(incomingMessage);
                 }
 
                 needsReturnMessage = false;

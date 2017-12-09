@@ -246,14 +246,11 @@ public class Client
                 taAgentOutput.appendText("Your bid of: " + response.getBidAmount() + " was refused due to insufficient funds.");
             }
 
+            //System.out.println("INSIDE PLACEAHBID " + response.getBidAmount() + " " + response.getName());
 
 
-            if (response.getBidResponse() == BidResponse.ACCEPT && response.getItem().getCurrentBid() < response.getBidAmount()
-                    && response.getItem().getMinimumBid() < response.getBidAmount())
-            //if (response.getBidResponse() == BidResponse.ACCEPT && auctionHouse.placeBid(biddingKey, bidAmount, item.getItemID(), auctionHouse.getPublicID()))
-            {
-                response.getItem().setCurrentBidAndBidder(response.getBidAmount(), response.getName());
-            }
+
+            //response.getItem().setCurrentBidAndBidder(response.getBidAmount(), response.getName());
 
         }
         catch (IOException e)
@@ -612,6 +609,7 @@ public class Client
         
         
         double prevBidAmount = incomingMessage.getItem().getCurrentBid(); //todo: DEBUGGING not sure about this line.
+        //System.out.println("THE BID AMOUNT INSIDE ACCEPT BID IS: " + incomingMessage.getBidAmount());
         String prevBidder = auctionHouse.processHoldResponse(incomingMessage.getBiddingKey(), incomingMessage.getBidAmount(),
             incomingMessage.getItemID(), timer);
         if(prevBidder != null)

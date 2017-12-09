@@ -12,9 +12,9 @@ public class Item implements Serializable
 {
     private int ahID;      //IDs.ID of the AuctionHouse that holds this item
     private Double minimumBid;
-    private Double currentBid;               //CurrentBid on this item--the highest of all the bids. Will be 0 until first bid.
+    private Double currentBid = 0.0;               //CurrentBid on this item--the highest of all the bids. Will be 0 until first bid.
     private String itemName;
-    private String currentHighestBidderID;    //BIDDING_ID of Agent who holds the currentBid, which is winning. Will be null until first bid.
+    private String currentHighestBidderID = null;    //BIDDING_ID of Agent who holds the currentBid, which is winning. Will be null until first bid.
     private String imgPath;
     private int itemID;            //Unique item ID
 
@@ -40,14 +40,6 @@ public class Item implements Serializable
         this.imgPath = imgPath;
         this.setMinimumBid(minimumBid);
         ahID = -1; // Sentinel value so that we know ahID hasn't been initialized yet.
-        currentBid = 0.0;
-        currentHighestBidderID = null;
-    }
-
-    public Item(String itemName, String imgPath, double minimumBid, int itemID)
-    {
-        this(itemName, imgPath, minimumBid);
-        this.itemID = itemID;
     }
 
     public void setItemID(int itemID) { this.itemID = itemID; }
