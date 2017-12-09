@@ -255,8 +255,6 @@ public class Server
             Message incomingMessage = (Message) centralIn.readObject();
 
 
-
-
             boolean needsReturnMessage = true;
 
             // Updating the list of AHs to the agent
@@ -277,6 +275,7 @@ public class Server
                 incomingMessage.setPortNumber(agentPort);
                 agentBiddingKeyToSocketInfo.put(biddingKey, new SocketInfo(incomingMessage.getHostname(), agentPort));
                 agentPort++;
+                System.out.println("SEND_MSG: " + incomingMessage.getType() + " - TO: " + incomingMessage.getName());
             }
             // Registering a new AH with AC
             else if (incomingMessage.getType() == MessageType.REGISTER_AH)
@@ -285,10 +284,12 @@ public class Server
                 System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: " + ahToRegister.getName());
                 auctionCentral.registerAuctionHouse(ahToRegister);
                 ahPublicIDToSocketInfo.put(ahToRegister.getPublicID(), new SocketInfo(incomingMessage.getHostname(), ahToRegister.getPublicID()));
+                System.out.println("SEND_MSG: " + incomingMessage.getType() + " - TO: " + ahToRegister.getName());
             }
             //if place bid is null then its from agent, anything else is response from auctionhouse
             else if (incomingMessage.getType() == MessageType.PLACE_BID)
             {
+                // Place_Bid came from agent
                 if (incomingMessage.getBidResponse() == null)
                 {
                     System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: bidKey-" + incomingMessage.getBiddingKey());
