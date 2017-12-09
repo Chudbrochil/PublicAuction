@@ -156,7 +156,7 @@ public class AuctionHouse implements Serializable
 
         else
         {
-            System.out.println("false inside auction house");
+            System.out.println("Not a valid bid.");
             return false;
         }
     }
@@ -175,18 +175,6 @@ public class AuctionHouse implements Serializable
      *          BidResponse PASS to the returned biddingID and a REQUEST_BID BidResponseMessage ACCEPT to
      *          *this* biddingID
      *
-     *          **Timer stores itemID and calls itemSold()
-     *
-     *          String oldBidder = processHoldResponse(....);
-     *          In Client:  if(oldBidder!=null)
-     *                      {
-     *                          sendMessage(oldBidder, BidResponse.PASS......)
-     *                          //sendMessage(message.getBidder(), BidResponse.ACCEPT)
-     *                      }
-     *                      else
-     *                      {
-     *                          //forward message to Agent (the ACCEPT/REJECT is already set. Agent will react accordingly.
-     *                      }
      */
     public String processHoldResponse(String biddingID, double amount, int itemID, AuctionTimer timer)
     {
