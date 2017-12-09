@@ -8,10 +8,30 @@ We have spent an enormous amount of time on this bug. It is a known issue online
 Java and has absolutely nothing to do with an "outofboundsexception", it is being
 thrown from a thread and then a component somewhere getting a null ref.
 
+Explanation of design:
+Per the spec, we have Agent, Bank, Auction Central and Auction House.
+Each of these has a Controller (Class spanning between the GUI and the class).
+Each of these has an FXML (Actual definition of GUI components).
+From there, in order to make an Agent or Auction House you will need to make a new
+Client which is a networking wrapper for Agent and Auction House.
+In order to make an Auction Central or Bank you will need to make a new Server which
+is a networking wrapper for AC and Bank.
+
+Things we were unable to implement or finish:
+After an item is sold at the Auction House we are losing the "ITEM_SOLD" msg that should be going to
+the Auction Central and then to the Bank(to remove hold) and to Agent (to congratulate)
+After an agent is passed on an item, the OUT_BID msg is also being lost at Auction Central.
+
+Extras:
+Images on the UI.
+GUIs for every class. Agent, Auction House, Auction Central, Bank
+The way that standard out is captured on the GUIs is pretty clever.
+Each GUI has the ability to custom connect to different IPs. This was non-trivial.
+Dynamic port assignment for Clients(AH, Agent)
 
 
-Message Life Cycle.
 
+Message Life Cycle:
 Life cycle of Registering Agent with Bank.
 Agent send a message to bank saying that it would like to register an account.
 Bank responds back to agent confirming that it has been registered and gives it a bank key.
