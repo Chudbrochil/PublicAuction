@@ -55,10 +55,10 @@ Using a GUI - Updated 12/8/2017
 
     Explanation of the Agent GUI:.
     
-    Current Balance: This is the current amount of money you have available
-                     in the bank. It gets updated after you connect to the bank
+    Balance: This is the current amount of money you have available
+             in the bank. It gets updated after you connect to the bank
                      
-    Connect to Localhost: This connects you to the AC and Bank at localhost(127.0.0.1)
+    Connect AC/Bank to Localhost: This connects you to the AC and Bank at localhost(127.0.0.1)
     
     BidAmount Textfield: Enter bid's into here to place bids and withdraw money.
     
