@@ -210,12 +210,14 @@ public class Server
                     // ToDo Remove hold from bank and put hold amount back in account
                     //todo: this will do the trick:
     
-                     /** Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
+                     Account account = bank.getBankKeyToAccount().get(incomingMessage.getBankKey());
                      if(account.releaseHold(incomingMessage.getBidAmount())) //todo, Anna: currently this amount is not the old bid amount THIS user placed. Fix that.
                      {
-                     //send message if applicable.
+                        System.out.println("Hold successfully released for $"+incomingMessage.getBidAmount()+" for biddingID "+incomingMessage.getBiddingKey());
                      }
-                     //else something has gone very wrong--the amount must have been switched or something. */
+                     else System.out.println("There was not enough money on hold bidding ID "+incomingMessage.getBiddingKey()+" to release " +
+                         "$"+incomingMessage.getBidAmount());
+                     //else something has gone very wrong--the amount must have been switched or something.
 
                 }
 
@@ -399,10 +401,15 @@ public class Server
                 out = new ObjectOutputStream(bankSocket.getOutputStream());
                 in = new ObjectInputStream(bankSocket.getInputStream());
 
+                // ****** I changed this code to add the bankKey to the message and forward it. --Anna
                 String bankKey = auctionCentral.getBiddingKeyToBankKey().get(incomingMessage.getBiddingKey());
-                // Sending a message of type OUT_BID.
-                out.writeObject(new Message(MessageType.OUT_BID, incomingMessage.getAuctionHousePublicID(), bankKey, incomingMessage.getBidAmount()));
+                incomingMessage.setBankKey(bankKey);
+                
+                
                 // ToDO make ac talk to agent.
+                
+                // Sending a message of type OUT_BID.
+                out.writeObject(incomingMessage);
                 needsReturnMessage = false;
             }
 

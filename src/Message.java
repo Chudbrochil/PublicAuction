@@ -118,12 +118,12 @@ public class Message implements Serializable
     }
 
     //OUT_BID Constructor
-    public Message(MessageType t, int ahID, String bankK, Double b)
+    public Message(MessageType t, int ahID, String bKey, Double amount, Item item)
     {
         type = t;
         auctionHousePublicID = ahID;
-        bankKey = bankK;
-        bidAmount = b;
+        biddingKey = bKey;
+        bidAmount = amount;
     }
 
 

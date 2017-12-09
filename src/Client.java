@@ -579,6 +579,7 @@ public class Client
      */
     private void acceptBid(Message incomingMessage) throws IOException
     {
+        //Make a new timer
         AuctionTimer timer = new AuctionTimer(incomingMessage.getItem());
         timer.setOnFinished(new EventHandler<ActionEvent>()
         {
@@ -592,10 +593,21 @@ public class Client
     
                 //todo: close AH if it has no more items.
                 boolean ahHasItems = auctionHouse.hasItems();
+                if(!ahHasItems)
+                {
+                    try { unsubscribe();}
+                    catch(Exception e)
+                    {
+                        System.out.println(e.getMessage());
+                        System.out.println(e.getLocalizedMessage());
+                        e.printStackTrace();
+                    }
+                }
                 
-                //todo: notify winner.
+                notifyWinner(soldItem);
             }
         });
+        
         
         double prevBidAmount = incomingMessage.getItem().getCurrentBid(); //todo: DEBUGGING not sure about this line.
         String prevBidder = auctionHouse.processHoldResponse(incomingMessage.getBiddingKey(), incomingMessage.getBidAmount(),
@@ -610,6 +622,16 @@ public class Client
     }
     
     /**
+     * notifyWinner()
+     * @param item that has been sold! The bidding ID and amount is stored in it.
+     */
+    private void notifyWinner(Item item)
+    {
+        System.out.println("SEND_MSG: Bidding ID"+ );
+        out.writeObject(winnerMessage);
+    }
+    
+    /**
      * sendOutBidMessage()
      * @param prevBidAmount The amount of the bid that is now null--needed by the bank to release the right amount from the hold.
      * @param prevBidder The biddingID of the bidder who should be notified that their bid has been passed.
@@ -618,9 +640,8 @@ public class Client
      */
     private void sendOutBidMessage(double prevBidAmount, String prevBidder, Item item) throws IOException
     {
-        //Message outbidMessage = new Message();
-        
-        //out.writeObject(outbidMessage);
+        Message outbidMessage = new Message(MessageType.OUT_BID, auctionHouse.getPublicID(), prevBidder, prevBidAmount, item);
+        out.writeObject(outbidMessage);
     }
     
     /**
