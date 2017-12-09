@@ -348,9 +348,10 @@ public class Server
                     out.flush();
                     in = new ObjectInputStream(auctionHouseSocket.getInputStream());
                     ////////
-                    
+
                     out.writeObject(bankResponse);
                     centralOut.writeObject(bankResponse);
+                    //centralOut.writeObject(incomingMessage);
                 }
 
                 needsReturnMessage = false;

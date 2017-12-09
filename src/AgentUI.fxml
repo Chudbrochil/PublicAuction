@@ -22,7 +22,7 @@
                      <font>
                         <Font size="18.0" />
                      </font></Label>
-                  <Label fx:id="lblBalance" prefHeight="27.0" prefWidth="85.0" text="Cash">
+                  <Label fx:id="lblBalance" prefHeight="27.0" prefWidth="76.0" text="Cash">
                      <font>
                         <Font size="18.0" />
                      </font></Label>
@@ -31,7 +31,7 @@
                         <Font size="18.0" />
                      </font>
                   </Label>
-                  <Label prefHeight="27.0" prefWidth="91.0" text="No holds." textFill="#ff0b0b">
+                  <Label prefHeight="27.0" prefWidth="83.0" text="No holds." textFill="#ff0b0b">
                      <font>
                         <Font size="18.0" />
                      </font>
