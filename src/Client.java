@@ -590,7 +590,7 @@ public class Client
             @Override
             public void handle(ActionEvent arg0)
             {
-                String itemSoldReport = auctionHouse.itemSold(incomingMessage.getItemID());
+                String itemSoldReport = auctionHouse.itemSold(incomingMessage.getItem().getItemID());
                 System.out.println(itemSoldReport);
                 setSoldItem(auctionHouse.getSoldItem());
                 //System.out.println("Timer for "+incomingMessage.getItem().toString()+" just went off!");
@@ -615,7 +615,7 @@ public class Client
         
         double prevBidAmount = incomingMessage.getItem().getCurrentBid(); //todo: DEBUGGING not sure about this line.
         String prevBidder = auctionHouse.processHoldResponse(incomingMessage.getBiddingKey(), incomingMessage.getBidAmount(),
-            incomingMessage.getItemID(), timer);
+            incomingMessage.getItem().getItemID(), timer);
         if(prevBidder != null)
         {
             System.out.println("Sendingout message"); //***
