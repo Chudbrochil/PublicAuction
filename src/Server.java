@@ -12,6 +12,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Wrapper class for AC and Bank. Listeners.
+ */
 public class Server
 {
     private Bank bank;
@@ -398,6 +401,7 @@ public class Server
                 String bankKey = auctionCentral.getBiddingKeyToBankKey().get(incomingMessage.getBiddingKey());
                 incomingMessage.setBankKey(bankKey);
 
+
                 out.writeObject(incomingMessage);
                 System.out.println("SEND_MSG: " + incomingMessage.getType() + " - TO: Bank");
 
@@ -405,7 +409,15 @@ public class Server
                 // ToDO make ac talk to agent.
 
                 // Sending a message of type OUT_BID.
+                
+                //get Agent socket
+                SocketInfo agentSocketInfo = agentBiddingKeyToSocketInfo.get(incomingMessage.getBiddingKey());
+                Socket agentSocket = new Socket(agentSocketInfo.HOSTNAME, agentSocketInfo.PORT);
+                ObjectOutputStream agentOut = new ObjectOutputStream(agentSocket.getOutputStream());
 
+                // Sending a message of type OUT_BID.
+                agentOut.writeObject(incomingMessage);
+                out.writeObject(incomingMessage);
                 needsReturnMessage = false;
             }
 
