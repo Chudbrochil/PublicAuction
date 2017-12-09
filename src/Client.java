@@ -552,7 +552,6 @@ public class Client
                     System.out.println("RCV_MSG: " + incomingMessage.getType() + " - FROM: Auction Central");
                     if (incomingMessage.getBidResponse() == BidResponse.ACCEPT)
                     {
-                        System.out.println("Calling acceptBid"); //***
                         acceptBid(incomingMessage);
 
                         //All other code moved into above method.
@@ -582,7 +581,7 @@ public class Client
     {
         //Make a new timer
         AuctionTimer timer = new AuctionTimer(incomingMessage.getItem());
-        System.out.println("Making a new timer!"); //***
+        System.out.println("Making a new timer for a bidded on item!"); //***
         timer.setOnFinished(new EventHandler<ActionEvent>()
         {
             @Override
