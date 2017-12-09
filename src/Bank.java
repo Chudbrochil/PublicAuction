@@ -10,6 +10,9 @@ public class Bank
     private HashMap<String, Account> bankKeyToAccount = new HashMap<>();
     private Random rand = new Random();
 
+    /**
+     * empty bank constructor
+     */
     public Bank()
     {
 

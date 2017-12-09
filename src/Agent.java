@@ -11,12 +11,20 @@ public class Agent
     private int portNumber;
 
 
+    /**
+     * Agent Constructor.
+     * @param name name of agent.
+     */
     public Agent(String name)
     {
         auctionHouses = new ArrayList<>();
         this.name = name;
     }
 
+    /**
+     * set the account information of the agent.
+     * @param account agent's acount information
+     */
     public void setAccountInfo(Account account)
     {
         accountNum = account.getAccountNum();

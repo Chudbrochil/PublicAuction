@@ -30,6 +30,12 @@ public class Account implements Serializable
         this.setName(name);
     }
 
+    /**
+     * Deducts money from directly from bank account.
+     * @param amountToDeduct the amount that is withdrawn from account.
+     * @return true if amount was deducted.
+     *         false if there was not enough money in account.
+     */
     public boolean deductAccountBalance(Double amountToDeduct)
     {
         if (accountBalance - amountToDeduct < 0)
@@ -61,33 +67,65 @@ public class Account implements Serializable
         else return false;
     }
 
+    /**
+     * Gets the account balance.
+     * @return the amount of money in account.
+     */
     public Double getAccountBalance() {
         return accountBalance;
     }
 
+    /**
+     * Sets the acount balance.
+     * @param accountBalance how much money is in account.
+     */
     public void setAccountBalance(Double accountBalance) {
         this.accountBalance = accountBalance;
     }
 
+    /**
+     * Sets the agents account number.
+     * @param accountNum agents account number.
+     */
     public void setAccountNum(int accountNum)
     {
         this.accountNum = accountNum;
     }
 
+    /**
+     * Gets the agents account number.
+     * @return agents account number.
+     */
     public int getAccountNum()
     {
         return accountNum;
     }
 
+    /**
+     * sets the agents bank key.
+     * @param bankKey agents bank key.
+     */
     public void setBankKey(String bankKey) { this.bankKey = bankKey; }
 
+    /**
+     * gets the agent bank key.
+     * @return agents bank key.
+     */
     public String getBankKey() { return bankKey; }
 
+    /**
+     * Gets the agents name.
+     * @return agents anme
+     */
     public String getName()
     {
         return name;
     }
 
+    /**
+     * Set Agents name.
+     * @param name Agents name
+     */
     public void setName(String name)
     {
         this.name = name;
