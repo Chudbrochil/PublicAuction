@@ -25,7 +25,7 @@ public class Client
     private Socket auctionCentralSocket;
     private TextArea taAgentOutput;
     private Label lblAuctionHouseList;
-    private ServerSocket client;
+    private ServerSocket listeningSocket;
     private Socket pipeConnection;
     private Item soldItem;
 
@@ -488,24 +488,22 @@ public class Client
         if (isAgent)
         {
             System.out.println("Agent thinks the port is " + agent.getPortNumber());
-            client = new ServerSocket(agent.getPortNumber());
+            listeningSocket = new ServerSocket(agent.getPortNumber());
             taAgentOutput.appendText("Agent listening for msg's on port " + getAgent().getPortNumber() + "\n");
         }
         else
         {
             System.out.println("AH thinks the port is: " + auctionHouse.getPublicID());
-            client = new ServerSocket(auctionHouse.getPublicID());
+            listeningSocket = new ServerSocket(auctionHouse.getPublicID());
             System.out.println(auctionHouse.getName() + " listening for msg's on port " + auctionHouse.getPublicID());
         }
 
 
-        // TODO: Does this need to be inside while(true)?
-        pipeConnection = client.accept();
-        out = new ObjectOutputStream(pipeConnection.getOutputStream());
-        in = new ObjectInputStream(pipeConnection.getInputStream());
-
         while(true)
         {
+            pipeConnection = listeningSocket.accept();
+            out = new ObjectOutputStream(pipeConnection.getOutputStream());
+            in = new ObjectInputStream(pipeConnection.getInputStream());
             Message incomingMessage = (Message) in.readObject();
             // Agent listening
             if(isAgent)
@@ -629,12 +627,17 @@ public class Client
      * notifyWinner()
      * @param item that has been sold! The bidding ID and amount is stored in it.
      */
-    private void notifyWinner(Item item) throws IOException
+    private void notifyWinner(Item item)
     {
-        System.out.println("Bidding ID"+ item.getCurrentHighestBidderID()+ " just won "+item.getItemName()+" for $"+item.getCurrentBid()+"!");
-        Message winnerMessage = new Message(MessageType.ITEM_SOLD, auctionHouse.getPublicID(), item.getCurrentHighestBidderID(),
-            item.getCurrentBid(), item);
-        out.writeObject(winnerMessage);
+        try
+        {
+            System.out.println("Bidding ID"+ item.getCurrentHighestBidderID()+ " just won "+item.getItemName()+" for $"+item.getCurrentBid()+"!");
+            Message winnerMessage = new Message(MessageType.ITEM_SOLD, auctionHouse.getPublicID(), item.getCurrentHighestBidderID(),
+                    item.getCurrentBid(), item);
+            out.writeObject(winnerMessage);
+        }
+        catch(IOException e) { System.out.println(e.getMessage()); }
+
     }
     
     /**
