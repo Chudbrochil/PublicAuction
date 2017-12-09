@@ -355,6 +355,9 @@ public class Server
                     {
                         System.out.println("you didn't have enough money");
                     }
+
+                    System.out.println("SEND_MSG: " + bankResponse.getType() + " - TO: AH-ID: " + incomingMessage.getItem().getAhID());
+                    System.out.println("SEND_MSG " + bankResponse.getType() + " - TO: bidKey-" + incomingMessage.getBiddingKey());
                     out.writeObject(bankResponse);
                     centralOut.writeObject(bankResponse);
                 }

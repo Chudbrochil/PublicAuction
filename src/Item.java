@@ -90,11 +90,10 @@ public class Item implements Serializable
     @Override
     public String toString()
     {
-//        if(currentBid==0)
-//            return itemName + " ID: " + itemID + " ahID: " + ahID + " MinBid: "+ minimumBid;
-//        else
-//            return itemName + " ID: " + itemID + " ahID: " + ahID + " CurrBid: "+ currentBid;
-        return itemName + " ID: " + itemID + " ahID: " + ahID + " minBid: " + minimumBid;
+        if(currentBid==0)
+            return itemName + " ID: " + itemID + " ahID: " + ahID + " MinBid: "+ minimumBid;
+        else
+            return itemName + " ID: " + itemID + " ahID: " + ahID + " CurrBid: "+ currentBid;
     }
 
     public Double getMinimumBid()
