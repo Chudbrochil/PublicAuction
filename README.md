@@ -1,3 +1,8 @@
+CS351
+Lab 4 PublicAuction
+Anna Carey, Vincent Crespin, Anthony Galczak and Jacob Collins
+
+
 PublicAuction Readme:
 
 Consult the User Guide.txt for how to run PublicAuction
