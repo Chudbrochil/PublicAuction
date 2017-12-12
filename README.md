@@ -1,6 +1,9 @@
 CS351
 Lab 4 PublicAuction
-Anna Carey, Vincent Crespin, Anthony Galczak and Jacob Collins
+Anna Carey - careya42
+Vincent Crespin - crespinv
+Anthony Galczak - Chudbrochil
+Jacob Collins - jacobacollins
 
 
 PublicAuction Readme:
